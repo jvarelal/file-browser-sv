@@ -1,0 +1,283 @@
+@import "./vars.scss";
+
+html,
+body {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+html {
+    --color-main: #f0f0f0;
+    --color-bg-label: rgb(240, 160, 20);
+    --color-label: #fff;
+    --color-text: #555;
+    --color-btn: #e2e2ec;
+    --color-btn-focus: #d8d8e8;
+    --color-bg-inp: #f0f0f8;
+    --color-bg-inp-disable: #e4e4f0;
+    --color-inp-disable: #aaa;
+    --color-border-l: #ccc9;
+    --color-border-m: #aaa;
+    --color-border-s: #999;
+    --color-route: #7d3500b8;
+    --color-route-disable: #7d350088;
+    --color-item: rgba(25, 75, 250, 0.2);
+    --color-folder: rgb(250, 220, 20);
+    --color-file-icon: rgba(150, 160, 150, 0.5);
+    --color-bg-iframe: #f8f8f8;
+}
+html[data-theme="night-light"] {
+    --color-main: #ecd7cd;
+    --color-bg-label: #a94037;
+    --color-label: #eee;
+    --color-text: #555;
+    --color-btn: #e2e2ec;
+    --color-btn-focus: #d8d8e8;
+    --color-bg-inp: #e4e2e188;
+    --color-bg-inp-disable: #e4e4f0;
+    --color-inp-disable: #aaa;
+    --color-border-l: #ccc9;
+    --color-border-m: #aaa;
+    --color-border-s: #999;
+    --color-route-disable: #7d350088;
+    --color-route: #7d3500b8;
+    --color-item: rgba(220, 180, 125, 0.2);
+    --color-folder: rgba(240, 160, 20, 0.5);
+    --color-file-icon: rgba(140, 60, 20, 0.5);
+    --color-bg-iframe: #ecd7cd;
+}
+html[data-theme="dark"] {
+    --color-main: #222;
+    --color-bg-label: #a94037;
+    --color-label: #eee;
+    --color-text: #ddd;
+    --color-btn: #444;
+    --color-btn-focus: #666;
+    --color-bg-inp: #2228;
+    --color-bg-inp-disable: #4448;
+    --color-inp-disable: #999;
+    --color-border-l: #ccc9;
+    --color-border-m: #aaa;
+    --color-border-s: #999;
+    --color-route-disable: #eee;
+    --color-route: #eeea;
+    --color-item: rgba(250, 100, 220, 0.25);
+    --color-folder: rgba(200, 175, 150, 0.5);
+    --color-file-icon: rgba(100, 100, 120, 0.5);
+    --color-bg-iframe: wheat;
+}
+
+body {
+    color: $color-text;
+    margin: 0;
+    box-sizing: border-box;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue",
+        sans-serif;
+    background-color: $bg-main;
+    font-size: 16px;
+}
+
+.modal-wrapper {
+    z-index: 10;
+    background-color: rgba(100, 100, 100, 0.5);
+    position: absolute;
+    top: 0;
+    left: 0;
+    min-width: 100%;
+    min-height: 100%;
+    overflow: hidden;
+    display: flex;
+}
+
+.loader {
+    border: 2px solid $border-light;
+    border-top: 2px solid $border-medium;
+    border-radius: 50%;
+    width: 3rem;
+    height: 3rem;
+    animation: spin 1s linear infinite;
+    margin: auto;
+}
+
+.scroll {
+    scrollbar-width: thin;
+    scrollbar-color: $border-strong;
+    overflow: auto;
+}
+
+@each $align in left, right, center, justify {
+    .t-#{$align} {
+        text-align: $align;
+    }
+}
+
+@each $display in none, block, flex {
+    .d-#{$display} {
+        display: $display;
+    }
+}
+
+.m-auto {
+    margin: auto;
+}
+
+@each $letter, $orientation in ("t": "top", "r": "right", "l": "left", "b": "bottom") {
+    .m-#{$letter}-auto {
+        margin-#{$orientation}: auto;
+    }
+    @for $i from 1 through 15 {
+        .p-#{$letter}-#{$i} {
+            padding-#{$orientation}: $i * 0.1rem;
+        }
+        .m-#{$letter}-#{$i} {
+            margin-#{$orientation}: $i * 0.1rem;
+        }
+    }
+}
+
+@for $i from 1 through 10 {
+    .p-#{$i} {
+        padding: $i * 0.1rem;
+    }
+    .m-#{$i} {
+        margin: $i * 0.1rem;
+    }
+    .f-0#{$i} {
+        font-size: $i * 0.1rem;
+    }
+}
+
+@each $width in 25, 50, 75, 100 {
+    .w-#{$width} {
+        width: $width * 1%;
+    }
+}
+
+@each $glass in "in", "out" {
+    .glass-#{$glass} {
+        cursor: zoom-#{$glass};
+    }
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.pointer {
+    cursor: pointer;
+}
+
+option {
+    background: $bg-main;
+    color: $color-text;
+}
+
+.inactive {
+    display: none;
+    width: 0%;
+}
+
+.statusToolbar{
+    height: calc(100vh - 4rem);
+    &.toolbarExpanded{
+        height: calc(100vh - 8.25rem);
+    }
+}
+
+.form-field-control {
+    padding: 0.75rem;
+    margin: 0.75rem auto 0.25rem auto;
+    position: relative;
+    label {
+        position: absolute;
+        display: block;
+        font-size: 0.7rem;
+        top: 0;
+        background-color: $bg-label;
+        color: $color-label;
+        padding: 0.1rem 0.25rem;
+        border-radius: 0.25rem 0;
+        line-height: 1.1;
+    }
+    .form-field {
+        display: flex;
+        min-height: 2rem;
+        select,
+        input,
+        .inp-type {
+            background-color: $bg-inp;
+            color: $color-text;
+            border: 1px solid $border-light;
+            border-bottom: 1px solid $border-medium;
+            box-shadow: 0px 0px;
+            box-sizing: border-box;
+            padding: 0 0.25rem;
+            &:disabled {
+                background-color: $bg-inp-disable;
+            }
+        }
+        .inp-type {
+            display: flex;
+            align-items: center;
+            padding: 0.25rem;
+        }
+        .inp-type.disable {
+            background-color: $bg-inp-disable;
+        }
+    }
+    .form-field-error {
+        margin: 0.2rem 0;
+        font-size: 0.8rem;
+        text-align: left;
+        color: $bg-label;
+    }
+}
+
+.white {
+    color: $color-text;
+    background-color: $bg-inp;
+}
+
+.btn {
+    cursor: pointer;
+    border: 1px solid $border-medium;
+    border-radius: 0.25rem;
+    padding: 0.25rem;
+    box-shadow: 0px 0px;
+    background-color: $bg-btn;
+    color: $color-text;
+    font-size: 0.9rem;
+    &-active {
+        color: white !important;
+        background-color: #2288ff !important;
+    }
+}
+ul {
+    list-style-type: square;
+    list-style-position: outside;
+    list-style-image: none;
+    padding: 0.25rem 1rem;
+}
+
+.underline {
+    text-decoration: underline;
+}
+.d-responsive {
+    display: none;
+}
+
+@media (max-width: 560px) {
+    .expand {
+        display: none;
+    }
+    .d-responsive {
+        display: block;
+    }
+}
