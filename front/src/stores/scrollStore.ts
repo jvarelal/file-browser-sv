@@ -10,29 +10,29 @@ const initialState: ScrollStoreModel = {
 }
 
 function createScrollStore() {
-    const { subscribe, set, update } = writable(initialState);
+    const { subscribe, set, update } = writable<ScrollStoreModel>(initialState);
     return {
         subscribe,
-        setCurrentHeight: (start: number, end: number) => update((s: ScrollStoreModel): ScrollStoreModel => ({
+        setCurrentHeight: (start: number, end: number) => update(s => ({
             ...s,
             startHeight: start,
             endHeight: end
         })),
-        setPreviousHeight: (previousHeight: number) => update((s: ScrollStoreModel): ScrollStoreModel => ({
+        setPreviousHeight: (previousHeight: number) => update(s => ({
             ...s,
             previousHeight: previousHeight
         })),
-        triggerPrevious: () => update((s: ScrollStoreModel): ScrollStoreModel => ({
+        triggerPrevious: () => update(s => ({
             ...s,
             updateScroll: true
         })),
-        restore: () => update((s: ScrollStoreModel): ScrollStoreModel => ({
+        restore: () => update(s => ({
             ...s,
             updateScroll: false,
             previousHeight: 0,
             previewY: 0
         })),
-        setPreviewHeight: (previewY: number) => update((s: ScrollStoreModel): ScrollStoreModel => ({
+        setPreviewHeight: (previewY: number) => update(s => ({
             ...s,
             previewY: previewY
         })),

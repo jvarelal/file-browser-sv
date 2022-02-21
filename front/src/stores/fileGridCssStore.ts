@@ -10,7 +10,7 @@ const initialState: FileGridCssStoreType = {
 }
 
 function createfileGridGapStore() {
-    const { subscribe, set, update } = writable(initialState);
+    const { subscribe, set, update } = writable<FileGridCssStoreType>(initialState);
     function calculatePerRow(itemWidth: number): FileGridCssStoreType {
         let scrollAprox: number = 9;
         let width: number = window.innerWidth - scrollAprox;

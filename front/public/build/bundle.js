@@ -10215,7 +10215,7 @@ var app = (function () {
                 err(data);
             });
         },
-        editTxt: (file, cb, err) => {
+        setPlainFile: (file, cb, err) => {
             let data = {
                 name: secure.digest(file.name),
                 route: secure.digest(file.route),
@@ -10514,7 +10514,7 @@ var app = (function () {
                     return true;
                 });
                 let nBookmarks = s.bookmarks.filter(b => files.find(f => b.route + b.name === f.route + f.name) === undefined);
-                return (Object.assign(Object.assign({}, s), { files: nFiles, bookmarks: nBookmarks.length === s.bookmarks.length ? s.bookmarks : setLocalBookmarks(nBookmarks), numberItemsChecked: numberChecked }));
+                return (Object.assign(Object.assign({}, s), { files: nFiles, numberItems: nFiles.length, bookmarks: nBookmarks.length === s.bookmarks.length ? s.bookmarks : setLocalBookmarks(nBookmarks), numberItemsChecked: numberChecked }));
             }),
             setCopy: (files) => update((s) => (Object.assign(Object.assign({}, s), { clipboard: files.map(f => (Object.assign(Object.assign({}, f), { checked: false }))), move: false }))),
             setMove: (files) => update((s) => (Object.assign(Object.assign({}, s), { clipboard: files.map(f => (Object.assign(Object.assign({}, f), { checked: false }))), move: true }))),
@@ -10529,13 +10529,14 @@ var app = (function () {
                         isInBookmarks = true;
                     }
                 }
-                return (Object.assign(Object.assign({}, s), { clipboard: s.move ? [] : s.clipboard, move: false, bookmarks: isInBookmarks ? setLocalBookmarks(nBookmarks) : s.bookmarks, files: [
-                        ...s.files,
-                        ...files.map(f => {
-                            let nFile = (Object.assign(Object.assign({}, f), { route: s.origin }));
-                            return Object.assign(Object.assign({}, nFile), getFileIcon(nFile));
-                        })
-                    ] }));
+                let updatedFiles = [
+                    ...s.files,
+                    ...files.map(f => {
+                        let nFile = (Object.assign(Object.assign({}, f), { route: s.origin }));
+                        return Object.assign(Object.assign({}, nFile), getFileIcon(nFile));
+                    })
+                ];
+                return (Object.assign(Object.assign({}, s), { clipboard: s.move ? [] : s.clipboard, move: false, bookmarks: isInBookmarks ? setLocalBookmarks(nBookmarks) : s.bookmarks, numberItems: updatedFiles.length, files: updatedFiles }));
             }),
             setError: (e = true) => update((s) => (Object.assign(Object.assign({}, s), { error: e }))),
             reset: () => set(initialState$6)
@@ -13342,13 +13343,13 @@ var app = (function () {
         }
         return {
             subscribe,
-            showContextItem: (item, x, y) => update((s) => {
+            showContextItem: (item, x, y) => update(s => {
                 return (Object.assign(Object.assign(Object.assign({}, s), { active: true, item: item, showItem: true }), calculateDisplay(x, y, "item")));
             }),
-            showContextParent: (parent, x, y) => update((s) => {
+            showContextParent: (parent, x, y) => update(s => {
                 return (Object.assign(Object.assign(Object.assign({}, s), { active: true, parent: parent, showItem: false }), calculateDisplay(x, y, "parent")));
             }),
-            closeContext: () => update((s) => (Object.assign(Object.assign({}, s), { active: false }))),
+            closeContext: () => update(s => (Object.assign(Object.assign({}, s), { active: false }))),
             reset: () => set(initialState$5)
         };
     }
@@ -13370,9 +13371,9 @@ var app = (function () {
         const { subscribe, set, update } = writable(initialState$4);
         return {
             subscribe,
-            showDialog: (message, onAction = () => null, onHide = () => null) => update((s) => (Object.assign(Object.assign({}, s), { active: true, loading: false, message: message, options: true, onAction: onAction, onHide: onHide }))),
-            showLoading: (textLoading = initialState$4.textLoading) => update((s) => (Object.assign(Object.assign({}, s), { active: true, loading: true, textLoading: textLoading }))),
-            showMessage: (message, onHide = () => null) => update((s) => (Object.assign(Object.assign({}, s), { active: true, options: false, loading: false, message: message, onHide: onHide }))),
+            showDialog: (message, onAction = () => null, onHide = () => null) => update(s => (Object.assign(Object.assign({}, s), { active: true, loading: false, message: message, options: true, onAction: onAction, onHide: onHide }))),
+            showLoading: (textLoading = initialState$4.textLoading) => update(s => (Object.assign(Object.assign({}, s), { active: true, loading: true, textLoading: textLoading }))),
+            showMessage: (message, onHide = () => null) => update(s => (Object.assign(Object.assign({}, s), { active: true, options: false, loading: false, message: message, onHide: onHide }))),
             closeDialog: () => update(s => initialState$4),
             reset: () => set(initialState$4)
         };
@@ -15490,6 +15491,7 @@ var app = (function () {
     }
 
     /* src\components\commons\InputFile.svelte generated by Svelte v3.44.2 */
+
     const file$g = "src\\components\\commons\\InputFile.svelte";
 
     function get_each_context$6(ctx, list, i) {
@@ -15519,7 +15521,7 @@ var app = (function () {
     	let dispose;
 
     	function click_handler_1() {
-    		return /*click_handler_1*/ ctx[12](/*file*/ ctx[18]);
+    		return /*click_handler_1*/ ctx[13](/*file*/ ctx[18]);
     	}
 
     	const block = {
@@ -15533,14 +15535,14 @@ var app = (function () {
     			i = element("i");
     			t2 = space();
     			attr_dev(td0, "class", "t-left svelte-cp77h5");
-    			add_location(td0, file$g, 71, 24, 2374);
+    			add_location(td0, file$g, 71, 24, 2331);
     			attr_dev(i, "class", "fas fa-trash-alt");
-    			add_location(i, file$g, 77, 32, 2689);
+    			add_location(i, file$g, 77, 32, 2646);
     			attr_dev(button, "class", "inp-type disable pointer");
-    			add_location(button, file$g, 73, 28, 2469);
+    			add_location(button, file$g, 73, 28, 2426);
     			attr_dev(td1, "class", "svelte-cp77h5");
-    			add_location(td1, file$g, 72, 24, 2435);
-    			add_location(tr, file$g, 70, 20, 2344);
+    			add_location(td1, file$g, 72, 24, 2392);
+    			add_location(tr, file$g, 70, 20, 2301);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, tr, anchor);
@@ -15592,7 +15594,7 @@ var app = (function () {
     			t0 = text("* ");
     			t1 = text(t1_value);
     			attr_dev(div, "class", "form-field-error m-t-4 f-08");
-    			add_location(div, file$g, 86, 8, 2930);
+    			add_location(div, file$g, 86, 8, 2887);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -15679,29 +15681,29 @@ var app = (function () {
     			}
 
     			attr_dev(label, "for", "file");
-    			add_location(label, file$g, 44, 4, 1398);
+    			add_location(label, file$g, 44, 4, 1355);
     			attr_dev(i0, "class", "fas fa-plus");
-    			add_location(i0, file$g, 57, 12, 1961);
+    			add_location(i0, file$g, 57, 12, 1918);
     			attr_dev(i1, "class", "fas fa-file");
-    			add_location(i1, file$g, 58, 12, 2000);
+    			add_location(i1, file$g, 58, 12, 1957);
     			attr_dev(div0, "class", "file-entry white pointer svelte-cp77h5");
     			attr_dev(div0, "tabindex", "0");
     			attr_dev(div0, "draggable", "");
     			toggle_class(div0, "dragOn", /*dragOn*/ ctx[2]);
-    			add_location(div0, file$g, 46, 8, 1504);
+    			add_location(div0, file$g, 46, 8, 1461);
     			attr_dev(input, "type", "file");
     			attr_dev(input, "name", "file");
     			input.multiple = true;
     			attr_dev(input, "class", "svelte-cp77h5");
-    			add_location(input, file$g, 60, 8, 2051);
-    			add_location(tbody, file$g, 68, 12, 2268);
+    			add_location(input, file$g, 60, 8, 2008);
+    			add_location(tbody, file$g, 68, 12, 2225);
     			attr_dev(table, "class", "tbl w-100 f-09 svelte-cp77h5");
-    			add_location(table, file$g, 67, 8, 2224);
+    			add_location(table, file$g, 67, 8, 2181);
     			attr_dev(div1, "class", "form-field");
     			set_style(div1, "flex-direction", "column");
-    			add_location(div1, file$g, 45, 4, 1438);
+    			add_location(div1, file$g, 45, 4, 1395);
     			attr_dev(div2, "class", "form-field-control");
-    			add_location(div2, file$g, 43, 0, 1360);
+    			add_location(div2, file$g, 43, 0, 1317);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -15717,7 +15719,7 @@ var app = (function () {
     			append_dev(div0, i1);
     			append_dev(div1, t3);
     			append_dev(div1, input);
-    			/*input_binding*/ ctx[11](input);
+    			/*input_binding*/ ctx[12](input);
     			append_dev(div1, t4);
     			append_dev(div1, table);
     			append_dev(table, tbody);
@@ -15734,11 +15736,11 @@ var app = (function () {
 
     			if (!mounted) {
     				dispose = [
-    					listen_dev(div0, "click", /*click_handler*/ ctx[7], false, false, false),
-    					listen_dev(div0, "keydown", /*keydown_handler*/ ctx[8], false, false, false),
-    					listen_dev(div0, "dragenter", prevent_default(/*dragenter_handler*/ ctx[9]), false, true, false),
+    					listen_dev(div0, "click", /*click_handler*/ ctx[8], false, false, false),
+    					listen_dev(div0, "keydown", /*keydown_handler*/ ctx[9], false, false, false),
+    					listen_dev(div0, "dragenter", prevent_default(/*dragenter_handler*/ ctx[10]), false, true, false),
     					listen_dev(div0, "drop", prevent_default(/*handleDrop*/ ctx[5]), false, true, false),
-    					listen_dev(div0, "dragover", prevent_default(/*dragover_handler*/ ctx[10]), false, true, false),
+    					listen_dev(div0, "dragover", prevent_default(/*dragover_handler*/ ctx[11]), false, true, false),
     					listen_dev(input, "change", /*handleChange*/ ctx[6], false, false, false)
     				];
 
@@ -15802,7 +15804,7 @@ var app = (function () {
     		o: noop,
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(div2);
-    			/*input_binding*/ ctx[11](null);
+    			/*input_binding*/ ctx[12](null);
     			destroy_each(each_blocks_1, detaching);
     			destroy_each(each_blocks, detaching);
     			mounted = false;
@@ -15822,12 +15824,10 @@ var app = (function () {
     }
 
     function instance$l($$self, $$props, $$invalidate) {
-    	let $fileBrowserStore;
-    	validate_store(fileBrowserStore, 'fileBrowserStore');
-    	component_subscribe($$self, fileBrowserStore, $$value => $$invalidate(13, $fileBrowserStore = $$value));
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots('InputFile', slots, []);
     	let { filesSelected = [] } = $$props;
+    	let { currentFiles = [] } = $$props;
     	let { errors = [] } = $$props;
     	let dragOn = false;
     	let inputFile;
@@ -15837,7 +15837,7 @@ var app = (function () {
 
     		inputFiles.forEach(file => {
     			if (!filesSelected.find(f => f.name === file.name)) {
-    				if ($fileBrowserStore.files.find(f => f.name === file.name)) {
+    				if (currentFiles.find(f => f.name === file.name)) {
     					errors.push(`El archivo ${file.name} ya existe en la ruta`);
     				} else {
     					$$invalidate(0, filesSelected = [...filesSelected, file]);
@@ -15873,7 +15873,7 @@ var app = (function () {
     		addFiles(files);
     	}
 
-    	const writable_props = ['filesSelected', 'errors'];
+    	const writable_props = ['filesSelected', 'currentFiles', 'errors'];
 
     	Object.keys($$props).forEach(key => {
     		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console.warn(`<InputFile> was created with unknown prop '${key}'`);
@@ -15895,24 +15895,25 @@ var app = (function () {
 
     	$$self.$$set = $$props => {
     		if ('filesSelected' in $$props) $$invalidate(0, filesSelected = $$props.filesSelected);
+    		if ('currentFiles' in $$props) $$invalidate(7, currentFiles = $$props.currentFiles);
     		if ('errors' in $$props) $$invalidate(1, errors = $$props.errors);
     	};
 
     	$$self.$capture_state = () => ({
-    		fileBrowserStore,
     		filesSelected,
+    		currentFiles,
     		errors,
     		dragOn,
     		inputFile,
     		addFiles,
     		removeFile,
     		handleDrop,
-    		handleChange,
-    		$fileBrowserStore
+    		handleChange
     	});
 
     	$$self.$inject_state = $$props => {
     		if ('filesSelected' in $$props) $$invalidate(0, filesSelected = $$props.filesSelected);
+    		if ('currentFiles' in $$props) $$invalidate(7, currentFiles = $$props.currentFiles);
     		if ('errors' in $$props) $$invalidate(1, errors = $$props.errors);
     		if ('dragOn' in $$props) $$invalidate(2, dragOn = $$props.dragOn);
     		if ('inputFile' in $$props) $$invalidate(3, inputFile = $$props.inputFile);
@@ -15930,6 +15931,7 @@ var app = (function () {
     		removeFile,
     		handleDrop,
     		handleChange,
+    		currentFiles,
     		click_handler,
     		keydown_handler,
     		dragenter_handler,
@@ -15942,7 +15944,12 @@ var app = (function () {
     class InputFile extends SvelteComponentDev {
     	constructor(options) {
     		super(options);
-    		init(this, options, instance$l, create_fragment$l, safe_not_equal, { filesSelected: 0, errors: 1 });
+
+    		init(this, options, instance$l, create_fragment$l, safe_not_equal, {
+    			filesSelected: 0,
+    			currentFiles: 7,
+    			errors: 1
+    		});
 
     		dispatch_dev("SvelteRegisterComponent", {
     			component: this,
@@ -15960,6 +15967,14 @@ var app = (function () {
     		throw new Error("<InputFile>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
     	}
 
+    	get currentFiles() {
+    		throw new Error("<InputFile>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set currentFiles(value) {
+    		throw new Error("<InputFile>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
     	get errors() {
     		throw new Error("<InputFile>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
     	}
@@ -15972,7 +15987,7 @@ var app = (function () {
     /* src\components\fileBrowser\forms\FileForm.svelte generated by Svelte v3.44.2 */
     const file$f = "src\\components\\fileBrowser\\forms\\FileForm.svelte";
 
-    // (95:4) {:else}
+    // (114:4) {:else}
     function create_else_block$7(ctx) {
     	let inputfile;
     	let updating_errors;
@@ -15980,14 +15995,16 @@ var app = (function () {
     	let current;
 
     	function inputfile_errors_binding(value) {
-    		/*inputfile_errors_binding*/ ctx[11](value);
+    		/*inputfile_errors_binding*/ ctx[12](value);
     	}
 
     	function inputfile_filesSelected_binding(value) {
-    		/*inputfile_filesSelected_binding*/ ctx[12](value);
+    		/*inputfile_filesSelected_binding*/ ctx[13](value);
     	}
 
-    	let inputfile_props = {};
+    	let inputfile_props = {
+    		currentFiles: /*$fileBrowserStore*/ ctx[4].files
+    	};
 
     	if (/*errors*/ ctx[1].files !== void 0) {
     		inputfile_props.errors = /*errors*/ ctx[1].files;
@@ -16011,6 +16028,7 @@ var app = (function () {
     		},
     		p: function update(ctx, dirty) {
     			const inputfile_changes = {};
+    			if (dirty & /*$fileBrowserStore*/ 16) inputfile_changes.currentFiles = /*$fileBrowserStore*/ ctx[4].files;
 
     			if (!updating_errors && dirty & /*errors*/ 2) {
     				updating_errors = true;
@@ -16044,14 +16062,14 @@ var app = (function () {
     		block,
     		id: create_else_block$7.name,
     		type: "else",
-    		source: "(95:4) {:else}",
+    		source: "(114:4) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (87:4) {#if values.type === "folder"}
+    // (106:4) {#if ["folder", "plain"].includes(values.type)}
     function create_if_block_1$7(ctx) {
     	let inputtext;
     	let updating_value;
@@ -16059,11 +16077,11 @@ var app = (function () {
     	let current;
 
     	function inputtext_value_binding(value) {
-    		/*inputtext_value_binding*/ ctx[9](value);
+    		/*inputtext_value_binding*/ ctx[10](value);
     	}
 
     	function inputtext_errors_binding(value) {
-    		/*inputtext_errors_binding*/ ctx[10](value);
+    		/*inputtext_errors_binding*/ ctx[11](value);
     	}
 
     	let inputtext_props = {
@@ -16127,14 +16145,14 @@ var app = (function () {
     		block,
     		id: create_if_block_1$7.name,
     		type: "if",
-    		source: "(87:4) {#if values.type === \\\"folder\\\"}",
+    		source: "(106:4) {#if [\\\"folder\\\", \\\"plain\\\"].includes(values.type)}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (101:4) {#if finalError}
+    // (121:4) {#if finalError}
     function create_if_block$f(ctx) {
     	let div;
     	let t0;
@@ -16147,7 +16165,7 @@ var app = (function () {
     			t1 = text(/*finalError*/ ctx[2]);
     			attr_dev(div, "class", "f-08");
     			set_style(div, "color", "red");
-    			add_location(div, file$f, 101, 8, 3373);
+    			add_location(div, file$f, 121, 8, 4337);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -16166,7 +16184,7 @@ var app = (function () {
     		block,
     		id: create_if_block$f.name,
     		type: "if",
-    		source: "(101:4) {#if finalError}",
+    		source: "(121:4) {#if finalError}",
     		ctx
     	});
 
@@ -16180,7 +16198,7 @@ var app = (function () {
     	let t1;
     	let div0;
     	let span;
-    	let t2_value = /*$fileDirectoryStore*/ ctx[4].current + "";
+    	let t2_value = /*$fileDirectoryStore*/ ctx[5].current + "";
     	let t2;
     	let t3;
     	let div3;
@@ -16190,14 +16208,16 @@ var app = (function () {
     	let select;
     	let option0;
     	let option1;
-    	let t8;
+    	let option2;
+    	let t9;
+    	let show_if;
     	let current_block_type_index;
     	let if_block0;
-    	let t9;
     	let t10;
+    	let t11;
     	let div4;
     	let button0;
-    	let t12;
+    	let t13;
     	let button1;
     	let current;
     	let mounted;
@@ -16206,11 +16226,12 @@ var app = (function () {
     	const if_blocks = [];
 
     	function select_block_type(ctx, dirty) {
-    		if (/*values*/ ctx[0].type === "folder") return 0;
+    		if (show_if == null || dirty & /*values*/ 1) show_if = !!["folder", "plain"].includes(/*values*/ ctx[0].type);
+    		if (show_if) return 0;
     		return 1;
     	}
 
-    	current_block_type_index = select_block_type(ctx);
+    	current_block_type_index = select_block_type(ctx, -1);
     	if_block0 = if_blocks[current_block_type_index] = if_block_creators[current_block_type_index](ctx);
     	let if_block1 = /*finalError*/ ctx[2] && create_if_block$f(ctx);
 
@@ -16235,50 +16256,55 @@ var app = (function () {
     			option0.textContent = "Folder";
     			option1 = element("option");
     			option1.textContent = "Archivo";
-    			t8 = space();
-    			if_block0.c();
+    			option2 = element("option");
+    			option2.textContent = "Nuevo archivo plano";
     			t9 = space();
-    			if (if_block1) if_block1.c();
+    			if_block0.c();
     			t10 = space();
+    			if (if_block1) if_block1.c();
+    			t11 = space();
     			div4 = element("div");
     			button0 = element("button");
     			button0.textContent = "Agregar";
-    			t12 = space();
+    			t13 = space();
     			button1 = element("button");
     			button1.textContent = "Cancelar";
     			attr_dev(label0, "for", "type");
-    			add_location(label0, file$f, 64, 8, 2229);
+    			add_location(label0, file$f, 82, 8, 3056);
     			attr_dev(span, "class", "inp-type disable p-3 w-100 f-08 t-left");
-    			add_location(span, file$f, 66, 12, 2307);
+    			add_location(span, file$f, 84, 12, 3134);
     			attr_dev(div0, "class", "form-field");
-    			add_location(div0, file$f, 65, 8, 2269);
+    			add_location(div0, file$f, 83, 8, 3096);
     			attr_dev(div1, "class", "form-field-control");
-    			add_location(div1, file$f, 63, 4, 2187);
+    			add_location(div1, file$f, 81, 4, 3014);
     			attr_dev(label1, "for", "type");
-    			add_location(label1, file$f, 72, 8, 2504);
+    			add_location(label1, file$f, 90, 8, 3331);
     			option0.__value = "folder";
     			option0.value = option0.__value;
-    			add_location(option0, file$f, 81, 16, 2805);
+    			add_location(option0, file$f, 99, 16, 3632);
     			option1.__value = "file";
     			option1.value = option1.__value;
-    			add_location(option1, file$f, 82, 16, 2861);
+    			add_location(option1, file$f, 100, 16, 3688);
+    			option2.__value = "plain";
+    			option2.value = option2.__value;
+    			add_location(option2, file$f, 101, 16, 3743);
     			attr_dev(select, "id", "type");
     			attr_dev(select, "class", "w-100");
     			attr_dev(select, "name", "type");
-    			if (/*values*/ ctx[0].type === void 0) add_render_callback(() => /*select_change_handler*/ ctx[7].call(select));
-    			add_location(select, file$f, 74, 12, 2594);
+    			if (/*values*/ ctx[0].type === void 0) add_render_callback(() => /*select_change_handler*/ ctx[8].call(select));
+    			add_location(select, file$f, 92, 12, 3421);
     			attr_dev(div2, "class", "form-field");
-    			add_location(div2, file$f, 73, 8, 2556);
+    			add_location(div2, file$f, 91, 8, 3383);
     			attr_dev(div3, "class", "form-field-control");
-    			add_location(div3, file$f, 71, 4, 2462);
+    			add_location(div3, file$f, 89, 4, 3289);
     			attr_dev(button0, "type", "submit");
     			attr_dev(button0, "class", "btn m-auto w-25");
-    			add_location(button0, file$f, 106, 8, 3520);
+    			add_location(button0, file$f, 126, 8, 4484);
     			attr_dev(button1, "class", "btn m-auto w-25");
-    			add_location(button1, file$f, 107, 8, 3592);
+    			add_location(button1, file$f, 127, 8, 4556);
     			attr_dev(div4, "class", "form-field-control d-flex");
-    			add_location(div4, file$f, 105, 4, 3471);
-    			add_location(form, file$f, 62, 0, 2135);
+    			add_location(div4, file$f, 125, 4, 4435);
+    			add_location(form, file$f, 80, 0, 2962);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -16299,38 +16325,39 @@ var app = (function () {
     			append_dev(div2, select);
     			append_dev(select, option0);
     			append_dev(select, option1);
+    			append_dev(select, option2);
     			select_option(select, /*values*/ ctx[0].type);
-    			/*select_binding*/ ctx[8](select);
-    			append_dev(form, t8);
-    			if_blocks[current_block_type_index].m(form, null);
+    			/*select_binding*/ ctx[9](select);
     			append_dev(form, t9);
-    			if (if_block1) if_block1.m(form, null);
+    			if_blocks[current_block_type_index].m(form, null);
     			append_dev(form, t10);
+    			if (if_block1) if_block1.m(form, null);
+    			append_dev(form, t11);
     			append_dev(form, div4);
     			append_dev(div4, button0);
-    			append_dev(div4, t12);
+    			append_dev(div4, t13);
     			append_dev(div4, button1);
     			current = true;
 
     			if (!mounted) {
     				dispose = [
-    					listen_dev(select, "change", /*select_change_handler*/ ctx[7]),
-    					listen_dev(button1, "click", prevent_default(/*closeModal*/ ctx[5]), false, true, false),
-    					listen_dev(form, "submit", prevent_default(/*handleSubmit*/ ctx[6]), false, true, false)
+    					listen_dev(select, "change", /*select_change_handler*/ ctx[8]),
+    					listen_dev(button1, "click", prevent_default(/*closeModal*/ ctx[6]), false, true, false),
+    					listen_dev(form, "submit", prevent_default(/*handleSubmit*/ ctx[7]), false, true, false)
     				];
 
     				mounted = true;
     			}
     		},
     		p: function update(ctx, [dirty]) {
-    			if ((!current || dirty & /*$fileDirectoryStore*/ 16) && t2_value !== (t2_value = /*$fileDirectoryStore*/ ctx[4].current + "")) set_data_dev(t2, t2_value);
+    			if ((!current || dirty & /*$fileDirectoryStore*/ 32) && t2_value !== (t2_value = /*$fileDirectoryStore*/ ctx[5].current + "")) set_data_dev(t2, t2_value);
 
     			if (dirty & /*values*/ 1) {
     				select_option(select, /*values*/ ctx[0].type);
     			}
 
     			let previous_block_index = current_block_type_index;
-    			current_block_type_index = select_block_type(ctx);
+    			current_block_type_index = select_block_type(ctx, dirty);
 
     			if (current_block_type_index === previous_block_index) {
     				if_blocks[current_block_type_index].p(ctx, dirty);
@@ -16352,7 +16379,7 @@ var app = (function () {
     				}
 
     				transition_in(if_block0, 1);
-    				if_block0.m(form, t9);
+    				if_block0.m(form, t10);
     			}
 
     			if (/*finalError*/ ctx[2]) {
@@ -16361,7 +16388,7 @@ var app = (function () {
     				} else {
     					if_block1 = create_if_block$f(ctx);
     					if_block1.c();
-    					if_block1.m(form, t10);
+    					if_block1.m(form, t11);
     				}
     			} else if (if_block1) {
     				if_block1.d(1);
@@ -16379,7 +16406,7 @@ var app = (function () {
     		},
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(form);
-    			/*select_binding*/ ctx[8](null);
+    			/*select_binding*/ ctx[9](null);
     			if_blocks[current_block_type_index].d();
     			if (if_block1) if_block1.d();
     			mounted = false;
@@ -16399,12 +16426,12 @@ var app = (function () {
     }
 
     function instance$k($$self, $$props, $$invalidate) {
-    	let $fileDirectoryStore;
     	let $fileBrowserStore;
-    	validate_store(fileDirectoryStore, 'fileDirectoryStore');
-    	component_subscribe($$self, fileDirectoryStore, $$value => $$invalidate(4, $fileDirectoryStore = $$value));
+    	let $fileDirectoryStore;
     	validate_store(fileBrowserStore, 'fileBrowserStore');
-    	component_subscribe($$self, fileBrowserStore, $$value => $$invalidate(13, $fileBrowserStore = $$value));
+    	component_subscribe($$self, fileBrowserStore, $$value => $$invalidate(4, $fileBrowserStore = $$value));
+    	validate_store(fileDirectoryStore, 'fileDirectoryStore');
+    	component_subscribe($$self, fileDirectoryStore, $$value => $$invalidate(5, $fileDirectoryStore = $$value));
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots('FileForm', slots, []);
     	const closeModal = getContext("closeModal");
@@ -16425,18 +16452,29 @@ var app = (function () {
     		var _a;
 
     		const cb = () => {
-    			if (values.type === "folder") {
-    				fileDirectoryStore.setDirectory($fileDirectoryStore.current + "/" + values.name);
-    			} else {
-    				fileBrowserStore.setFiles(
-    					[
-    						...$fileBrowserStore.files,
-    						...mapCustomFiles(values === null || values === void 0
-    						? void 0
-    						: values.files)
-    					],
-    					$fileDirectoryStore.current
-    				);
+    			switch (values.type) {
+    				case "folder":
+    					fileDirectoryStore.setDirectory($fileDirectoryStore.current + "/" + values.name);
+    					break;
+    				case "file":
+    					fileBrowserStore.setFiles(
+    						[
+    							...$fileBrowserStore.files,
+    							...mapCustomFiles(values === null || values === void 0
+    							? void 0
+    							: values.files)
+    						],
+    						$fileDirectoryStore.current
+    					);
+    					break;
+    				case "plain":
+    					let customFile = {
+    						name: values.name,
+    						isDirectory: false,
+    						creation: new Date().toISOString(),
+    						modification: new Date().toISOString()
+    					};
+    					fileBrowserStore.setFiles([...$fileBrowserStore.files, customFile], $fileDirectoryStore.current);
     			}
 
     			blockModal(false);
@@ -16455,13 +16493,22 @@ var app = (function () {
     			);
     		};
 
-    		if (values.type === "folder") {
+    		if (["folder", "plain"].includes(values.type)) {
     			if (((_a = values === null || values === void 0
     			? void 0
     			: values.name) === null || _a === void 0
     			? void 0
     			: _a.trim().length) === 0) {
     				$$invalidate(1, errors.name = `* El campo es obligatorio`, errors);
+    				return;
+    			}
+    		}
+
+    		if (values.type === "plain") {
+    			if ($fileBrowserStore.files.find(f => f.name === (values === null || values === void 0
+    			? void 0
+    			: values.name))) {
+    				$$invalidate(1, errors.files = [`El archivo ${values.name} ya existe en la ruta`], errors);
     				return;
     			}
     		}
@@ -16543,8 +16590,8 @@ var app = (function () {
     		finalError,
     		focusElement,
     		handleSubmit,
-    		$fileDirectoryStore,
-    		$fileBrowserStore
+    		$fileBrowserStore,
+    		$fileDirectoryStore
     	});
 
     	$$self.$inject_state = $$props => {
@@ -16563,6 +16610,7 @@ var app = (function () {
     		errors,
     		finalError,
     		focusElement,
+    		$fileBrowserStore,
     		$fileDirectoryStore,
     		closeModal,
     		handleSubmit,
@@ -17551,11 +17599,11 @@ var app = (function () {
         const { subscribe, set, update } = writable(initialState$2);
         return {
             subscribe,
-            setCurrentHeight: (start, end) => update((s) => (Object.assign(Object.assign({}, s), { startHeight: start, endHeight: end }))),
-            setPreviousHeight: (previousHeight) => update((s) => (Object.assign(Object.assign({}, s), { previousHeight: previousHeight }))),
-            triggerPrevious: () => update((s) => (Object.assign(Object.assign({}, s), { updateScroll: true }))),
-            restore: () => update((s) => (Object.assign(Object.assign({}, s), { updateScroll: false, previousHeight: 0, previewY: 0 }))),
-            setPreviewHeight: (previewY) => update((s) => (Object.assign(Object.assign({}, s), { previewY: previewY }))),
+            setCurrentHeight: (start, end) => update(s => (Object.assign(Object.assign({}, s), { startHeight: start, endHeight: end }))),
+            setPreviousHeight: (previousHeight) => update(s => (Object.assign(Object.assign({}, s), { previousHeight: previousHeight }))),
+            triggerPrevious: () => update(s => (Object.assign(Object.assign({}, s), { updateScroll: true }))),
+            restore: () => update(s => (Object.assign(Object.assign({}, s), { updateScroll: false, previousHeight: 0, previewY: 0 }))),
+            setPreviewHeight: (previewY) => update(s => (Object.assign(Object.assign({}, s), { previewY: previewY }))),
             reset: () => set(initialState$2)
         };
     }
@@ -20413,7 +20461,7 @@ var app = (function () {
     			attr_dev(textarea, "class", "txt-edit-file scroll svelte-wjm53u");
     			textarea.disabled = textarea_disabled_value = !/*enableEdit*/ ctx[0];
     			toggle_class(textarea, "enableEdit", /*enableEdit*/ ctx[0]);
-    			add_location(textarea, file_1$1, 68, 8, 1768);
+    			add_location(textarea, file_1$1, 68, 8, 1773);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, textarea, anchor);
@@ -20472,7 +20520,7 @@ var app = (function () {
     		c: function create() {
     			h2 = element("h2");
     			h2.textContent = "errMessage";
-    			add_location(h2, file_1$1, 66, 8, 1726);
+    			add_location(h2, file_1$1, 66, 8, 1731);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, h2, anchor);
@@ -20518,15 +20566,15 @@ var app = (function () {
     			i1 = element("i");
     			t2 = text("\r\n                    Cancelar");
     			attr_dev(i0, "class", "fas fa-save");
-    			add_location(i0, file_1$1, 77, 20, 2105);
+    			add_location(i0, file_1$1, 77, 20, 2110);
     			attr_dev(button0, "class", "btn m-auto w-25");
-    			add_location(button0, file_1$1, 76, 16, 2031);
+    			add_location(button0, file_1$1, 76, 16, 2036);
     			attr_dev(i1, "class", "far fa-window-close");
-    			add_location(i1, file_1$1, 81, 20, 2284);
+    			add_location(i1, file_1$1, 81, 20, 2289);
     			attr_dev(button1, "class", "btn m-auto w-25");
-    			add_location(button1, file_1$1, 80, 16, 2204);
+    			add_location(button1, file_1$1, 80, 16, 2209);
     			attr_dev(div, "class", "txt-edit-control svelte-wjm53u");
-    			add_location(div, file_1$1, 75, 12, 1983);
+    			add_location(div, file_1$1, 75, 12, 1988);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -20582,7 +20630,7 @@ var app = (function () {
     			div = element("div");
     			if_block.c();
     			attr_dev(div, "class", "txt-edit svelte-wjm53u");
-    			add_location(div, file_1$1, 64, 0, 1672);
+    			add_location(div, file_1$1, 64, 0, 1677);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -20675,7 +20723,7 @@ var app = (function () {
 
     			dialogStore$1.showLoading();
 
-    			FileService.editTxt(
+    			FileService.setPlainFile(
     				fileEdit,
     				() => {
     					dialogStore$1.reset();

@@ -102,7 +102,7 @@ const directory = {
 		return secure.digest(text)
 	},
 
-	editText: (file) => {
+	setPlainFile: (file) => {
 		try {
 			let dataDir = path.join(secure.process(file.route), secure.process(file.name));
 			fs.writeFileSync(dataDir, secure.process(file.text))
@@ -124,6 +124,19 @@ const directory = {
 					return { status: 200, message: "Folder created" }
 				}
 				return { status: 400, message: "Folder already exist" }
+			} catch (e) {
+				return { status: 500, message: "Some files had problems: " + e.message }
+			}
+		},
+
+		plain: (body) => {
+			try {
+				let { name, route } = body
+				route = secure.process(route)
+				name = secure.process(name)
+				let newPath = path.join(route, name)
+				fs.writeFileSync(newPath, "")
+				return { status: 200, message: "File created" }
 			} catch (e) {
 				return { status: 500, message: "Some files had problems: " + e.message }
 			}

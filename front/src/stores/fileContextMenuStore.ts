@@ -15,7 +15,7 @@ const initialState: FileContextMenuStore = {
 }
 
 function fileContextStore() {
-    const { subscribe, set, update } = writable(initialState);
+    const { subscribe, set, update } = writable<FileContextMenuStore>(initialState);
     function calculateDisplay(x: number, y: number, type: string): ContextMenuPosition {
         let { innerWidth, innerHeight } = window;
         let aproxHeight = initialState.minHeight
@@ -28,7 +28,7 @@ function fileContextStore() {
     }
     return {
         subscribe,
-        showContextItem: (item: FileUI, x: number, y: number) => update((s: FileContextMenuStore): FileContextMenuStore => {
+        showContextItem: (item: FileUI, x: number, y: number) => update(s => {
             return ({
                 ...s,
                 active: true,
@@ -37,7 +37,7 @@ function fileContextStore() {
                 ...calculateDisplay(x, y, "item")
             })
         }),
-        showContextParent: (parent: FileApiResponse, x: number, y: number) => update((s: FileContextMenuStore): FileContextMenuStore => {
+        showContextParent: (parent: FileApiResponse, x: number, y: number) => update(s => {
             return ({
                 ...s,
                 active: true,
@@ -46,7 +46,7 @@ function fileContextStore() {
                 ...calculateDisplay(x, y, "parent")
             })
         }),
-        closeContext: () => update((s: FileContextMenuStore): FileContextMenuStore => ({ ...s, active: false })),
+        closeContext: () => update(s => ({ ...s, active: false })),
         reset: () => set(initialState)
     };
 }

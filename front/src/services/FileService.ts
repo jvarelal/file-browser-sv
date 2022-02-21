@@ -102,7 +102,7 @@ const FileService = {
             })
     },
 
-    editTxt: (
+    setPlainFile: (
         file: FileEdit,
         cb: (data: ApiResponse) => void,
         err: (resp: ErrorApiResponse) => void

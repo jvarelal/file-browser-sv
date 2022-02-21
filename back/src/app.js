@@ -124,7 +124,7 @@ app.post('/api/files/edit', checkLogin, (req, res) => {
 })
 
 app.post('/api/files/editText', checkLogin, (req, res) => {
-	let resp = directory.editText(req.body)
+	let resp = directory.setPlainFile(req.body)
 	res.status(resp.status).send(resp)
 })
 

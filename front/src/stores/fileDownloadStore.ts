@@ -8,7 +8,7 @@ const initialState: FileDownloadStore = {
 }
 
 function fileDownloadStore() {
-    const { subscribe, set, update } = writable(initialState);
+    const { subscribe, set, update } = writable<FileDownloadStore>(initialState);
     return {
         subscribe,
         setDownload: (files: FileUI[]) => update((s) => {

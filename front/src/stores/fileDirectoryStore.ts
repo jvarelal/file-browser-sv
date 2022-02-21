@@ -9,7 +9,7 @@ const initialState: FileDirectoryStore = {
 }
 
 function directoryStore() {
-    const { subscribe, set, update } = writable(initialState);
+    const { subscribe, set, update } = writable<FileDirectoryStore>(initialState);
     return {
         subscribe,
         setInit: (directory: string) => update((s) => {

@@ -7,8 +7,15 @@
     import InputText from "../../commons/InputText.svelte";
     import InputFile from "../../commons/InputFile.svelte";
     //types
-    import type { BooleanFunction, FileUpload } from "../../../types/UITypes";
-    import type { ErrorApiResponse } from "../../../types/ApiTypes";
+    import type {
+        BooleanFunction,
+        FileUI,
+        FileUpload,
+    } from "../../../types/UITypes";
+    import type {
+        ErrorApiResponse,
+        FileApiResponse,
+    } from "../../../types/ApiTypes";
     //helpers
     import FileService from "../../../services/FileService";
     import { mapCustomFiles } from "../../../helpers/Media";
@@ -28,18 +35,34 @@
 
     function handleSubmit(): void {
         const cb = (): void => {
-            if (values.type === "folder") {
-                fileDirectoryStore.setDirectory(
-                    $fileDirectoryStore.current + "/" + values.name
-                );
-            } else {
-                fileBrowserStore.setFiles(
-                    [
-                        ...$fileBrowserStore.files,
-                        ...mapCustomFiles(values?.files),
-                    ],
-                    $fileDirectoryStore.current
-                );
+            switch (values.type) {
+                case "folder":
+                    fileDirectoryStore.setDirectory(
+                        $fileDirectoryStore.current + "/" + values.name
+                    );
+                    break;
+                case "file":
+                    fileBrowserStore.setFiles(
+                        [
+                            ...$fileBrowserStore.files,
+                            ...mapCustomFiles(values?.files),
+                        ],
+                        $fileDirectoryStore.current
+                    );
+                    break;
+                case "plain":
+                    let customFile: FileApiResponse = {
+                        name: values.name,
+                        isDirectory: false,
+                        creation: new Date().toISOString(),
+                        modification: new Date().toISOString(),
+                    };
+                    fileBrowserStore.setFiles(
+                        [...$fileBrowserStore.files, customFile],
+                        $fileDirectoryStore.current
+                    );
+                default:
+                    break;
             }
             blockModal(false);
             closeModal();
@@ -51,9 +74,15 @@
                 finalError = "";
             }, 10000);
         };
-        if (values.type === "folder") {
+        if (["folder", "plain"].includes(values.type)) {
             if (values?.name?.trim().length === 0) {
                 errors.name = `* El campo es obligatorio`;
+                return;
+            }
+        }
+        if (values.type === "plain") {
+            if ($fileBrowserStore.files.find((f) => f.name === values?.name)) {
+                errors.files = [`El archivo ${values.name} ya existe en la ruta`];
                 return;
             }
         }
@@ -91,10 +120,11 @@
             >
                 <option value="folder">Folder</option>
                 <option value="file">Archivo</option>
+                <option value="plain">Nuevo archivo plano</option>
             </select>
         </div>
     </div>
-    {#if values.type === "folder"}
+    {#if ["folder", "plain"].includes(values.type)}
         <InputText
             name="name"
             label="Nombre"
@@ -106,6 +136,7 @@
         <InputFile
             bind:errors={errors.files}
             bind:filesSelected={values.files}
+            currentFiles={$fileBrowserStore.files}
         />
     {/if}
     {#if finalError}

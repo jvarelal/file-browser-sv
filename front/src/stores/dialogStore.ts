@@ -13,14 +13,14 @@ const initialState: DialogStore = {
 }
 
 function dialogStore() {
-    const { subscribe, set, update } = writable(initialState);
+    const { subscribe, set, update } = writable<DialogStore>(initialState);
     return {
         subscribe,
         showDialog: (
             message: string,
             onAction = () => null,
             onHide = () => null
-        ) => update((s: DialogStore): DialogStore => ({
+        ) => update(s => ({
             ...s,
             active: true,
             loading: false,
@@ -29,13 +29,13 @@ function dialogStore() {
             onAction: onAction,
             onHide: onHide
         })),
-        showLoading: (textLoading = initialState.textLoading) => update((s: DialogStore): DialogStore => ({
+        showLoading: (textLoading = initialState.textLoading) => update(s => ({
             ...s,
             active: true,
             loading: true,
             textLoading: textLoading
         })),
-        showMessage: (message: string, onHide = () => null) => update((s: DialogStore): DialogStore => ({
+        showMessage: (message: string, onHide = () => null) => update(s => ({
             ...s,
             active: true,
             options: false,

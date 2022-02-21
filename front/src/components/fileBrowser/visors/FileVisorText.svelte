@@ -52,7 +52,7 @@
                 text: textArea.value,
             };
             dialogStore.showLoading();
-            FileService.editTxt(
+            FileService.setPlainFile(
                 fileEdit,
                 () => {
                     dialogStore.reset();

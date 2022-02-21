@@ -14,7 +14,7 @@ const defaultState: FileSettingStore = {
 }
 
 function createfileSettingStore() {
-    const { subscribe, update } = writable(getLocalSettings());
+    const { subscribe, update } = writable<FileSettingStore>(getLocalSettings());
 
     function localUpdate(s: FileSettingStore, prop: FileSettingProps, value: any): FileSettingStore {
         let settings: FileSettingStore = s;

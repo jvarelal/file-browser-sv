@@ -4,7 +4,7 @@ import type { FileUIPreview } from "../types/UITypes";
 const initialState: Map<string, FileUIPreview> = new Map();
 
 function filePreviewStore() {
-    const { subscribe, set, update } = writable(initialState);
+    const { subscribe, set, update } = writable<Map<string, FileUIPreview>>(initialState);
     return {
         subscribe,
         setPreview: (key: string, preview: FileUIPreview) => update(map => {

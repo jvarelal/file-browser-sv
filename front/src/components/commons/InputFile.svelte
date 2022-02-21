@@ -1,7 +1,8 @@
 <script lang="ts">
-    import fileBrowserStore from "../../stores/fileBrowserStore";
+    import type { FileUI } from "../../types/UITypes";
 
     export let filesSelected: File[] = [];
+    export let currentFiles: FileUI[] = [];
     export let errors: string[] = [];
 
     let dragOn: boolean = false;
@@ -11,7 +12,7 @@
         errors = [];
         inputFiles.forEach((file: File) => {
             if (!filesSelected.find((f) => f.name === file.name)) {
-                if ($fileBrowserStore.files.find((f) => f.name === file.name)) {
+                if (currentFiles.find((f) => f.name === file.name)) {
                     errors.push(`El archivo ${file.name} ya existe en la ruta`);
                 } else {
                     filesSelected = [...filesSelected, file];
