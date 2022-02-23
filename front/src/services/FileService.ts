@@ -1,4 +1,3 @@
-import FileBrowser from "../constants/FileBrowser"
 import { secure } from "../helpers/Misc"
 import type {
     FileListApiResponse,
@@ -11,14 +10,30 @@ import type {
 import type { FileEdit, FileMove, FileUI, FileUpload, Login } from "../types/UITypes";
 import httpClient from "./HttpClient"
 
+function processErrorApiResponse(err: ErrorApiResponse, errCb: (resp: ErrorApiResponse) => void): void {
+    err.message = secure.process(err.message)
+    if (err.errors) {
+        err.errors = err.errors.map((e) => ({
+            route: secure.process(e.route),
+            name: secure.process(e.name),
+            message: secure.process(e.message)
+        }))
+    }
+    errCb(err)
+}
+
 const FileService = {
 
     login: (
-        data: Login,
+        loginData: Login,
         cb: (resp: LoginApiResponse) => void,
         err: (resp: ErrorApiResponse) => void
     ): void => {
-        httpClient.post(`${FileBrowser.baseUrl}/login`, data)
+        let loginDigest: Login = {
+            user: secure.digest(loginData.user),
+            key: secure.digest(loginData.key)
+        }
+        httpClient.post(`login`, loginDigest)
             .then((data: LoginApiResponse): void => {
                 if (data.token) {
                     httpClient.setToken(data.token)
@@ -30,31 +45,38 @@ const FileService = {
 
     list: (route: string): Promise<FileListApiResponse> => {
         if (route) {
-            return httpClient.post(`${FileBrowser.baseUrl}/files`, { route: secure.digest(route) })
+            return httpClient.post(`files`, { route: secure.digest(route) })
         }
         return Promise.reject()
     },
 
     preview: (file: FileApiResponse, reduce: number = 0): string => {
-        let digestDataToUri = encodeURIComponent(secure.digest(file.route + "/" + file.name))
-        let setSizePreview = reduce > 0 ? `&preview=${reduce}` : ""
-        return `${FileBrowser.baseUrl}/files?name=${digestDataToUri + setSizePreview}`
+        let parameters: Map<string, string> = new Map();
+        parameters.set("name", secure.digest(file.route + "/" + file.name))
+        if (reduce > 0) {
+            parameters.set("preview", reduce.toString())
+        }
+        return httpClient.getUrl("files", parameters)
     },
 
     previewAsTxt: (file: FileApiResponse): string => {
-        let digestDataToUri = encodeURIComponent(secure.digest(file.route + "/" + file.name))
-        return `${FileBrowser.baseUrl}/files?name=${digestDataToUri}&txt=true`
+        let parameters: Map<string, string> = new Map();
+        parameters.set("name", secure.digest(file.route + "/" + file.name))
+        parameters.set("txt", "true")
+        return httpClient.getUrl("files", parameters)
     },
 
     getAsTxt: (file: FileApiResponse,
         cb: (data: string) => void,
         err: (resp: ErrorApiResponse) => void
     ): void => {
-        let digestDataToUri = encodeURIComponent(secure.digest(file.route + "/" + file.name))
-        httpClient.getTxt(`${FileBrowser.baseUrl}/files?name=${digestDataToUri}&txt=true`).then((data: string) => {
+        let parameters: Map<string, string> = new Map();
+        parameters.set("name", secure.digest(file.route + "/" + file.name))
+        parameters.set("txt", "true")
+        httpClient.getTxt("files", parameters).then((data: string) => {
             let processData = secure.process(data)
             cb(processData)
-        }).catch(err)
+        }).catch(data => processErrorApiResponse(data, err))
     },
 
     information: (
@@ -66,7 +88,9 @@ const FileService = {
             route: secure.digest(file.route),
             name: secure.digest(file.name)
         }
-        httpClient.post(`${FileBrowser.baseUrl}/files/information`, request).then(cb).catch(err)
+        httpClient.post(`files/information`, request)
+            .then(cb)
+            .catch(data => processErrorApiResponse(data, err))
     },
 
     create: (
@@ -79,7 +103,9 @@ const FileService = {
         formData.set("type", data.type);
         formData.set("name", secure.digest(data.name?.trim() || ""));
         data.files?.forEach((f) => formData.append("file", f));
-        httpClient.postForm(`${FileBrowser.baseUrl}/files/add`, formData).then(cb).catch(err)
+        httpClient.postForm(`files/add`, formData)
+            .then(cb)
+            .catch(data => processErrorApiResponse(data, err))
     },
 
     edit: (
@@ -92,14 +118,9 @@ const FileService = {
             route: secure.digest(file.route),
             newName: secure.digest(file.newName)
         }
-        httpClient.post(`${FileBrowser.baseUrl}/files/edit`, data)
+        httpClient.post(`files/edit`, data)
             .then(cb)
-            .catch((data: ErrorApiResponse): void => {
-                if (data.message) {
-                    data.message = secure.process(data.message)
-                }
-                err(data)
-            })
+            .catch(data => processErrorApiResponse(data, err))
     },
 
     setPlainFile: (
@@ -112,14 +133,9 @@ const FileService = {
             route: secure.digest(file.route),
             text: secure.digest(file.text)
         }
-        httpClient.post(`${FileBrowser.baseUrl}/files/editText`, data)
+        httpClient.post(`files/editText`, data)
             .then(cb)
-            .catch((data: ErrorApiResponse): void => {
-                if (data.message) {
-                    data.message = secure.process(data.message)
-                }
-                err(data)
-            })
+            .catch(data => processErrorApiResponse(data, err))
     },
 
     delete: (
@@ -131,18 +147,9 @@ const FileService = {
             name: secure.digest(f.name),
             route: secure.digest(f.route)
         }))
-        httpClient.post(`${FileBrowser.baseUrl}/files/delete`, { files })
+        httpClient.post(`files/delete`, { files })
             .then(cb)
-            .catch((data: ErrorApiResponse): void => {
-                if (data.errors) {
-                    data.errors = data.errors.map(e => ({
-                        message: secure.process(e.message),
-                        route: secure.process(e.route),
-                        name: secure.process(e.name)
-                    }))
-                }
-                err(data)
-            })
+            .catch(data => processErrorApiResponse(data, err))
     },
 
     paste: (
@@ -155,18 +162,9 @@ const FileService = {
             name: secure.digest(f.name),
             route: secure.digest(f.route)
         }))
-        httpClient.post(`${FileBrowser.baseUrl}/files/${data.move ? "move" : "copy"}`, { route, files })
+        httpClient.post(`files/${data.move ? "move" : "copy"}`, { route, files })
             .then(cb)
-            .catch((data: ErrorApiResponse): void => {
-                if (data.errors) {
-                    data.errors = data.errors.map(e => ({
-                        message: secure.process(e.message),
-                        route: secure.process(e.route),
-                        name: secure.process(e.name)
-                    }))
-                }
-                err(data)
-            })
+            .catch(data => processErrorApiResponse(data, err))
     },
 
     download: (data: FileUI[],
@@ -190,15 +188,17 @@ const FileService = {
             let separateRoot = data[0].route.split("/");
             downloadName = `${routes.length === 1 ? separateRoot[separateRoot.length - 1] : "Bookmarks"}.zip`
         }
-        httpClient.postDownload(`${FileBrowser.baseUrl}/files/download`, { files }, err).then((blob: Blob) => {
-            cb()
-            let link = document.createElement('a');
-            link.href = window.URL.createObjectURL(blob);
-            link.download = downloadName;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }).catch(err)
+        httpClient.postDownload(`files/download`, { files }, err)
+            .then((blob: Blob) => {
+                cb()
+                let link = document.createElement('a');
+                link.href = window.URL.createObjectURL(blob);
+                link.download = downloadName;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            })
+            .catch(data => processErrorApiResponse(data, err))
     }
 }
 

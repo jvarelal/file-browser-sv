@@ -1,13 +1,15 @@
 {
     "port": 4000,
     "key": "fB*",
-    "expiresSession": "2h",
+    "expiresSession": "1h",
+    "tokenKey": "file_Browser",
     "users": [
         {
             "user": "Terminal1",
             "key": "test1",
             "initialFolder": [
-                "C:/Users"
+                "C:/Users",
+                "C:/Windows"
             ]
         }
     ],

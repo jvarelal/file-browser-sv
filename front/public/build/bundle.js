@@ -3285,9 +3285,9 @@ var app = (function () {
     }
     var fileDirectoryStore = directoryStore();
 
-    const IMG_PREVIEW = ['jpg', 'png', 'jpeg', 'svg', 'gif', 'webp'];
-    const FILE_AS_TEXT = ['md', 'svelte', 'ts', 'json', 'js', "txt"];
-    const EDITABLES = [...FILE_AS_TEXT, "html", 'xml'];
+    const IMG_PREVIEW = ["jpg", "png", "jpeg", "svg", "gif", "webp"];
+    const FILE_AS_TEXT = ["md", "svelte", "ts", "json", "js", "txt", "yml"];
+    const EDITABLES = [...FILE_AS_TEXT, "html", "xml"];
     const FileBrowser$1 = {
         baseUrl: "http://localhost:4000/api",
         secureKey: "fB*",
@@ -3316,15 +3316,15 @@ var app = (function () {
             { value: "modification", label: "Fecha Modificación" },
         ],
         previews: {
-            scalePreview: ['jpg', 'png', 'jpeg'],
+            scalePreview: ["jpg", "png", "jpeg"],
             image: IMG_PREVIEW,
             icons: {
-                png: ['dat', 'jar'],
-                svg: ['css', 'csv', 'exe', 'html', 'mp3', 'mp4', 'txt', 'doc', 'docx', 'js', 'pdf', 'xlsx', 'zip', 'xml', 'webm', 'json']
+                png: ["dat", "jar"],
+                svg: ["css", "csv", "exe", "html", "mp3", "mp4", "txt", "doc", "docx", "js", "pdf", "xlsx", "zip", "xml", "webm", "json"]
             },
             asText: FILE_AS_TEXT
         },
-        visor: [...IMG_PREVIEW, ...EDITABLES, 'pdf', 'mp3', 'mp4', 'webm'],
+        visor: [...IMG_PREVIEW, ...EDITABLES, "pdf", "mp3", "mp4", "webm"],
         editables: EDITABLES
     };
 
@@ -10081,7 +10081,7 @@ var app = (function () {
     }
     var fileSettingStore = createfileSettingStore();
 
-    let token = JSON.parse(sessionStorage.browerToken || "{}");
+    let token = { "Authorization": "Bearer " + sessionStorage.browserToken };
     async function validateResponse(response, dataType = "json") {
         if (response.status === 200) {
             return response[dataType]();
@@ -10091,8 +10091,22 @@ var app = (function () {
             throw error;
         }
     }
+    function generateUrl(base, params) {
+        let url = new URL(base);
+        params.forEach((val, key) => url.searchParams.append(key, encodeURIComponent(val)));
+        url.searchParams.append("tmp", encodeURIComponent(secure.digest(sessionStorage.browserToken)));
+        return url.toString();
+    }
     const httpClient = {
-        getTxt: async (url = '') => {
+        setToken: (t) => {
+            if (t) {
+                token = { "Authorization": "Bearer " + t };
+                sessionStorage.browserToken = t;
+            }
+        },
+        getUrl: (path, params) => generateUrl(`${FileBrowser$1.baseUrl}/${path}`, params),
+        getTxt: async (path, params) => {
+            let url = generateUrl(`${FileBrowser$1.baseUrl}/${path}`, params);
             const response = await fetch(url, {
                 method: 'GET',
                 mode: 'cors',
@@ -10104,14 +10118,8 @@ var app = (function () {
             });
             return validateResponse(response, "text");
         },
-        setToken: (t) => {
-            if (t) {
-                token = { "Authorization": "Bearer " + t };
-                sessionStorage.browerToken = JSON.stringify(token);
-            }
-        },
-        post: async (url = '', data = {}) => {
-            const response = await fetch(url, {
+        post: async (path = '', data = {}) => {
+            const response = await fetch(`${FileBrowser$1.baseUrl}/${path}`, {
                 method: 'POST',
                 mode: 'cors',
                 cache: 'no-cache',
@@ -10123,8 +10131,8 @@ var app = (function () {
             });
             return validateResponse(response);
         },
-        postForm: async (url = '', data) => {
-            const response = await fetch(url, {
+        postForm: async (path = '', data) => {
+            const response = await fetch(`${FileBrowser$1.baseUrl}/${path}`, {
                 method: 'POST',
                 mode: 'cors',
                 cache: 'no-cache',
@@ -10136,8 +10144,8 @@ var app = (function () {
             });
             return validateResponse(response);
         },
-        postDownload: async (url = '', data, error = (data) => null) => {
-            const response = await fetch(url, {
+        postDownload: async (path = '', data, error = (data) => null) => {
+            const response = await fetch(`${FileBrowser$1.baseUrl}/${path}`, {
                 method: 'POST',
                 mode: 'cors',
                 cache: 'no-cache',
@@ -10151,9 +10159,24 @@ var app = (function () {
         },
     };
 
+    function processErrorApiResponse(err, errCb) {
+        err.message = secure.process(err.message);
+        if (err.errors) {
+            err.errors = err.errors.map((e) => ({
+                route: secure.process(e.route),
+                name: secure.process(e.name),
+                message: secure.process(e.message)
+            }));
+        }
+        errCb(err);
+    }
     const FileService = {
-        login: (data, cb, err) => {
-            httpClient.post(`${FileBrowser$1.baseUrl}/login`, data)
+        login: (loginData, cb, err) => {
+            let loginDigest = {
+                user: secure.digest(loginData.user),
+                key: secure.digest(loginData.key)
+            };
+            httpClient.post(`login`, loginDigest)
                 .then((data) => {
                 if (data.token) {
                     httpClient.setToken(data.token);
@@ -10164,32 +10187,41 @@ var app = (function () {
         },
         list: (route) => {
             if (route) {
-                return httpClient.post(`${FileBrowser$1.baseUrl}/files`, { route: secure.digest(route) });
+                return httpClient.post(`files`, { route: secure.digest(route) });
             }
             return Promise.reject();
         },
         preview: (file, reduce = 0) => {
-            let digestDataToUri = encodeURIComponent(secure.digest(file.route + "/" + file.name));
-            let setSizePreview = reduce > 0 ? `&preview=${reduce}` : "";
-            return `${FileBrowser$1.baseUrl}/files?name=${digestDataToUri + setSizePreview}`;
+            let parameters = new Map();
+            parameters.set("name", secure.digest(file.route + "/" + file.name));
+            if (reduce > 0) {
+                parameters.set("preview", reduce.toString());
+            }
+            return httpClient.getUrl("files", parameters);
         },
         previewAsTxt: (file) => {
-            let digestDataToUri = encodeURIComponent(secure.digest(file.route + "/" + file.name));
-            return `${FileBrowser$1.baseUrl}/files?name=${digestDataToUri}&txt=true`;
+            let parameters = new Map();
+            parameters.set("name", secure.digest(file.route + "/" + file.name));
+            parameters.set("txt", "true");
+            return httpClient.getUrl("files", parameters);
         },
         getAsTxt: (file, cb, err) => {
-            let digestDataToUri = encodeURIComponent(secure.digest(file.route + "/" + file.name));
-            httpClient.getTxt(`${FileBrowser$1.baseUrl}/files?name=${digestDataToUri}&txt=true`).then((data) => {
+            let parameters = new Map();
+            parameters.set("name", secure.digest(file.route + "/" + file.name));
+            parameters.set("txt", "true");
+            httpClient.getTxt("files", parameters).then((data) => {
                 let processData = secure.process(data);
                 cb(processData);
-            }).catch(err);
+            }).catch(data => processErrorApiResponse(data, err));
         },
         information: (file, cb, err) => {
             let request = {
                 route: secure.digest(file.route),
                 name: secure.digest(file.name)
             };
-            httpClient.post(`${FileBrowser$1.baseUrl}/files/information`, request).then(cb).catch(err);
+            httpClient.post(`files/information`, request)
+                .then(cb)
+                .catch(data => processErrorApiResponse(data, err));
         },
         create: (data, cb, err) => {
             var _a, _b;
@@ -10198,7 +10230,9 @@ var app = (function () {
             formData.set("type", data.type);
             formData.set("name", secure.digest(((_a = data.name) === null || _a === void 0 ? void 0 : _a.trim()) || ""));
             (_b = data.files) === null || _b === void 0 ? void 0 : _b.forEach((f) => formData.append("file", f));
-            httpClient.postForm(`${FileBrowser$1.baseUrl}/files/add`, formData).then(cb).catch(err);
+            httpClient.postForm(`files/add`, formData)
+                .then(cb)
+                .catch(data => processErrorApiResponse(data, err));
         },
         edit: (file, cb, err) => {
             let data = {
@@ -10206,14 +10240,9 @@ var app = (function () {
                 route: secure.digest(file.route),
                 newName: secure.digest(file.newName)
             };
-            httpClient.post(`${FileBrowser$1.baseUrl}/files/edit`, data)
+            httpClient.post(`files/edit`, data)
                 .then(cb)
-                .catch((data) => {
-                if (data.message) {
-                    data.message = secure.process(data.message);
-                }
-                err(data);
-            });
+                .catch(data => processErrorApiResponse(data, err));
         },
         setPlainFile: (file, cb, err) => {
             let data = {
@@ -10221,32 +10250,18 @@ var app = (function () {
                 route: secure.digest(file.route),
                 text: secure.digest(file.text)
             };
-            httpClient.post(`${FileBrowser$1.baseUrl}/files/editText`, data)
+            httpClient.post(`files/editText`, data)
                 .then(cb)
-                .catch((data) => {
-                if (data.message) {
-                    data.message = secure.process(data.message);
-                }
-                err(data);
-            });
+                .catch(data => processErrorApiResponse(data, err));
         },
         delete: (data, cb, err) => {
             let files = data.map(f => ({
                 name: secure.digest(f.name),
                 route: secure.digest(f.route)
             }));
-            httpClient.post(`${FileBrowser$1.baseUrl}/files/delete`, { files })
+            httpClient.post(`files/delete`, { files })
                 .then(cb)
-                .catch((data) => {
-                if (data.errors) {
-                    data.errors = data.errors.map(e => ({
-                        message: secure.process(e.message),
-                        route: secure.process(e.route),
-                        name: secure.process(e.name)
-                    }));
-                }
-                err(data);
-            });
+                .catch(data => processErrorApiResponse(data, err));
         },
         paste: (data, cb, err) => {
             let route = secure.digest(data.route);
@@ -10254,18 +10269,9 @@ var app = (function () {
                 name: secure.digest(f.name),
                 route: secure.digest(f.route)
             }));
-            httpClient.post(`${FileBrowser$1.baseUrl}/files/${data.move ? "move" : "copy"}`, { route, files })
+            httpClient.post(`files/${data.move ? "move" : "copy"}`, { route, files })
                 .then(cb)
-                .catch((data) => {
-                if (data.errors) {
-                    data.errors = data.errors.map(e => ({
-                        message: secure.process(e.message),
-                        route: secure.process(e.route),
-                        name: secure.process(e.name)
-                    }));
-                }
-                err(data);
-            });
+                .catch(data => processErrorApiResponse(data, err));
         },
         download: (data, cb, err) => {
             let routes = [];
@@ -10287,7 +10293,8 @@ var app = (function () {
                 let separateRoot = data[0].route.split("/");
                 downloadName = `${routes.length === 1 ? separateRoot[separateRoot.length - 1] : "Bookmarks"}.zip`;
             }
-            httpClient.postDownload(`${FileBrowser$1.baseUrl}/files/download`, { files }, err).then((blob) => {
+            httpClient.postDownload(`files/download`, { files }, err)
+                .then((blob) => {
                 cb();
                 let link = document.createElement('a');
                 link.href = window.URL.createObjectURL(blob);
@@ -10295,7 +10302,8 @@ var app = (function () {
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
-            }).catch(err);
+            })
+                .catch(data => processErrorApiResponse(data, err));
         }
     };
 
@@ -10538,7 +10546,7 @@ var app = (function () {
                 ];
                 return (Object.assign(Object.assign({}, s), { clipboard: s.move ? [] : s.clipboard, move: false, bookmarks: isInBookmarks ? setLocalBookmarks(nBookmarks) : s.bookmarks, numberItems: updatedFiles.length, files: updatedFiles }));
             }),
-            setError: (e = true) => update((s) => (Object.assign(Object.assign({}, s), { error: e }))),
+            setError: (e = true) => update((s) => (Object.assign(Object.assign({}, s), { numberItems: 0, error: e }))),
             reset: () => set(initialState$6)
         };
     }
@@ -14657,7 +14665,7 @@ var app = (function () {
     /* src\components\fileBrowser\settings\FileSettingsActions.svelte generated by Svelte v3.44.2 */
     const file$i = "src\\components\\fileBrowser\\settings\\FileSettingsActions.svelte";
 
-    // (29:4) {#if !$fileBrowserStore.viewBookmarks}
+    // (29:4) {#if !$fileBrowserStore.viewBookmarks && !$fileBrowserStore.error}
     function create_if_block_1$8(ctx) {
     	let actionbutton;
     	let current;
@@ -14699,7 +14707,7 @@ var app = (function () {
     		block,
     		id: create_if_block_1$8.name,
     		type: "if",
-    		source: "(29:4) {#if !$fileBrowserStore.viewBookmarks}",
+    		source: "(29:4) {#if !$fileBrowserStore.viewBookmarks && !$fileBrowserStore.error}",
     		ctx
     	});
 
@@ -14920,7 +14928,7 @@ var app = (function () {
     	let div;
     	let t;
     	let current;
-    	let if_block0 = !/*$fileBrowserStore*/ ctx[0].viewBookmarks && create_if_block_1$8(ctx);
+    	let if_block0 = !/*$fileBrowserStore*/ ctx[0].viewBookmarks && !/*$fileBrowserStore*/ ctx[0].error && create_if_block_1$8(ctx);
     	let if_block1 = /*$fileSettingStore*/ ctx[2].viewOptions && !/*$fileDownloadStore*/ ctx[3].isDownloading && create_if_block$h(ctx);
 
     	const block = {
@@ -14942,7 +14950,7 @@ var app = (function () {
     			current = true;
     		},
     		p: function update(ctx, [dirty]) {
-    			if (!/*$fileBrowserStore*/ ctx[0].viewBookmarks) {
+    			if (!/*$fileBrowserStore*/ ctx[0].viewBookmarks && !/*$fileBrowserStore*/ ctx[0].error) {
     				if (if_block0) {
     					if_block0.p(ctx, dirty);
 
@@ -15137,7 +15145,7 @@ var app = (function () {
     /* src\components\commons\Accordion.svelte generated by Svelte v3.44.2 */
     const file$h = "src\\components\\commons\\Accordion.svelte";
 
-    // (37:8) {#if renderDefault || !collapse}
+    // (38:8) {#if renderDefault || !collapse}
     function create_if_block$g(ctx) {
     	let current;
     	const default_slot_template = /*#slots*/ ctx[9].default;
@@ -15188,7 +15196,7 @@ var app = (function () {
     		block,
     		id: create_if_block$g.name,
     		type: "if",
-    		source: "(37:8) {#if renderDefault || !collapse}",
+    		source: "(38:8) {#if renderDefault || !collapse}",
     		ctx
     	});
 
@@ -15223,16 +15231,16 @@ var app = (function () {
     			attr_dev(input, "name", /*id*/ ctx[2]);
     			attr_dev(input, "id", /*id*/ ctx[2]);
     			attr_dev(input, "class", "svelte-1mu3mtw");
-    			add_location(input, file$h, 19, 4, 505);
+    			add_location(input, file$h, 20, 4, 526);
     			attr_dev(label, "class", "d-block svelte-1mu3mtw");
     			attr_dev(label, "for", /*id*/ ctx[2]);
     			attr_dev(label, "tabindex", "0");
     			toggle_class(label, "text-center", /*labelCenter*/ ctx[5]);
-    			add_location(label, file$h, 26, 4, 646);
+    			add_location(label, file$h, 27, 4, 667);
     			attr_dev(section, "class", "svelte-1mu3mtw");
-    			add_location(section, file$h, 35, 4, 842);
+    			add_location(section, file$h, 36, 4, 863);
     			attr_dev(div, "class", div_class_value = "" + (null_to_empty("accordion " + /*cssClass*/ ctx[3]) + " svelte-1mu3mtw"));
-    			add_location(div, file$h, 18, 0, 462);
+    			add_location(div, file$h, 19, 0, 483);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -15351,6 +15359,7 @@ var app = (function () {
     	function handleFocusEnter(e) {
     		if (e.key === "Enter") {
     			$$invalidate(0, collapse = !collapse);
+    			onChange();
     		}
     	}
 
@@ -18147,7 +18156,7 @@ var app = (function () {
     			toggle_class(div, "selected", /*file*/ ctx[0].checked);
     			toggle_class(div, "list", /*list*/ ctx[1]);
     			toggle_class(div, "grid", !/*list*/ ctx[1]);
-    			add_location(div, file_1$4, 160, 0, 4971);
+    			add_location(div, file_1$4, 168, 0, 5183);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -18246,12 +18255,16 @@ var app = (function () {
      */
     const map = new Map();
 
+    let currentIdx = 0;
+
     function focusItem(key, idx) {
     	var _a;
 
     	(_a = map.get(key + idx)) === null || _a === void 0
     	? void 0
     	: _a.focus();
+
+    	currentIdx = idx;
     }
 
     function instance$g($$self, $$props, $$invalidate) {
@@ -18396,7 +18409,11 @@ var app = (function () {
     		}
 
     		map.set(key + file.idxFocus, element);
-    		return () => map.delete(key + file.idxFocus);
+
+    		return () => {
+    			map.delete(key + file.idxFocus);
+    			currentIdx = 0;
+    		};
     	});
 
     	const writable_props = ['file', 'viewItem', 'list'];
@@ -18430,6 +18447,7 @@ var app = (function () {
     		_a,
     		_b,
     		map,
+    		currentIdx,
     		focusItem,
     		_a,
     		_b,
@@ -18495,6 +18513,12 @@ var app = (function () {
     				: element.focus();
     			} else {
     				$$invalidate(4, style = "");
+
+    				if (file.idxFocus === currentIdx) {
+    					element === null || element === void 0
+    					? void 0
+    					: element.focus();
+    				}
     			}
     		}
 
@@ -20458,10 +20482,10 @@ var app = (function () {
     			t = space();
     			if (if_block) if_block.c();
     			if_block_anchor = empty();
-    			attr_dev(textarea, "class", "txt-edit-file scroll svelte-wjm53u");
+    			attr_dev(textarea, "class", "txt-edit-file scroll svelte-1scs42");
     			textarea.disabled = textarea_disabled_value = !/*enableEdit*/ ctx[0];
     			toggle_class(textarea, "enableEdit", /*enableEdit*/ ctx[0]);
-    			add_location(textarea, file_1$1, 68, 8, 1773);
+    			add_location(textarea, file_1$1, 68, 8, 1775);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, textarea, anchor);
@@ -20515,17 +20539,21 @@ var app = (function () {
     // (66:4) {#if errMessage}
     function create_if_block$8(ctx) {
     	let h2;
+    	let t;
 
     	const block = {
     		c: function create() {
     			h2 = element("h2");
-    			h2.textContent = "errMessage";
+    			t = text(/*errMessage*/ ctx[2]);
     			add_location(h2, file_1$1, 66, 8, 1731);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, h2, anchor);
+    			append_dev(h2, t);
     		},
-    		p: noop,
+    		p: function update(ctx, dirty) {
+    			if (dirty & /*errMessage*/ 4) set_data_dev(t, /*errMessage*/ ctx[2]);
+    		},
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(h2);
     		}
@@ -20566,15 +20594,15 @@ var app = (function () {
     			i1 = element("i");
     			t2 = text("\r\n                    Cancelar");
     			attr_dev(i0, "class", "fas fa-save");
-    			add_location(i0, file_1$1, 77, 20, 2110);
+    			add_location(i0, file_1$1, 77, 20, 2112);
     			attr_dev(button0, "class", "btn m-auto w-25");
-    			add_location(button0, file_1$1, 76, 16, 2036);
+    			add_location(button0, file_1$1, 76, 16, 2038);
     			attr_dev(i1, "class", "far fa-window-close");
-    			add_location(i1, file_1$1, 81, 20, 2289);
+    			add_location(i1, file_1$1, 81, 20, 2291);
     			attr_dev(button1, "class", "btn m-auto w-25");
-    			add_location(button1, file_1$1, 80, 16, 2209);
-    			attr_dev(div, "class", "txt-edit-control svelte-wjm53u");
-    			add_location(div, file_1$1, 75, 12, 1988);
+    			add_location(button1, file_1$1, 80, 16, 2211);
+    			attr_dev(div, "class", "txt-edit-control svelte-1scs42");
+    			add_location(div, file_1$1, 75, 12, 1990);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -20629,7 +20657,7 @@ var app = (function () {
     		c: function create() {
     			div = element("div");
     			if_block.c();
-    			attr_dev(div, "class", "txt-edit svelte-wjm53u");
+    			attr_dev(div, "class", "txt-edit svelte-1scs42");
     			add_location(div, file_1$1, 64, 0, 1677);
     		},
     		l: function claim(nodes) {
@@ -22576,7 +22604,7 @@ var app = (function () {
 
     const file$6 = "src\\components\\fileBrowser\\FileInit.svelte";
 
-    // (25:0) {#if $fileBrowserStore.viewBookmarks}
+    // (24:0) {#if $fileBrowserStore.viewBookmarks}
     function create_if_block$5(ctx) {
     	let fileview;
     	let current;
@@ -22619,7 +22647,7 @@ var app = (function () {
     		block,
     		id: create_if_block$5.name,
     		type: "if",
-    		source: "(25:0) {#if $fileBrowserStore.viewBookmarks}",
+    		source: "(24:0) {#if $fileBrowserStore.viewBookmarks}",
     		ctx
     	});
 
@@ -22651,7 +22679,7 @@ var app = (function () {
     			if (if_block) if_block.c();
     			if_block_anchor = empty();
     			toggle_class(div, "inactive", /*$fileBrowserStore*/ ctx[0].viewBookmarks);
-    			add_location(div, file$6, 18, 0, 673);
+    			add_location(div, file$6, 17, 0, 664);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -22742,7 +22770,7 @@ var app = (function () {
     	onMount(() => {
     		fileBrowserStore.setFiles(files, $fileDirectoryStore.current);
     		fileSettingStore.updateCache($fileDirectoryStore.current);
-    		document.title = "FileBrowser - " + getLastTreeName($fileDirectoryStore.current);
+    		document.title = `FileBrowser - ${getLastTreeName($fileDirectoryStore.current)}`;
     	});
 
     	const writable_props = ['files'];
@@ -24501,7 +24529,7 @@ var app = (function () {
     /* src\components\Login.svelte generated by Svelte v3.44.2 */
     const file$2 = "src\\components\\Login.svelte";
 
-    // (42:16) {#if finalError}
+    // (46:16) {#if finalError}
     function create_if_block$2(ctx) {
     	let div;
 
@@ -24511,7 +24539,7 @@ var app = (function () {
     			div.textContent = `* ${/*finalError*/ ctx[2]}`;
     			attr_dev(div, "class", "f-08");
     			set_style(div, "color", "red");
-    			add_location(div, file$2, 42, 20, 1562);
+    			add_location(div, file$2, 46, 20, 1663);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -24526,7 +24554,7 @@ var app = (function () {
     		block,
     		id: create_if_block$2.name,
     		type: "if",
-    		source: "(42:16) {#if finalError}",
+    		source: "(46:16) {#if finalError}",
     		ctx
     	});
 
@@ -24629,23 +24657,23 @@ var app = (function () {
     			button = element("button");
     			button.textContent = "Ingresar";
     			attr_dev(legend, "class", "svelte-1hy4e1e");
-    			add_location(legend, file$2, 22, 8, 821);
+    			add_location(legend, file$2, 26, 8, 922);
     			attr_dev(i, "class", "fas fa-key login-icon svelte-1hy4e1e");
-    			add_location(i, file$2, 24, 12, 901);
+    			add_location(i, file$2, 28, 12, 1002);
     			attr_dev(div0, "class", "login-section svelte-1hy4e1e");
-    			add_location(div0, file$2, 23, 8, 860);
+    			add_location(div0, file$2, 27, 8, 961);
     			attr_dev(button, "type", "submit");
     			attr_dev(button, "class", "btn m-auto w-50");
-    			add_location(button, file$2, 47, 20, 1769);
+    			add_location(button, file$2, 51, 20, 1870);
     			attr_dev(div1, "class", "form-field-control d-flex");
-    			add_location(div1, file$2, 46, 16, 1708);
-    			add_location(form, file$2, 27, 12, 1003);
+    			add_location(div1, file$2, 50, 16, 1809);
+    			add_location(form, file$2, 31, 12, 1104);
     			attr_dev(div2, "class", "login-section svelte-1hy4e1e");
-    			add_location(div2, file$2, 26, 8, 962);
+    			add_location(div2, file$2, 30, 8, 1063);
     			attr_dev(fieldset, "class", "login-container svelte-1hy4e1e");
-    			add_location(fieldset, file$2, 21, 4, 777);
+    			add_location(fieldset, file$2, 25, 4, 878);
     			attr_dev(div3, "class", "login svelte-1hy4e1e");
-    			add_location(div3, file$2, 20, 0, 752);
+    			add_location(div3, file$2, 24, 0, 853);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -24763,6 +24791,10 @@ var app = (function () {
     		);
     	}
 
+    	onMount(() => {
+    		document.title = `FileBrowser -Login`;
+    	});
+
     	const writable_props = ['navigate'];
 
     	Object.keys($$props).forEach(key => {
@@ -24802,6 +24834,7 @@ var app = (function () {
     	};
 
     	$$self.$capture_state = () => ({
+    		onMount,
     		FileService,
     		dialogStore: dialogStore$1,
     		fileDirectoryStore,

@@ -16,8 +16,9 @@
     onMount(() => {
         fileBrowserStore.setFiles(files, $fileDirectoryStore.current);
         fileSettingStore.updateCache($fileDirectoryStore.current);
-        document.title =
-            "FileBrowser - " + getLastTreeName($fileDirectoryStore.current);
+        document.title = `FileBrowser - ${getLastTreeName(
+            $fileDirectoryStore.current
+        )}`;
     });
 </script>
 

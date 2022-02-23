@@ -1,9 +1,13 @@
+import FileBrowser from "../constants/FileBrowser";
+import { secure } from "../helpers/Misc";
+
 type Token = {
     Authorization: string;
 }
 
-let token: Token = JSON.parse(sessionStorage.browerToken || "{}")
-async function validateResponse(response: Response, dataType:string = "json"): Promise<any> {
+let token: Token = { "Authorization": "Bearer " + sessionStorage.browserToken }
+
+async function validateResponse(response: Response, dataType: string = "json"): Promise<any> {
     if (response.status === 200) {
         return response[dataType]();
     } else {
@@ -11,8 +15,27 @@ async function validateResponse(response: Response, dataType:string = "json"): P
         throw error;
     }
 }
+
+function generateUrl(base: string, params: Map<string, string>) {
+    let url = new URL(base)
+    params.forEach((val, key) => url.searchParams.append(key, encodeURIComponent(val)))
+    url.searchParams.append("tmp", encodeURIComponent(secure.digest(sessionStorage.browserToken)))
+    return url.toString()
+}
+
 const httpClient = {
-    getTxt: async (url: string = ''): Promise<any> => {
+
+    setToken: (t: string): void => {
+        if (t) {
+            token = { "Authorization": "Bearer " + t }
+            sessionStorage.browserToken = t
+        }
+    },
+
+    getUrl: (path: string, params: Map<string, string>) => generateUrl(`${FileBrowser.baseUrl}/${path}`, params),
+
+    getTxt: async (path: string, params: Map<string, string>): Promise<any> => {
+        let url = generateUrl(`${FileBrowser.baseUrl}/${path}`, params)
         const response = await fetch(url, {
             method: 'GET',
             mode: 'cors',
@@ -24,14 +47,9 @@ const httpClient = {
         })
         return validateResponse(response, "text")
     },
-    setToken: (t: string): void => {
-        if (t) {
-            token = { "Authorization": "Bearer " + t }
-            sessionStorage.browerToken = JSON.stringify(token)
-        }
-    },
-    post: async (url: string = '', data: any = {}): Promise<any> => {
-        const response = await fetch(url, {
+
+    post: async (path: string = '', data: any = {}): Promise<any> => {
+        const response = await fetch(`${FileBrowser.baseUrl}/${path}`, {
             method: 'POST',
             mode: 'cors',
             cache: 'no-cache',
@@ -46,8 +64,9 @@ const httpClient = {
         })
         return validateResponse(response)
     },
-    postForm: async (url: string = '', data: FormData): Promise<any> => {
-        const response = await fetch(url, {
+
+    postForm: async (path: string = '', data: FormData): Promise<any> => {
+        const response = await fetch(`${FileBrowser.baseUrl}/${path}`, {
             method: 'POST',
             mode: 'cors',
             cache: 'no-cache',
@@ -59,8 +78,9 @@ const httpClient = {
         })
         return validateResponse(response)
     },
-    postDownload: async (url: string = '', data: any, error = (data: any) => null): Promise<Blob> => {
-        const response = await fetch(url, {
+
+    postDownload: async (path: string = '', data: any, error = (data: any) => null): Promise<Blob> => {
+        const response = await fetch(`${FileBrowser.baseUrl}/${path}`, {
             method: 'POST',
             mode: 'cors',
             cache: 'no-cache',

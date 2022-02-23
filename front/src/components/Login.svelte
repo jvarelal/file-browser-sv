@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { onMount } from "svelte";
     import FileService from "../services/FileService";
     import dialogStore from "../stores/dialogStore";
     import fileDirectoryStore from "../stores/fileDirectoryStore";
@@ -25,6 +26,9 @@
             (err) => dialogStore.showMessage(err.message)
         );
     }
+    onMount(() => {
+        document.title = `FileBrowser -Login`;
+    });
 </script>
 
 <div class="login">

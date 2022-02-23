@@ -9,49 +9,45 @@ const path = require("path")
 const directory = require('./directory.js')
 const sharp = require('sharp')
 const archiver = require('archiver');
+const secure = require('./util/secure')
 
 const app = express()
 const storage = multer.diskStorage({
 	destination: path.join(__dirname, "tmp"),
-	filename: (req, file, cb) => {
-		cb(null, file.originalname)
-	}
+	filename: (req, file, cb) => cb(null, file.originalname)
 })
-const tokenKey = "file_Browser"
-
 //middleware
 app.use(cors())
 app.use(express.json())
 app.use(multer({ storage }).array("file", config.fileBrowser.maxNumberFilesUpload))
 
+//login
 app.post('/api/login', (req, res) => {
 	let { user, key } = req.body
-	let date = new Date().toDateString()
+	user = secure.process(user)
+	key = secure.process(key)
 	let foundUser = config.users.find(u => u.user === user)
 	if (user && foundUser && foundUser.user === user && foundUser.key === key) {
-		jwt.sign({ user, date }, tokenKey, { expiresIn: config.expiresSession }, (err, token) => {
-			res.status(200).send({
-				status: 200,
-				token,
-				routes: foundUser.initialFolder
-			})
+		jwt.sign({ user }, config.tokenKey, { expiresIn: config.expiresSession }, (err, token) => {
+			res.status(200).send({ status: 200, token, routes: foundUser.initialFolder })
 		})
 	} else {
-		res.status(403).send({
-			status: 403,
-			message: "Usuario o password invalidos"
-		})
+		res.status(403).send({ status: 403, message: "Invalid User or Password" })
 	}
 })
 
 const checkLogin = (req, res, next) => {
-	let token = (req.headers["authorization"] || "").split(" ")[1]
+	let token = req.method === "POST" ?
+		(req.headers["authorization"] || "").split(" ")[1] :
+		secure.process(decodeURIComponent(req.query.tmp));
 	if (token) {
-		jwt.verify(token, tokenKey, (error, authData = {}) => {
+		jwt.verify(token, config.tokenKey, (error, authData = {}) => {
 			let foundUser = config.users.find(u => u.user === authData.user)
 			if (error || !foundUser) {
-				res.status(401).send({ status: 401, message: "Session invalid" })
+				res.status(401).send({ status: 401, message: "Invalid Session" })
 			} else {
+				req.body.user = foundUser
+				req.appOperator = directory(foundUser)
 				next()
 			}
 		})
@@ -60,52 +56,30 @@ const checkLogin = (req, res, next) => {
 	}
 }
 
-app.post('/api/files', checkLogin, (req, res) => {
-	try {
-		res.send({
-			status: 200,
-			files: directory.listFiles(req.body.route)
-		})
-	} catch (e) {
-		res.status(500).send({
-			status: 500,
-			message: e.message
-		})
-	}
-})
+//files
+app.post('/api/files', checkLogin, (req, res) => res.send(req.appOperator.listFiles((req.body))))
 
-app.get('/api/files', (req, res) => {
-	try {
-		let name = req.query.name
-		let preview = req.query.preview
-		let txt = req.query.txt
-		let route = directory.getCurrentRoute(decodeURIComponent(name))
-		res.setHeader('Content-Disposition', `inline`);
-		if (preview && !isNaN(preview)) {
-			let pvSize = parseInt(preview)
-			let type = route.split(".")
-			sharp(route)
-				.resize(pvSize)
-				.toBuffer()
-				.then(data => {
-					res.setHeader('Content-Type', `image/${type[type.length - 1]}`);
-					res.end(data);
-				})
-				.catch(err => res.status(500).send({ status: 500, message: err.message }));
-		} else if (txt === "true") {
-			res.send(directory.fileAsText(route))
-		} else {
-			res.sendFile(route)
-		}
-	} catch (e) {
-		console.log(e)
-		return res.status(500).send("Server error")
+app.get('/api/files', checkLogin, (req, res) => {
+	let { name, preview, txt } = req.query
+	let route = req.appOperator.getRouteFile(decodeURIComponent(name))?.dir
+	res.setHeader('Content-Disposition', `inline`);
+	if (preview && !isNaN(preview)) {
+		let pvSize = parseInt(preview)
+		let type = route.split(".")
+		sharp(route).resize(pvSize).toBuffer().then(data => {
+			res.setHeader('Content-Type', `image/${type[type.length - 1]}`);
+			res.end(data);
+		}).catch(err => res.status(500).send({ status: 500, message: "File problem" }));
+	} else if (txt === "true") {
+		res.send(req.appOperator.fileAsText(route))
+	} else {
+		res.sendFile(route)
 	}
 })
 
 app.post('/api/files/add', checkLogin, (req, res) => {
 	let type = req.body.type || ""
-	let func = directory.add[type]
+	let func = req.appOperator.add[type]
 	if (!func) {
 		return res.status(400).send({ status: 400, message: "Type unidentified" })
 	}
@@ -114,32 +88,32 @@ app.post('/api/files/add', checkLogin, (req, res) => {
 })
 
 app.post('/api/files/information', checkLogin, async (req, res) => {
-	let resp = await directory.information(req.body)
+	let resp = await req.appOperator.getFolderInformation(req.body)
 	res.status(resp.status).send(resp)
 })
 
 app.post('/api/files/edit', checkLogin, (req, res) => {
-	let resp = directory.rename(req.body)
+	let resp = req.appOperator.renameElement(req.body)
 	res.status(resp.status).send(resp)
 })
 
 app.post('/api/files/editText', checkLogin, (req, res) => {
-	let resp = directory.setPlainFile(req.body)
+	let resp = req.appOperator.setPlainFile(req.body)
 	res.status(resp.status).send(resp)
 })
 
 app.post('/api/files/copy', checkLogin, (req, res) => {
-	let resp = directory.copy(req.body)
+	let resp = req.appOperator.copy(req.body)
 	res.status(resp.status).send(resp)
 })
 
 app.post('/api/files/move', checkLogin, (req, res) => {
-	let resp = directory.move(req.body)
+	let resp = req.appOperator.move(req.body)
 	res.status(resp.status).send(resp)
 })
 
 app.post('/api/files/delete', checkLogin, (req, res) => {
-	let resp = directory.delete(req.body)
+	let resp = req.appOperator.deleteElement(req.body)
 	res.status(resp.status).send(resp)
 })
 
@@ -147,15 +121,30 @@ app.post('/api/files/download', checkLogin, (req, res) => {
 	let { files = [] } = req.body
 	if (files.length === 1 && !files[0].isDirectory) {
 		let file = files[0]
-		res.download(directory.getRouteFile(file.route, file.name).dir)
+		res.download(req.appOperator.getRouteFile(file.route, file.name).dir)
 	} else {
 		res.set('Content-Type', 'application/zip');
 		res.set('Content-Disposition', 'attachment; filename=file.zip');
 		let zip = archiver('zip');
 		zip.pipe(res);
-		directory.download(files, zip)
+		req.appOperator.download(files, zip)
 		zip.finalize()
 	}
+})
+
+app.use((err, req, res, next) => {
+	let respError = {
+		status: 500,
+		message: secure.digest(err.message),
+	}
+	if (err.errors) {
+		respError.errors = err.errors.map((e) => ({
+			route: secure.digest(e.route),
+			name:  secure.digest(e.name),
+			message: secure.digest(e.message)
+		}))
+	}
+	return res.status(respError.status).send(respError)
 })
 
 app.listen(config.port, () => {

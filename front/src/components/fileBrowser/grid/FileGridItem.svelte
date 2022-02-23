@@ -3,8 +3,10 @@
      * Control focus on elements
      */
     const map: Map<string, HTMLElement> = new Map();
+    let currentIdx = 0;
     function focusItem(key: string, idx: number): void {
         map.get(key + idx)?.focus();
+        currentIdx = idx;
     }
 </script>
 
@@ -142,7 +144,10 @@
             }
         }
         map.set(key + file.idxFocus, element);
-        return () => map.delete(key + file.idxFocus);
+        return () =>{
+            map.delete(key + file.idxFocus);
+            currentIdx = 0
+        }
     });
     //move focus on preview
     $: if (
@@ -153,6 +158,9 @@
         element?.focus();
     } else {
         style = "";
+        if (file.idxFocus === currentIdx) {
+            element?.focus();
+        }
     }
     //focus on previous folder
     $: if (

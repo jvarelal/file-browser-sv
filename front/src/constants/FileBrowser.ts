@@ -1,8 +1,8 @@
 import type { FileBrowserSettings } from "../types/UITypes";
 
-const IMG_PREVIEW: string[] = ['jpg', 'png', 'jpeg', 'svg', 'gif', 'webp']
-const FILE_AS_TEXT: string[] = ['md', 'svelte', 'ts', 'json', 'js', "txt"]
-const EDITABLES: string[] = [...FILE_AS_TEXT, "html", 'xml']
+const IMG_PREVIEW: string[] = ["jpg", "png", "jpeg", "svg", "gif", "webp"]
+const FILE_AS_TEXT: string[] = ["md", "svelte", "ts", "json", "js", "txt", "yml"]
+const EDITABLES: string[] = [...FILE_AS_TEXT, "html", "xml"]
 
 const FileBrowser: FileBrowserSettings = {
     baseUrl: "http://localhost:4000/api",
@@ -32,15 +32,15 @@ const FileBrowser: FileBrowserSettings = {
         { value: "modification", label: "Fecha Modificación" },
     ],
     previews: {
-        scalePreview: ['jpg', 'png', 'jpeg'],
+        scalePreview: ["jpg", "png", "jpeg"],
         image: IMG_PREVIEW,
         icons: {
-            png: ['dat', 'jar'],
-            svg: ['css', 'csv', 'exe', 'html', 'mp3', 'mp4', 'txt', 'doc', 'docx', 'js', 'pdf', 'xlsx', 'zip', 'xml', 'webm', 'json']
+            png: ["dat", "jar"],
+            svg: ["css", "csv", "exe", "html", "mp3", "mp4", "txt", "doc", "docx", "js", "pdf", "xlsx", "zip", "xml", "webm", "json"]
         },
         asText: FILE_AS_TEXT
     },
-    visor: [...IMG_PREVIEW, ...EDITABLES, 'pdf', 'mp3', 'mp4', 'webm'],
+    visor: [...IMG_PREVIEW, ...EDITABLES, "pdf", "mp3", "mp4", "webm"],
     editables: EDITABLES
 }
 

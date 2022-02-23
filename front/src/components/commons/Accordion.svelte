@@ -13,6 +13,7 @@
     function handleFocusEnter(e: KeyboardEvent): void {
         if (e.key === "Enter") {
             collapse = !collapse;
+            onChange()
         }
     }
     function onChange() {

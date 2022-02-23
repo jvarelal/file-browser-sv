@@ -80,7 +80,7 @@
 
 <div class="txt-edit">
     {#if errMessage}
-        <h2>errMessage</h2>
+        <h2>{errMessage}</h2>
     {:else}
         <textarea
             bind:this={textArea}
@@ -115,6 +115,7 @@
             margin: 0;
             border: none;
             padding: 0.5rem;
+            white-space: pre;
             &.enableEdit {
                 height: calc(100% - 5rem);
             }

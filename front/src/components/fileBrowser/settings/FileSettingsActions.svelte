@@ -36,7 +36,7 @@
 </script>
 
 <div>
-    {#if !$fileBrowserStore.viewBookmarks}
+    {#if !$fileBrowserStore.viewBookmarks && !$fileBrowserStore.error}
         <ActionButton
             on:click={activateModal}
             icon="fas fa-folder-plus"

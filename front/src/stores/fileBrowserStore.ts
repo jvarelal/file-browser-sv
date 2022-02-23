@@ -224,6 +224,7 @@ function createfileBrowserStore() {
         }),
         setError: (e = true) => update((s) => ({
             ...s,
+            numberItems: 0,
             error: e
         })),
         reset: () => set(initialState)
