@@ -10,18 +10,6 @@ import type {
 import type { FileEdit, FileMove, FileUI, FileUpload, Login } from "../types/UITypes";
 import httpClient from "./HttpClient"
 
-function processErrorApiResponse(err: ErrorApiResponse, errCb: (resp: ErrorApiResponse) => void): void {
-    err.message = secure.process(err.message)
-    if (err.errors) {
-        err.errors = err.errors.map((e) => ({
-            route: secure.process(e.route),
-            name: secure.process(e.name),
-            message: secure.process(e.message)
-        }))
-    }
-    errCb(err)
-}
-
 const FileService = {
 
     login: (
@@ -74,9 +62,9 @@ const FileService = {
         parameters.set("name", secure.digest(file.route + "/" + file.name))
         parameters.set("txt", "true")
         httpClient.getTxt("files", parameters).then((data: string) => {
-            let processData = secure.process(data)
+            let processData = secure.recover(data)
             cb(processData)
-        }).catch(data => processErrorApiResponse(data, err))
+        }).catch(err)
     },
 
     information: (
@@ -90,7 +78,7 @@ const FileService = {
         }
         httpClient.post(`files/information`, request)
             .then(cb)
-            .catch(data => processErrorApiResponse(data, err))
+            .catch(err)
     },
 
     create: (
@@ -105,7 +93,7 @@ const FileService = {
         data.files?.forEach((f) => formData.append("file", f));
         httpClient.postForm(`files/add`, formData)
             .then(cb)
-            .catch(data => processErrorApiResponse(data, err))
+            .catch(err)
     },
 
     edit: (
@@ -120,7 +108,7 @@ const FileService = {
         }
         httpClient.post(`files/edit`, data)
             .then(cb)
-            .catch(data => processErrorApiResponse(data, err))
+            .catch(err)
     },
 
     setPlainFile: (
@@ -135,7 +123,7 @@ const FileService = {
         }
         httpClient.post(`files/editText`, data)
             .then(cb)
-            .catch(data => processErrorApiResponse(data, err))
+            .catch(err)
     },
 
     delete: (
@@ -149,7 +137,7 @@ const FileService = {
         }))
         httpClient.post(`files/delete`, { files })
             .then(cb)
-            .catch(data => processErrorApiResponse(data, err))
+            .catch(err)
     },
 
     paste: (
@@ -164,7 +152,7 @@ const FileService = {
         }))
         httpClient.post(`files/${data.move ? "move" : "copy"}`, { route, files })
             .then(cb)
-            .catch(data => processErrorApiResponse(data, err))
+            .catch(err)
     },
 
     download: (data: FileUI[],
@@ -198,7 +186,7 @@ const FileService = {
                 link.click();
                 document.body.removeChild(link);
             })
-            .catch(data => processErrorApiResponse(data, err))
+            .catch(err)
     }
 }
 

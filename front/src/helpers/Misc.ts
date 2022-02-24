@@ -17,7 +17,7 @@ export const secure = {
             return ""
         }
     },
-    process: (text: string): string => {
+    recover: (text: string): string => {
         try {
             return CryptoJS.AES.decrypt(text, FileBrowser.secureKey).toString(CryptoJS.enc.Utf8);
         } catch (e) {

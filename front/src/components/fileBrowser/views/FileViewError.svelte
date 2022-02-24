@@ -4,11 +4,11 @@
     import type { ErrorApiResponse } from "../../../types/ApiTypes";
 
     export let error: ErrorApiResponse;
-    export let navigate: (route: string) => void;
+    export let showLogin: boolean;
 
     onMount(() => {
-        if (error.status === 401 && navigate) {
-            navigate("/login");
+        if (error.status === 401) {
+            showLogin = true;
         }
         fileBrowserStore.setError();
     });

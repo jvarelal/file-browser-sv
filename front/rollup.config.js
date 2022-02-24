@@ -4,6 +4,7 @@ import resolve from '@rollup/plugin-node-resolve';
 import livereload from 'rollup-plugin-livereload';
 import { terser } from 'rollup-plugin-terser';
 import sveltePreprocess from 'svelte-preprocess';
+import replace from '@rollup/plugin-replace';
 import typescript from '@rollup/plugin-typescript';
 import css from 'rollup-plugin-css-only';
 import autoPreprocess from 'svelte-preprocess';
@@ -77,7 +78,11 @@ export default {
 
 		// If we're building for production (npm run build
 		// instead of npm run dev), minify
-		production && terser()
+		production && terser(),
+		replace({
+			'process.env.NODE_ENV': JSON.stringify(production ? 'build' : 'dev'),
+			preventAssignment: true
+		}),
 	],
 	watch: {
 		clearScreen: false

@@ -1,4 +1,4 @@
 node_modules/
-public/build/
 .vscode/
 tmp/
+back/src/public

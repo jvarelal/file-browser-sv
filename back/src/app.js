@@ -136,16 +136,19 @@ app.use((err, req, res, next) => {
 	let respError = {
 		status: 500,
 		message: secure.digest(err.message),
+		secure: true
 	}
 	if (err.errors) {
 		respError.errors = err.errors.map((e) => ({
 			route: secure.digest(e.route),
-			name:  secure.digest(e.name),
+			name: secure.digest(e.name),
 			message: secure.digest(e.message)
 		}))
 	}
 	return res.status(respError.status).send(respError)
 })
+
+app.use("/", express.static(path.join(__dirname, "public")))
 
 app.listen(config.port, () => {
 	console.log(`File Browser running ${config.port}`)

@@ -36,4 +36,5 @@ export interface FileInformationApiResponse extends ApiResponse {
 
 export interface ErrorApiResponse extends ApiResponse {
     errors?: FileApiError[];
+    secure?: true;
 }

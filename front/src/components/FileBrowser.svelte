@@ -14,11 +14,11 @@
     //helpers
     import FileService from "../services/FileService";
     import type { FileUI } from "../types/UITypes";
-
-    export let navigate: (route: string) => void;
+    import Login from "./Login.svelte";
 
     let numberItemsFiltered: number = 0;
     let fileInfo: FileUI;
+    let showLogin = false;
 
     $: fileList = FileService.list($fileDirectoryStore.current);
 
@@ -34,31 +34,35 @@
             if ($fileSettingStore.cache[0]) {
                 fileDirectoryStore.setDirectory($fileSettingStore.cache[0]);
             } else {
-                navigate("/login");
+                showLogin = true;
             }
         }
     });
 </script>
 
 <section>
-    <FileToolBar {numberItemsFiltered} />
-    <FileLayout>
-        {#await fileList}
-            <FileViewWaiting />
-        {:then list}
-            <FileInit files={list.files} />
-        {:catch error}
-            <FileViewError {error} {navigate} />
-        {/await}
-    </FileLayout>
-    {#if fileInfo}
-        <Modal
-            icon="fas fa-info"
-            label="Detalle elemento"
-            onClose={() => (fileInfo = null)}
-        >
-            <FileInfo file={fileInfo} />
-        </Modal>
+    {#if showLogin}
+        <Login bind:showLogin />
+    {:else}
+        <FileToolBar {numberItemsFiltered} />
+        <FileLayout>
+            {#await fileList}
+                <FileViewWaiting />
+            {:then list}
+                <FileInit files={list.files} />
+            {:catch error}
+                <FileViewError {error} bind:showLogin />
+            {/await}
+        </FileLayout>
+        {#if fileInfo}
+            <Modal
+                icon="fas fa-info"
+                label="Detalle elemento"
+                onClose={() => (fileInfo = null)}
+            >
+                <FileInfo file={fileInfo} />
+            </Modal>
+        {/if}
     {/if}
 </section>
 

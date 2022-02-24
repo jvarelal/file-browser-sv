@@ -28,8 +28,8 @@ function getLocalBookmarks(): FileUI[] {
         let localBookmarks: FileApiResponse[] = JSON.parse(data)
         return localBookmarks.map((b): FileUI => {
             let data: FileApiResponse = ({
-                route: secure.process(b.route),
-                name: secure.process(b.name),
+                route: secure.recover(b.route),
+                name: secure.recover(b.name),
                 isDirectory: false,
             })
             return { ...data, ...getFileIcon(data) }

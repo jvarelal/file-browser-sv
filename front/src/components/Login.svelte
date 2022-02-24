@@ -7,7 +7,7 @@
     import InputText from "./commons/InputText.svelte";
     import type { Login } from "../types/UITypes";
 
-    export let navigate: (route: string) => void;
+    export let showLogin: boolean;
 
     let finalError: string = "";
     let values: Login = { user: "", key: "" };
@@ -21,7 +21,7 @@
                 fileSettingStore.initCache(data.routes);
                 fileDirectoryStore.setInit(data.routes[0]);
                 dialogStore.closeDialog();
-                navigate("/");
+                showLogin = false
             },
             (err) => dialogStore.showMessage(err.message)
         );

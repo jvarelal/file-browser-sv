@@ -34,7 +34,7 @@ function createfileSettingStore() {
             let settings = localStorage.getItem(FileBrowser.localStorageKeys.settings)
             let localSettings: FileSettingStore = JSON.parse(settings)
             if (localSettings.cache.length > 0) {
-                localSettings.cache = localSettings.cache.map(dir => secure.process(dir))
+                localSettings.cache = localSettings.cache.map(dir => secure.recover(dir))
             }
             document.documentElement.setAttribute("data-theme", FileBrowser.themes[localSettings.themeId].value)
             return localSettings

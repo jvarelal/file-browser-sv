@@ -5,7 +5,7 @@ const FILE_AS_TEXT: string[] = ["md", "svelte", "ts", "json", "js", "txt", "yml"
 const EDITABLES: string[] = [...FILE_AS_TEXT, "html", "xml"]
 
 const FileBrowser: FileBrowserSettings = {
-    baseUrl: "http://localhost:4000/api",
+    baseUrl: process.env.NODE_ENV === "build" ? `${window.location.origin}/api` : "http://localhost:4000/api",
     secureKey: "fB*",
     regexp: {
         folderName: /^["/?*:|<>\\]/

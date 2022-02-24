@@ -1,5 +1,6 @@
 import FileBrowser from "../constants/FileBrowser";
 import { secure } from "../helpers/Misc";
+import type { ErrorApiResponse } from "../types/ApiTypes";
 
 type Token = {
     Authorization: string;
@@ -11,9 +12,23 @@ async function validateResponse(response: Response, dataType: string = "json"): 
     if (response.status === 200) {
         return response[dataType]();
     } else {
-        let error = await response.json();
-        throw error;
+        let error: ErrorApiResponse = await response.json();
+        throw processErrorApiResponse(error);
     }
+}
+
+function processErrorApiResponse(err: ErrorApiResponse): ErrorApiResponse {
+    if (err.secure) {
+        err.message = secure.recover(err.message)
+        if (err.errors) {
+            err.errors = err.errors.map((e) => ({
+                route: secure.recover(e.route),
+                name: secure.recover(e.name),
+                message: secure.recover(e.message)
+            }))
+        }
+    }
+    return err
 }
 
 function generateUrl(base: string, params: Map<string, string>) {

@@ -4,6 +4,9 @@
   "description": "node ws test",
   "main": "index.js",
   "scripts": {
+    "prestart": "npm --prefix ../front run build",
+    "start": "rm -f -r ./src/public && cp -r ../front/public ./src/public",
+    "poststart": "node src/app.js",
     "dev": "nodemon src/app.js"
   },
   "author": "",
