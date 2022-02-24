@@ -1,7 +1,7 @@
 {
   "name": "try-on",
-  "version": "1.0.0",
-  "description": "node ws test",
+  "version": "1.1.0",
+  "description": "Rest Services File Browser",
   "main": "index.js",
   "scripts": {
     "prestart": "npm --prefix ../front run build",
