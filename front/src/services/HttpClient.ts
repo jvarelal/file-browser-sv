@@ -31,10 +31,12 @@ function processErrorApiResponse(err: ErrorApiResponse): ErrorApiResponse {
     return err
 }
 
-function generateUrl(base: string, params: Map<string, string>) {
+function generateUrl(base: string, params: Map<string, string>, key: boolean) {
     let url = new URL(base)
     params.forEach((val, key) => url.searchParams.append(key, encodeURIComponent(val)))
-    url.searchParams.append("tmp", encodeURIComponent(secure.digest(sessionStorage.browserToken)))
+    if (key) {
+        url.searchParams.append("tmp", encodeURIComponent(secure.digest(sessionStorage.browserToken)))
+    }
     return url.toString()
 }
 
@@ -47,10 +49,10 @@ const httpClient = {
         }
     },
 
-    getUrl: (path: string, params: Map<string, string>) => generateUrl(`${FileBrowser.baseUrl}/${path}`, params),
+    getUrl: (path: string, params: Map<string, string>) => generateUrl(`${FileBrowser.baseUrl}/${path}`, params, false),
 
     getTxt: async (path: string, params: Map<string, string>): Promise<any> => {
-        let url = generateUrl(`${FileBrowser.baseUrl}/${path}`, params)
+        let url = generateUrl(`${FileBrowser.baseUrl}/${path}`, params, true)
         const response = await fetch(url, {
             method: 'GET',
             mode: 'cors',

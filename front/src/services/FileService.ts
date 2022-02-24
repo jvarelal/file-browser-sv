@@ -44,14 +44,7 @@ const FileService = {
         if (reduce > 0) {
             parameters.set("preview", reduce.toString())
         }
-        return httpClient.getUrl("files", parameters)
-    },
-
-    previewAsTxt: (file: FileApiResponse): string => {
-        let parameters: Map<string, string> = new Map();
-        parameters.set("name", secure.digest(file.route + "/" + file.name))
-        parameters.set("txt", "true")
-        return httpClient.getUrl("files", parameters)
+        return httpClient.getUrl("image", parameters)
     },
 
     getAsTxt: (file: FileApiResponse,

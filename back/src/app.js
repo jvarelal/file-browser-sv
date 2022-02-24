@@ -21,6 +21,9 @@ app.use(cors())
 app.use(express.json())
 app.use(multer({ storage }).array("file", config.fileBrowser.maxNumberFilesUpload))
 
+//build aplication
+app.use("/", express.static(path.join(__dirname, "public")))
+
 //login
 app.post('/api/login', (req, res) => {
 	let { user, key } = req.body
@@ -59,9 +62,9 @@ const checkLogin = (req, res, next) => {
 //files
 app.post('/api/files', checkLogin, (req, res) => res.send(req.appOperator.listFiles((req.body))))
 
-app.get('/api/files', checkLogin, (req, res) => {
-	let { name, preview, txt } = req.query
-	let route = req.appOperator.getRouteFile(decodeURIComponent(name))?.dir
+app.get('/api/image', (req, res) => {
+	let { name, preview } = req.query
+	let route = path.resolve(secure.process(decodeURIComponent(name)))
 	res.setHeader('Content-Disposition', `inline`);
 	if (preview && !isNaN(preview)) {
 		let pvSize = parseInt(preview)
@@ -70,7 +73,16 @@ app.get('/api/files', checkLogin, (req, res) => {
 			res.setHeader('Content-Type', `image/${type[type.length - 1]}`);
 			res.end(data);
 		}).catch(err => res.status(500).send({ status: 500, message: "File problem" }));
-	} else if (txt === "true") {
+	}else {
+		res.sendFile(route)
+	}
+})
+
+app.get('/api/files', checkLogin, (req, res) => {
+	let { name, txt } = req.query
+	let route = req.appOperator.getRouteFile(decodeURIComponent(name))?.dir
+	res.setHeader('Content-Disposition', `inline`);
+	if (txt === "true") {
 		res.send(req.appOperator.fileAsText(route))
 	} else {
 		res.sendFile(route)
@@ -133,6 +145,7 @@ app.post('/api/files/download', checkLogin, (req, res) => {
 })
 
 app.use((err, req, res, next) => {
+	console.log(err)
 	let respError = {
 		status: 500,
 		message: secure.digest(err.message),
@@ -148,7 +161,6 @@ app.use((err, req, res, next) => {
 	return res.status(respError.status).send(respError)
 })
 
-app.use("/", express.static(path.join(__dirname, "public")))
 
 app.listen(config.port, () => {
 	console.log(`File Browser running ${config.port}`)
