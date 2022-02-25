@@ -27,7 +27,7 @@
         );
     }
     onMount(() => {
-        document.title = `FileBrowser -Login`;
+        document.title = `FileBrowser - Login`;
     });
 </script>
 

@@ -7,7 +7,7 @@ import type {
     FileInformationApiResponse,
     FileApiResponse
 } from "../types/ApiTypes"
-import type { FileEdit, FileMove, FileUI, FileUpload, Login } from "../types/UITypes";
+import type { FileEdit, FileExcel, FileMove, FileUI, FileUpload, Login } from "../types/UITypes";
 import httpClient from "./HttpClient"
 
 const FileService = {
@@ -66,15 +66,12 @@ const FileService = {
     },
 
     getExcel: (file: FileApiResponse,
-        cb: (data: string) => void,
+        cb: (data: FileExcel[]) => void,
         err: (resp: ErrorApiResponse) => void
     ): void => {
         let parameters: Map<string, string> = new Map();
         parameters.set("name", secure.digest(file.route + "/" + file.name))
-        httpClient.getJson("files/view/excel", parameters).then((data: string) => {
-            let processData = secure.recover(data)
-            cb(processData)
-        }).catch(err)
+        httpClient.getJson("files/view/excel", parameters).then(cb).catch(err)
     },
 
     information: (

@@ -75,6 +75,12 @@ export interface FileEdit {
     name: string;
     text: string;
 }
+
+export interface FileExcel {
+    sheetName: string;
+    data: string[];
+}
+
 /**
  * 
  */
@@ -94,7 +100,7 @@ export interface FileBrowserSettings {
     previews: {
         scalePreview: string[];
         image: string[];
-        icons:{
+        icons: {
             png: string[];
             svg: string[];
         },
@@ -102,5 +108,5 @@ export interface FileBrowserSettings {
         excel: string[]
     };
     visor: string[],
-    editables:string[]
+    editables: string[]
 }

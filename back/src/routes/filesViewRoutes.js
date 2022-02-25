@@ -36,8 +36,9 @@ router.get(`${parentPath}/excel`, authValidation, (req, res) => {
     const excel = XLSX.readFile(dir);
     let sheets = excel.SheetNames
     let excelData = sheets.map(sheet => ({
-        sheet,
-        data: XLSX.utils.sheet_to_json(excel.Sheets[sheet])
+        sheetName: sheet,
+        headers: excel.Sheets[sheet]['!cols'],
+        data: XLSX.utils.sheet_to_json(excel.Sheets[sheet], { header: 1 })
     }))
     res.send(excelData)
 })

@@ -8,6 +8,46 @@ type Token = {
 
 let token: Token = { "Authorization": "Bearer " + sessionStorage.browserToken }
 
+function generateUrl(base: string, params: Map<string, string>, key: boolean) {
+    let url = new URL(base)
+    params.forEach((val, key) => url.searchParams.append(key, encodeURIComponent(val)))
+    if (key) {
+        url.searchParams.append("tmp", encodeURIComponent(secure.digest(sessionStorage.browserToken)))
+    }
+    return url.toString()
+}
+
+async function getData(path: string, params: Map<string, string>, typeResponse: string): Promise<any> {
+    let url = generateUrl(`${FileBrowser.baseUrl}/${path}`, params, false)
+    const response = await fetch(url, {
+        method: 'GET',
+        mode: 'cors',
+        cache: 'no-cache',
+        credentials: 'same-origin',
+        headers: token,
+        redirect: 'follow',
+        referrerPolicy: 'no-referrer',
+    })
+    return validateResponse(response, typeResponse)
+}
+
+async function postData(path: string = '', data: any = {}, typeResponse: string): Promise<any> {
+    const response = await fetch(`${FileBrowser.baseUrl}/${path}`, {
+        method: 'POST',
+        mode: 'cors',
+        cache: 'no-cache',
+        credentials: 'same-origin',
+        headers: {
+            'Content-Type': 'application/json',
+            ...token
+        },
+        redirect: 'follow',
+        referrerPolicy: 'no-referrer',
+        body: JSON.stringify(data)
+    })
+    return validateResponse(response, typeResponse)
+}
+
 async function validateResponse(response: Response, dataType: string = "json"): Promise<any> {
     if (response.status === 200) {
         return response[dataType]();
@@ -29,46 +69,6 @@ function processErrorApiResponse(err: ErrorApiResponse): ErrorApiResponse {
         }
     }
     return err
-}
-
-function generateUrl(base: string, params: Map<string, string>, key: boolean) {
-    let url = new URL(base)
-    params.forEach((val, key) => url.searchParams.append(key, encodeURIComponent(val)))
-    if (key) {
-        url.searchParams.append("tmp", encodeURIComponent(secure.digest(sessionStorage.browserToken)))
-    }
-    return url.toString()
-}
-
-async function getData(path: string, params: Map<string, string>, typeResponse:string): Promise<any> {
-    let url = generateUrl(`${FileBrowser.baseUrl}/${path}`, params, false)
-    const response = await fetch(url, {
-        method: 'GET',
-        mode: 'cors',
-        cache: 'no-cache',
-        credentials: 'same-origin',
-        headers: token,
-        redirect: 'follow',
-        referrerPolicy: 'no-referrer',
-    })
-    return validateResponse(response, typeResponse)
-}
-
-async function postData(path: string = '', data: any = {},  typeResponse:string): Promise<any> {
-    const response = await fetch(`${FileBrowser.baseUrl}/${path}`, {
-        method: 'POST',
-        mode: 'cors',
-        cache: 'no-cache',
-        credentials: 'same-origin',
-        headers: {
-            'Content-Type': 'application/json',
-            ...token
-        },
-        redirect: 'follow',
-        referrerPolicy: 'no-referrer',
-        body: JSON.stringify(data)
-    })
-    return validateResponse(response, typeResponse)
 }
 
 const httpClient = {
