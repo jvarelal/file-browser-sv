@@ -4,6 +4,8 @@ const secure = require("../helpers/secure")
 const path = require("path")
 const sharp = require('sharp')
 const authValidation = require("../helpers/authValidation")
+const XLSX = require("xlsx");
+
 const parentPath = '/api/files/view'
 
 router.get(`${parentPath}/image`, (req, res) => {
@@ -30,8 +32,14 @@ router.get(`${parentPath}/text`, authValidation, (req, res) => {
 
 router.get(`${parentPath}/excel`, authValidation, (req, res) => {
     let { name } = req.query
-    let route = req.appOperator.getRouteFile(decodeURIComponent(name))?.dir
-    res.send(req.appOperator.fileAsText(route))
+    let dir = req.appOperator.getRouteFile(decodeURIComponent(name))?.dir
+    const excel = XLSX.readFile(dir);
+    let sheets = excel.SheetNames
+    let excelData = sheets.map(sheet => ({
+        sheet,
+        data: XLSX.utils.sheet_to_json(excel.Sheets[sheet])
+    }))
+    res.send(excelData)
 })
 
 router.get(`${parentPath}/raw`, authValidation, (req, res) => {

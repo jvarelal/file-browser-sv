@@ -48,7 +48,7 @@ const directory = (user) => {
 				return { name: file }
 			}
 		})
-		return { status: 200, message: "Information collected", files }
+		return { message: "Information collected", files }
 	}
 
 	async function getFolderInformation({ name, route }) {
@@ -57,7 +57,7 @@ const directory = (user) => {
 		const fastFolderSizeAsync = promisify(fastFolderSize)
 		const bytes = await fastFolderSizeAsync(dir)
 		return {
-			status: 200,
+		
 			message: "Information collected",
 			data: {
 				isDirectory: true,
@@ -75,7 +75,7 @@ const directory = (user) => {
 
 	function setPlainFile({ route, name, text }) {
 		fs.writeFileSync(getRouteFile(route, name).dir, secure.process(text))
-		return { status: 200, message: "Folder created" }
+		return { message: "Folder created" }
 	}
 
 	function copyFiles(data, move = false) {
@@ -94,35 +94,35 @@ const directory = (user) => {
 		if (errors.length > 0) {
 			throw new FileOperationError({ message: "Some files had problems", errors });
 		}
-		return { status: 200, message: `Files ${move ? "moved" : "copied"}` };
+		return { message: `Files ${move ? "moved" : "copied"}` };
 	}
 
 	function renameElement(data) {
 		let { name, route, newName } = data
 		let { dir } = getRouteFile(route)
 		fs.renameSync(path.join(dir, secure.process(name)), path.join(dir, secure.process(newName)))
-		return { status: 200, message: "Files modified" }
+		return { message: "Files modified" }
 	}
 
 	function newFolder({ name, route }) {
 		let { dir } = getRouteFile(route, name)
 		if (fs.existsSync(dir)) {
-			return { status: 400, message: "Folder already exist" }
+			throw new FileOperationError({ message: "Folder already exist", errors, status: 400 });
 		}
 		fs.mkdirSync(dir);
-		return { status: 200, message: "Folder created" }
+		return { message: "Folder created" }
 	}
 
 	function newTextFile({ name, route }) {
 		fs.writeFileSync(getRouteFile(route, name).dir, "")
-		return { status: 200, message: "File created" }
+		return { message: "File created" }
 	}
 
 	function fileUpload({ route }, files = []) {
 		let errors = []
 		let { dir } = getRouteFile(route)
 		if (files.length === 0) {
-			return { status: 400, message: "Files not found" }
+			throw new FileOperationError({ message: "Files not found", errors, status: 400 });
 		}
 		files.forEach(file => {
 			let destination = path.join(dir, file.originalname)
@@ -143,7 +143,7 @@ const directory = (user) => {
 		if (errors.length > 0) {
 			throw new FileOperationError({ message: "Some files had problems", errors })
 		}
-		return { status: 200, message: "Files added" }
+		return { message: "Files added" }
 	}
 
 	function deleteElement(data) {
@@ -161,7 +161,7 @@ const directory = (user) => {
 		if (errors.length > 0) {
 			throw new FileOperationError({ message: "Some files had problems", errors })
 		}
-		return { status: 200, message: "Files deleted" }
+		return { message: "Files deleted" }
 	}
 
 	function download(files = [], zip) {
