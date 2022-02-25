@@ -139,7 +139,7 @@
                     element.getBoundingClientRect().width
                 );
             }
-            if (!$fileDirectoryStore.itemFocus) {
+            if (!$fileDirectoryStore.itemFocus && !$fileBrowserStore.filter) {
                 element.focus();
             }
         }
@@ -156,9 +156,10 @@
     ) {
         style = `background-color: #0c9aaa66;`;
         element?.focus();
+        backFocusedFlag = true;
     } else {
         style = "";
-        if (file.idxFocus === currentIdx) {
+        if (file.idxFocus === currentIdx && !$fileBrowserStore.filter) {
             element?.focus();
         }
     }
@@ -168,7 +169,6 @@
         file.name === $fileDirectoryStore.itemFocus &&
         !backFocusedFlag
     ) {
-        backFocusedFlag = true;
         element?.focus();
     }
 </script>

@@ -17,6 +17,7 @@
         <input
             type="text"
             class="w-100 m-l-auto"
+            value={$fileBrowserStore.filter}
             on:input={(e) => fileBrowserStore.setFilter(e.target.value)}
         />
         <i class="fas fa-search icon m-l-auto" />
@@ -37,7 +38,7 @@
         display: flex;
         input {
             height: 1.75rem;
-            padding: 0 2rem 0 0.75rem;
+            padding: 0 1rem 0 0.75rem;
             margin: 0;
             margin-left: auto;
             box-sizing: border-box;
