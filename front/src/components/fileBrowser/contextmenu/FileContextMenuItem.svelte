@@ -26,14 +26,6 @@
 
     let options: ContextMenuOption[] = [
         {
-            icon: "fas fa-info",
-            action: () => fileInfo($fileContextMenuStore.item),
-            label: "Información",
-            hide:
-                $fileContextMenuStore.item.checked &&
-                $fileBrowserStore.numberItemsChecked > 1,
-        },
-        {
             icon: "fas fa-arrow-right",
             action: () =>
                 fileDirectoryStore.setDirectory(
@@ -116,6 +108,14 @@
                 ? `Descargar seleccionados`
                 : "Descargar",
             hide: $fileDownloadStore.isDownloading
+        },        
+        {
+            icon: "fas fa-info",
+            action: () => fileInfo($fileContextMenuStore.item),
+            label: "Información",
+            hide:
+                $fileContextMenuStore.item.checked &&
+                $fileBrowserStore.numberItemsChecked > 1,
         },
         {
             icon: "fas fa-star",

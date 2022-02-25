@@ -48,7 +48,7 @@
         }
         .file-search {
             display: flex;
-            min-width: 220px;
+            min-width: 180px;
             max-width: 20%;
             align-items: center;
             position: relative;

@@ -1,4 +1,4 @@
-const secure = require("../util/secure")
+const secure = require("../helpers/secure")
 
 class FileOperationError extends Error {
     constructor({ message = "", errors = [] }) {

@@ -3,8 +3,8 @@ const sizeOf = require('image-size');
 const path = require("path")
 const fastFolderSize = require('fast-folder-size')
 const { promisify } = require('util')
-const secure = require("./util/secure")
-const FileOperationError = require("./errors/FileOperationError")
+const secure = require("../helpers/secure")
+const FileOperationError = require("../errors/FileOperationError")
 
 const directory = (user) => {
 	function getRouteFile(route, name) {
