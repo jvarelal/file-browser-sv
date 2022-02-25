@@ -139,7 +139,7 @@
                     element.getBoundingClientRect().width
                 );
             }
-            if (!$fileDirectoryStore.itemFocus && !$fileBrowserStore.filter) {
+            if (!$fileDirectoryStore.itemFocus) {
                 element.focus();
             }
         }
