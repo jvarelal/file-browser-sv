@@ -67,6 +67,20 @@ const httpClient = {
         return validateResponse(response, "text")
     },
 
+    getJson: async (path: string, params: Map<string, string>): Promise<any> => {
+        let url = generateUrl(`${FileBrowser.baseUrl}/${path}`, params, false)
+        const response = await fetch(url, {
+            method: 'GET',
+            mode: 'cors',
+            cache: 'no-cache',
+            credentials: 'same-origin',
+            headers: token,
+            redirect: 'follow',
+            referrerPolicy: 'no-referrer',
+        })
+        return validateResponse(response, "json")
+    },
+
     post: async (path: string = '', data: any = {}): Promise<any> => {
         const response = await fetch(`${FileBrowser.baseUrl}/${path}`, {
             method: 'POST',

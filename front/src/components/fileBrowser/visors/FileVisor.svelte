@@ -9,6 +9,7 @@
     import FileVisorImage from "./FileVisorImage.svelte";
     import ActionButton from "../../commons/ActionButton.svelte";
     import FileVisorText from "./FileVisorText.svelte";
+    import FileVisorExcel from "./FileVisorExcel.svelte";
     //helpers
     import FileService from "../../../services/FileService";
     import { isBookmark } from "../../../helpers/Media";
@@ -108,6 +109,8 @@
         <FileVisorImage {preview} />
     {:else if FileBrowser.previews.asText.includes(preview.type) || enableEdit}
         <FileVisorText file={preview} bind:enableEdit />
+    {:else if FileBrowser.previews.excel.includes(preview.type)}
+        <FileVisorExcel file={preview} />
     {:else}
         <iframe
             title="file"

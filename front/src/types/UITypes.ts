@@ -98,7 +98,8 @@ export interface FileBrowserSettings {
             png: string[];
             svg: string[];
         },
-        asText: string[]
+        asText: string[],
+        excel: string[]
     };
     visor: string[],
     editables:string[]

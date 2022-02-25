@@ -65,6 +65,18 @@ const FileService = {
         }).catch(err)
     },
 
+    getExcel: (file: FileApiResponse,
+        cb: (data: string) => void,
+        err: (resp: ErrorApiResponse) => void
+    ): void => {
+        let parameters: Map<string, string> = new Map();
+        parameters.set("name", secure.digest(file.route + "/" + file.name))
+        httpClient.getJson("files/view/excel", parameters).then((data: string) => {
+            let processData = secure.recover(data)
+            cb(processData)
+        }).catch(err)
+    },
+
     information: (
         file: FileUI,
         cb: (data: FileInformationApiResponse) => void,
