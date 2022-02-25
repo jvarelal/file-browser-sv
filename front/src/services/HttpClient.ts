@@ -40,6 +40,37 @@ function generateUrl(base: string, params: Map<string, string>, key: boolean) {
     return url.toString()
 }
 
+async function getData(path: string, params: Map<string, string>, typeResponse:string): Promise<any> {
+    let url = generateUrl(`${FileBrowser.baseUrl}/${path}`, params, false)
+    const response = await fetch(url, {
+        method: 'GET',
+        mode: 'cors',
+        cache: 'no-cache',
+        credentials: 'same-origin',
+        headers: token,
+        redirect: 'follow',
+        referrerPolicy: 'no-referrer',
+    })
+    return validateResponse(response, typeResponse)
+}
+
+async function postData(path: string = '', data: any = {},  typeResponse:string): Promise<any> {
+    const response = await fetch(`${FileBrowser.baseUrl}/${path}`, {
+        method: 'POST',
+        mode: 'cors',
+        cache: 'no-cache',
+        credentials: 'same-origin',
+        headers: {
+            'Content-Type': 'application/json',
+            ...token
+        },
+        redirect: 'follow',
+        referrerPolicy: 'no-referrer',
+        body: JSON.stringify(data)
+    })
+    return validateResponse(response, typeResponse)
+}
+
 const httpClient = {
 
     setToken: (t: string): void => {
@@ -53,50 +84,13 @@ const httpClient = {
 
     getAuthUrl: (path: string, params: Map<string, string>) => generateUrl(`${FileBrowser.baseUrl}/${path}`, params, true),
 
-    getTxt: async (path: string, params: Map<string, string>): Promise<any> => {
-        let url = generateUrl(`${FileBrowser.baseUrl}/${path}`, params, false)
-        const response = await fetch(url, {
-            method: 'GET',
-            mode: 'cors',
-            cache: 'no-cache',
-            credentials: 'same-origin',
-            headers: token,
-            redirect: 'follow',
-            referrerPolicy: 'no-referrer',
-        })
-        return validateResponse(response, "text")
-    },
+    getTxt: async (path: string, params: Map<string, string>): Promise<any> => getData(path, params, "text"),
 
-    getJson: async (path: string, params: Map<string, string>): Promise<any> => {
-        let url = generateUrl(`${FileBrowser.baseUrl}/${path}`, params, false)
-        const response = await fetch(url, {
-            method: 'GET',
-            mode: 'cors',
-            cache: 'no-cache',
-            credentials: 'same-origin',
-            headers: token,
-            redirect: 'follow',
-            referrerPolicy: 'no-referrer',
-        })
-        return validateResponse(response, "json")
-    },
+    getJson: async (path: string, params: Map<string, string>): Promise<any> => getData(path, params, "json"),
 
-    post: async (path: string = '', data: any = {}): Promise<any> => {
-        const response = await fetch(`${FileBrowser.baseUrl}/${path}`, {
-            method: 'POST',
-            mode: 'cors',
-            cache: 'no-cache',
-            credentials: 'same-origin',
-            headers: {
-                'Content-Type': 'application/json',
-                ...token
-            },
-            redirect: 'follow',
-            referrerPolicy: 'no-referrer',
-            body: JSON.stringify(data)
-        })
-        return validateResponse(response)
-    },
+    post: async (path: string = '', data: any = {}): Promise<any> => postData(path, data, "json"),
+
+    postDownload: async (path: string = '', data: any, error = (data: any) => null): Promise<Blob> => postData(path, data, "blob"),
 
     postForm: async (path: string = '', data: FormData): Promise<any> => {
         const response = await fetch(`${FileBrowser.baseUrl}/${path}`, {
@@ -112,22 +106,6 @@ const httpClient = {
         return validateResponse(response)
     },
 
-    postDownload: async (path: string = '', data: any, error = (data: any) => null): Promise<Blob> => {
-        const response = await fetch(`${FileBrowser.baseUrl}/${path}`, {
-            method: 'POST',
-            mode: 'cors',
-            cache: 'no-cache',
-            credentials: 'same-origin',
-            headers: {
-                'Content-Type': 'application/json',
-                ...token
-            },
-            redirect: 'follow',
-            referrerPolicy: 'no-referrer',
-            body: JSON.stringify(data)
-        })
-        return validateResponse(response, "blob")
-    },
 }
 
 export default httpClient
