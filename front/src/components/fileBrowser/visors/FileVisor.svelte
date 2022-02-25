@@ -111,7 +111,7 @@
     {:else}
         <iframe
             title="file"
-            src={FileService.preview(preview)}
+            src={FileService.viewRawFile(preview)}
             class="file-iframe scroll"
         />
     {/if}

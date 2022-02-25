@@ -49,10 +49,12 @@ const httpClient = {
         }
     },
 
-    getUrl: (path: string, params: Map<string, string>) => generateUrl(`${FileBrowser.baseUrl}/${path}`, params, false),
+    getImageUrl: (path: string, params: Map<string, string>) => generateUrl(`${FileBrowser.baseUrl}/${path}`, params, false),
+
+    getAuthUrl: (path: string, params: Map<string, string>) => generateUrl(`${FileBrowser.baseUrl}/${path}`, params, true),
 
     getTxt: async (path: string, params: Map<string, string>): Promise<any> => {
-        let url = generateUrl(`${FileBrowser.baseUrl}/${path}`, params, true)
+        let url = generateUrl(`${FileBrowser.baseUrl}/${path}`, params, false)
         const response = await fetch(url, {
             method: 'GET',
             mode: 'cors',

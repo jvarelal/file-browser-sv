@@ -4,9 +4,8 @@ const config = require("../../config.json")
 const filesService = require('../service/filesService')
 
 const authValidation = (req, res, next) => {
-    let token = req.method === "POST" ?
-        (req.headers["authorization"] || "").split(" ")[1] :
-        secure.process(decodeURIComponent(req.query.tmp));
+    let { tmp } = req.query
+    let token = tmp ? secure.process(decodeURIComponent(tmp)) : (req.headers["authorization"] || "").split(" ")[1];
     if (token) {
         jwt.verify(token, config.tokenKey, (error, authData = {}) => {
             let foundUser = config.users.find(u => u.user === authData.user)

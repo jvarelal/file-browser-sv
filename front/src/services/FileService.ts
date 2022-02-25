@@ -44,7 +44,13 @@ const FileService = {
         if (reduce > 0) {
             parameters.set("preview", reduce.toString())
         }
-        return httpClient.getUrl("image", parameters)
+        return httpClient.getImageUrl("files/view/image", parameters)
+    },
+
+    viewRawFile: (file: FileApiResponse, reduce: number = 0): string => {
+        let parameters: Map<string, string> = new Map();
+        parameters.set("name", secure.digest(file.route + "/" + file.name))
+        return httpClient.getAuthUrl("files/view/raw", parameters)
     },
 
     getAsTxt: (file: FileApiResponse,
@@ -53,8 +59,7 @@ const FileService = {
     ): void => {
         let parameters: Map<string, string> = new Map();
         parameters.set("name", secure.digest(file.route + "/" + file.name))
-        parameters.set("txt", "true")
-        httpClient.getTxt("files", parameters).then((data: string) => {
+        httpClient.getTxt("files/view/text", parameters).then((data: string) => {
             let processData = secure.recover(data)
             cb(processData)
         }).catch(err)

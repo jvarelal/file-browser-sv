@@ -26,6 +26,7 @@ app.use("/", express.static(path.join(__dirname, "public")))
 //routes
 app.use(require("./routes/loginRoutes"))
 app.use(require("./routes/filesRoutes"))
+app.use(require("./routes/filesViewRoutes"))
 
 //errors
 app.use(errorHandler)
