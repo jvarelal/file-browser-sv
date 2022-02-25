@@ -90,12 +90,6 @@
         ? groupFiles(filteredFiles, $fileSettingStore.groupBy)
         : [];
 
-    $: if ($scrollStore.previewY > 0 && grid) {
-        grid.scroll({
-            top: $scrollStore.previewY,
-            behavior: "smooth",
-        });
-    }
     $: if ($fileBrowserStore.filter) {
         itemsFiltered(filteredFiles.length);
     }

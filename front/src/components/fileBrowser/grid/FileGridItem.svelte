@@ -37,13 +37,8 @@
     function validateScroll(target: HTMLElement) {
         if (!$filePreviewStore.get(key)) {
             setTimeout(() => {
-                let boundingClientTarget = target.getBoundingClientRect();
-                scrollStore.setPreviewHeight(
-                    boundingClientTarget.y - boundingClientTarget.height
-                );
+                target.scrollIntoView({behavior: "smooth"});
             }, 500);
-        } else {
-            scrollStore.setPreviewHeight(0);
         }
     }
     function processItem(e: Event): void {

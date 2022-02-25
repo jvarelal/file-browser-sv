@@ -4,7 +4,6 @@ import type { ScrollStoreModel } from "../types/StoreTypes";
 const initialState: ScrollStoreModel = {
     startHeight: 0,
     endHeight: window.innerHeight,
-    previewY: 0,
     updateScroll: false,
     previousHeight: 0
 }
@@ -29,12 +28,7 @@ function createScrollStore() {
         restore: () => update(s => ({
             ...s,
             updateScroll: false,
-            previousHeight: 0,
-            previewY: 0
-        })),
-        setPreviewHeight: (previewY: number) => update(s => ({
-            ...s,
-            previewY: previewY
+            previousHeight: 0
         })),
         reset: () => set(initialState)
     };

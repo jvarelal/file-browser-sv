@@ -50,7 +50,6 @@ export type FileBrowserStore = {
 export type ScrollStoreModel = {
     startHeight: number;
     endHeight: number;
-    previewY: number;
     updateScroll: boolean;
     previousHeight: number;
 }

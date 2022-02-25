@@ -12,6 +12,8 @@ const storage = multer.diskStorage({
 	destination: path.join(__dirname, "tmp"),
 	filename: (req, file, cb) => cb(null, file.originalname)
 })
+//settings
+app.set("port", config.port)
 
 //middleware
 app.use(cors())
@@ -28,7 +30,4 @@ app.use(require("./routes/filesRoutes"))
 //errors
 app.use(errorHandler)
 
-
-app.listen(config.port, () => {
-	console.log(`File Browser running ${config.port}`)
-})
+module.exports = app

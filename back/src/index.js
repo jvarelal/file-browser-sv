@@ -1,7 +1,5 @@
-import app from "./app";
-import "./database";
+const app = require("./app")
 
-// Server is listening
-app.listen(config.port, () => {
-	console.log(`File Browser running ${config.port}`)
+app.listen(app.get("port"), () => {
+	console.log(`File Browser running ${app.get("port")}`)
 })
