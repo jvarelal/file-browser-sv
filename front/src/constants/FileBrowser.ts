@@ -1,7 +1,7 @@
 import type { FileBrowserSettings } from "../types/UITypes";
 
 const IMG_PREVIEW: string[] = ["jpg", "png", "jpeg", "svg", "gif", "webp"]
-const FILE_AS_TEXT: string[] = ["md", "svelte", "ts", "json", "js", "txt", "yml"]
+const FILE_AS_TEXT: string[] = ["css", "md", "svelte", "ts", "json", "js", "txt", "yml"]
 const EXCEL: string[] = ["xlsx", "csv"]
 const EDITABLES: string[] = [...FILE_AS_TEXT, "html", "xml"]
 

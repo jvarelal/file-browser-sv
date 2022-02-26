@@ -79,6 +79,7 @@ export interface FileEdit {
 export interface FileExcel {
     sheetName: string;
     data: string[];
+    maxNumberOnCol?: number;
 }
 
 /**

@@ -5,7 +5,6 @@
     import filePreviewStore from "../../../stores/filePreviewStore";
     import fileSettingStore from "../../../stores/fileSettingStore";
     import fileGridCssStore from "../../../stores/fileGridCssStore";
-    import scrollStore from "../../../stores/scrollStore";
     import fileToolbarCollapsedStore from "../../../stores/fileToolbarCollapsedStore";
     //components
     import FileGrid from "../grid/FileGrid.svelte";

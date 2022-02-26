@@ -31,11 +31,15 @@ router.get(`${parentPath}/text`, authValidation, (req, res) => {
 })
 
 router.get(`${parentPath}/excel`, authValidation, (req, res) => {
-    let { name } = req.query
-    let dir = req.appOperator.getRouteFile(decodeURIComponent(name))?.dir
+    const { name } = req.query
+    const dir = req.appOperator.getRouteFile(decodeURIComponent(name))?.dir
     const excel = XLSX.readFile(dir);
-    let sheets = excel.SheetNames
-    let excelData = sheets.map(sheet => ({
+    const sheets = excel.SheetNames
+    const rowAux = (sheetData = {}) => {
+        let maxNumberOnCol = Math.max(...sheetData.data.map(r => r.length))
+        return { ...sheetData, maxNumberOnCol }
+    }
+    let excelData = sheets.map(sheet => rowAux({
         sheetName: sheet,
         headers: excel.Sheets[sheet]['!cols'],
         data: XLSX.utils.sheet_to_json(excel.Sheets[sheet], { header: 1 })

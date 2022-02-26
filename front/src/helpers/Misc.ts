@@ -8,6 +8,18 @@ export function limitString(str: string = '', size: number = str.length, complem
     return str
 }
 
+//65 = A 90= z
+export function getExcelColumnCode(index: number) {
+    let code: string = ""
+    if (index > 25) {
+        let firstWord = Math.trunc(index / 25)
+        let secondWord = index % 25
+        return String.fromCharCode(firstWord + 64) + String.fromCharCode(secondWord + 64)
+    } else {
+        return String.fromCharCode(index + 64)
+    }
+}
+
 export const secure = {
     digest: (clearText: string): string => {
         try {
