@@ -162,7 +162,7 @@
             width: 10rem;
             transition: all 0.2s;
             &.active-audio {
-                width: 50%;
+                width: 67%;
                 &.expanded {
                     width: 0%;
                 }
@@ -177,7 +177,7 @@
         width: calc(100% - 10rem);
         transition: all 0.25s;
         &.active-audio {
-            width: 50%;
+            width: 33%;
             &.expanded {
                 width: 100%;
             }
@@ -197,6 +197,9 @@
                 max-height: 50vh;
                 overflow-y: auto;
                 margin: 1rem 0;
+                &.active-audio {
+                    width: 100%;
+                }
             }
         }
         .browser-preview {

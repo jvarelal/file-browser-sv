@@ -1,10 +1,8 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import { secondsStrToTime } from "../../../helpers/Date";
-
     import FileService from "../../../services/FileService";
-
     import type { FileUI } from "../../../types/UITypes";
+    import { secondsStrToTime } from "../../../helpers/Date";
 
     export let file: FileUI;
     let init = false;
@@ -12,18 +10,24 @@
     let seekbar: HTMLInputElement;
     let volumenBar: HTMLInputElement;
     let playButton: HTMLElement;
-    let isPaused = true;
+    let isPaused: boolean = true;
+    let isStoped: boolean = false;
+    let volumeIcon: string = getVolumeIcon("1");
 
     function resetAudio(): void {
         isPaused = true;
+        isStoped = true;
+        audioElement.src = FileService.viewRawFile(file);
         audioElement.pause();
         audioElement.currentTime = 0;
         seekbar.value = "0";
-        playButton?.focus()
+        playButton?.focus();
+        init = true;
     }
 
-    function playAudio() {
+    function playAudio(): void {
         if (isPaused) {
+            isStoped = false;
             audioElement.play();
         } else {
             audioElement.pause();
@@ -31,8 +35,20 @@
         isPaused = !isPaused;
     }
 
+    function getVolumeIcon(value: string): string {
+        let val = Number(value || "0");
+        if (val > 0.75) {
+            return "up";
+        } else if (val > 0.15) {
+            return "down";
+        } else if (val > 0) {
+            return "off";
+        }
+        return "mute";
+    }
     $: if (file && init) {
         resetAudio();
+        playAudio();
     }
 
     onMount(resetAudio);
@@ -45,11 +61,16 @@
         on:timeupdate={() =>
             (seekbar.value = audioElement?.currentTime.toString())}
         on:canplay={() => (seekbar.max = audioElement?.duration.toString())}
+        on:ended={resetAudio}
     >
-        <source src={FileService.viewRawFile(file)} type="audio/mpeg" />
+        <source type={`audio/${file.type}`} />
     </audio>
-    <div class="audio-animation">
-        <canvas height="100" width="480" />
+    <div class="audio-animation w-100">
+        <i
+            class="fas fa-compact-disc m-auto"
+            class:rotate={!isStoped}
+            class:paused={isPaused}
+        />
     </div>
     <div class="d-flex w-100">
         <span class="p-8">{secondsStrToTime(seekbar?.value)}</span>
@@ -73,9 +94,9 @@
         <button class="audio-control audio-play m-auto" on:click={resetAudio}>
             <i class="far fa-stop-circle" />
         </button>
-        <div class="w-50 p-5 audio-volumen d-flex">
-            <span class="p-8">
-                <i class="fas fa-volume-mute" />
+        <div class="w-50 p-8 audio-volumen d-flex">
+            <span class="p-8 w-25 d-flex">
+                <i class={`m-l-auto fas fa-volume-${volumeIcon}`} />
             </span>
             <input
                 class="w-100"
@@ -85,12 +106,11 @@
                 step="0.01"
                 bind:this={volumenBar}
                 on:keydown|stopPropagation
-                on:input={() =>
-                    (audioElement.volume = Number(volumenBar.value))}
+                on:input={() => {
+                    audioElement.volume = Number(volumenBar.value);
+                    volumeIcon = getVolumeIcon(volumenBar.value);
+                }}
             />
-            <span class="p-8">
-                <i class="fas fa-volume-up" />
-            </span>
         </div>
     </div>
 </div>
@@ -99,12 +119,18 @@
     @import "../../../styles/vars";
     .audio {
         &-data {
-            height: 50%;
             width: 90%;
             display: flex;
             flex-direction: column;
             margin: auto;
             background-color: $bg-btn;
+        }
+        &-animation {
+            font-size: 10rem;
+            display: flex;
+            background-color: $bg-label;
+            color: $color-label;
+            padding: 1rem 0;
         }
         &-controls {
             width: 100%;
@@ -134,8 +160,22 @@
             font-size: 1.75rem;
         }
     }
+    .rotate {
+        animation: rotate 3s linear infinite;
+        &.paused {
+            animation-play-state: paused;
+        }
+    }
     audio {
         display: none;
+    }
+    @keyframes rotate {
+        from {
+            transform: rotate(0deg);
+        }
+        to {
+            transform: rotate(360deg);
+        }
     }
     @media (max-width: $responsive-size) {
         .audio {
