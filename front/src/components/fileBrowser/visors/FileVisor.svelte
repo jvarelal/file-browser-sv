@@ -9,6 +9,7 @@
     import FileVisorImage from "./FileVisorImage.svelte";
     import ActionButton from "../../commons/ActionButton.svelte";
     import FileVisorText from "./FileVisorText.svelte";
+    import FIleVisorAudio from "./FIleVisorAudio.svelte";
     import FileVisorExcel from "./FileVisorExcel.svelte";
     //helpers
     import FileService from "../../../services/FileService";
@@ -111,6 +112,8 @@
         <FileVisorText file={preview} bind:enableEdit />
     {:else if FileBrowser.previews.excel.includes(preview.type)}
         <FileVisorExcel file={preview} />
+    {:else if FileBrowser.previews.audio.includes(preview.type)}
+        <FIleVisorAudio file={preview} />
     {:else}
         <iframe
             title="file"

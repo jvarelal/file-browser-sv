@@ -106,7 +106,8 @@ export interface FileBrowserSettings {
             svg: string[];
         },
         asText: string[],
-        excel: string[]
+        excel: string[],
+        audio: string[]
     };
     visor: string[],
     editables: string[]

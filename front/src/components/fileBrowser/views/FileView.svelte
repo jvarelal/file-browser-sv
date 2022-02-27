@@ -20,6 +20,7 @@
     //helpers
     import { getFileType } from "../../../helpers/Media";
     import { groupByDateClasification } from "../../../helpers/Date";
+    import FileBrowser from "../../../constants/FileBrowser";
 
     export let files: FileUI[] = [];
     export let active: boolean = true;
@@ -111,6 +112,10 @@
         <div
             class="scroll browser-wrapper"
             class:active={$filePreviewStore.get(key)}
+            class:active-audio={$filePreviewStore.get(key) &&
+                FileBrowser.previews.audio.includes(
+                    $filePreviewStore.get(key).type
+                )}
             class:statusToolbar={$filePreviewStore.get(key)}
             class:toolbarExpanded={!$fileToolbarCollapsedStore}
             class:expanded
@@ -130,7 +135,13 @@
             {/if}
         </div>
         {#if $filePreviewStore.get(key)}
-            <div class="browser-preview" class:expanded>
+            <div
+                class="browser-preview"
+                class:expanded
+                class:active-audio={FileBrowser.previews.audio.includes(
+                    $filePreviewStore.get(key).type
+                )}
+            >
                 <FileVisor bind:expanded {active} />
             </div>
         {/if}
@@ -150,6 +161,12 @@
             overflow-y: auto;
             width: 10rem;
             transition: all 0.2s;
+            &.active-audio {
+                width: 50%;
+                &.expanded {
+                    width: 0%;
+                }
+            }
             &.expanded {
                 width: 0%;
             }
@@ -159,6 +176,12 @@
         position: relative;
         width: calc(100% - 10rem);
         transition: all 0.25s;
+        &.active-audio {
+            width: 50%;
+            &.expanded {
+                width: 100%;
+            }
+        }
         &.expanded {
             width: 100%;
         }
@@ -178,6 +201,10 @@
         }
         .browser-preview {
             width: 100%;
+            &.active-audio {
+                width: 100%;
+                max-height: 50vh;
+            }
         }
     }
 </style>

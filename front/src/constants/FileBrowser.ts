@@ -2,7 +2,8 @@ import type { FileBrowserSettings } from "../types/UITypes";
 
 const IMG_PREVIEW: string[] = ["jpg", "png", "jpeg", "svg", "gif", "webp"]
 const FILE_AS_TEXT: string[] = ["css", "md", "svelte", "ts", "json", "js", "txt", "yml"]
-const EXCEL: string[] = ["xlsx", "csv"]
+const EXCEL: string[] = ["csv", "ods", "pods", "xls", "xlsm", "xlsx"]
+const AUDIO: string[] = ["mp3", "flac", "wav"]
 const EDITABLES: string[] = [...FILE_AS_TEXT, "html", "xml"]
 
 const FileBrowser: FileBrowserSettings = {
@@ -40,9 +41,10 @@ const FileBrowser: FileBrowserSettings = {
             svg: ["css", "csv", "exe", "html", "mp3", "mp4", "txt", "doc", "docx", "js", "pdf", "xlsx", "zip", "xml", "webm", "json"]
         },
         asText: FILE_AS_TEXT,
-        excel: EXCEL
+        excel: EXCEL,
+        audio: AUDIO
     },
-    visor: [...IMG_PREVIEW, ...EDITABLES, ...EXCEL, "pdf", "mp3", "mp4", "webm"],
+    visor: [...IMG_PREVIEW, ...EDITABLES, ...EXCEL, ...AUDIO, "pdf", "mp4", "webm"],
     editables: EDITABLES
 }
 
