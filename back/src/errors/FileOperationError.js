@@ -7,13 +7,13 @@ class FileOperationError extends Error {
         try {
             this.message = secure.digest(message);
             if (errors.length > 0) {
-                this.elements = errors.map(e => ({
+                this.errors = errors.map(e => ({
                     route: secure.digest(e.route),
                     name: secure.digest(e.name),
                     message: secure.digest(e.message)
                 }))
             }
-            this.key = true
+            this.secure = true
         } catch (e) {
             this.message = message;
             this.elements = errors;

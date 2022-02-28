@@ -18,6 +18,7 @@
         alt={name}
         class="file-img-preview"
         on:error={(e) => (error = true)}
+        on:dragstart|preventDefault
     />
 {:else}
     <i class="fas fa-file-image file-img-preview" />

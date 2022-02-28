@@ -1,5 +1,6 @@
 <script lang="ts">
     import type { FileUI } from "../../types/UITypes";
+    import { handleDrop } from "../../helpers/Media";
 
     export let filesSelected: File[] = [];
     export let currentFiles: FileUI[] = [];
@@ -23,21 +24,6 @@
     function removeFile(file: File): void {
         filesSelected = filesSelected.filter((f) => f.name !== file.name);
     }
-    function handleDrop(dragEvent: DragEvent): void {
-        let files: File[] = [];
-        if (dragEvent.dataTransfer.items) {
-            for (let i = 0; i < dragEvent.dataTransfer.items.length; i++) {
-                if (dragEvent.dataTransfer.items[i].kind === "file") {
-                    files.push(dragEvent.dataTransfer.items[i].getAsFile());
-                }
-            }
-        } else {
-            for (let i = 0; i < dragEvent.dataTransfer.files.length; i++) {
-                files.push(dragEvent.dataTransfer.files[i]);
-            }
-        }
-        addFiles(files);
-    }
     function handleChange(): void {
         let files = Array.from(inputFile.files);
         addFiles(files);
@@ -53,7 +39,7 @@
             on:click={() => inputFile.click()}
             on:keydown={(e) => (e.key === "Enter" ? inputFile.click() : null)}
             on:dragenter|preventDefault={() => (dragOn = true)}
-            on:drop|preventDefault={handleDrop}
+            on:drop|preventDefault={(e) => handleDrop(e, addFiles)}
             on:dragover|preventDefault={() => (dragOn = false)}
             tabindex="0"
             draggable

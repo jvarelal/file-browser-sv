@@ -47,8 +47,6 @@ function createfileSettingStore() {
         if (s.cache?.length > 0) {
             s.cache = s.cache.map(dir => secure.digest(dir))
         }
-        console.log(s.cache);
-        
         localStorage.setItem(FileBrowser.localStorageKeys.settings, JSON.stringify(s))
     }
 

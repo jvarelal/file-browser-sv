@@ -97,11 +97,28 @@ function getLastTreeName(route: string): string {
     return separateRoot[separateRoot.length - 1];
 }
 
+function handleDrop(dragEvent: DragEvent, callback: (files: File[]) => void): void {
+    let files: File[] = [];
+    if (dragEvent.dataTransfer.items) {
+        for (let i = 0; i < dragEvent.dataTransfer.items.length; i++) {
+            if (dragEvent.dataTransfer.items[i].kind === "file") {
+                files.push(dragEvent.dataTransfer.items[i].getAsFile());
+            }
+        }
+    } else {
+        for (let i = 0; i < dragEvent.dataTransfer.files.length; i++) {
+            files.push(dragEvent.dataTransfer.files[i]);
+        }
+    }
+    callback(files);
+}
+
 export {
     getFileType,
     getFileIcon,
     getSizeMb,
     mapCustomFiles,
     isBookmark,
-    getLastTreeName
+    getLastTreeName,
+    handleDrop
 }

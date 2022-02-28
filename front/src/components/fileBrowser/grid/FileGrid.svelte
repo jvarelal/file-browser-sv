@@ -34,7 +34,8 @@
     $: orderFiles = files.sort((a, b) =>
         sortFiles(a, b, $fileSettingStore.sortBy, $fileSettingStore.orderAsc)
     );
-    $: list = $fileSettingStore.viewList && $filePreviewStore.get(key) === undefined;
+    $: list =
+        $fileSettingStore.viewList && $filePreviewStore.get(key) === undefined;
 
     function sortFiles(
         fileA: FileUI,
@@ -76,7 +77,6 @@
         let filePreview: FileUIPreview = { ...file, ...consecutives };
         filePreviewStore.setPreview(key, filePreview);
     }
-
 </script>
 
 <div
@@ -98,6 +98,7 @@
                         src={file.icon}
                         alt={file.name}
                         class="file-img-icon"
+                        on:dragstart|preventDefault
                     />
                 {:else}
                     <i class={file.icon} />

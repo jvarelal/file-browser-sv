@@ -59,7 +59,9 @@ async function validateResponse(response: Response, dataType: string = "json"): 
 
 function processErrorApiResponse(err: ErrorApiResponse): ErrorApiResponse {
     if (err.secure) {
+        console.log(err)
         err.message = secure.recover(err.message)
+        console.log(err.message)
         if (err.errors) {
             err.errors = err.errors.map((e) => ({
                 route: secure.recover(e.route),
@@ -68,6 +70,7 @@ function processErrorApiResponse(err: ErrorApiResponse): ErrorApiResponse {
             }))
         }
     }
+    console.log(err)
     return err
 }
 

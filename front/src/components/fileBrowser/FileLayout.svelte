@@ -1,17 +1,29 @@
 <script lang="ts">
     import { fade } from "svelte/transition";
-
+    //stores
     import fileBrowserStore from "../../stores/fileBrowserStore";
     import fileContextMenuStore from "../../stores/fileContextMenuStore";
     import fileDirectoryStore from "../../stores/fileDirectoryStore";
     import fileDownloadStore from "../../stores/fileDownloadStore";
+    import dialogStore from "../../stores/dialogStore";
     import scrollStore from "../../stores/scrollStore";
     import fileToolbarCollapsed from "../../stores/fileToolbarCollapsedStore";
+    //components
     import Accordion from "../commons/Accordion.svelte";
-
-    import { getLastTreeName } from "../../helpers/Media";
+    //types
+    import type { FileUpload } from "../../types/UITypes";
+    import type { ErrorApiResponse } from "../../types/ApiTypes";
+    //helpers
+    import {
+        getLastTreeName,
+        handleDrop,
+        mapCustomFiles,
+    } from "../../helpers/Media";
+    import { listErrors } from "./contextmenu/FileContextMenu.svelte";
+    import FileService from "../../services/FileService";
 
     let section: HTMLElement;
+    let dragOn: boolean = false;
     let scrollAction = (e: Event): void => {
         let target = e.target as HTMLElement;
         fileContextMenuStore.closeContext();
@@ -20,6 +32,41 @@
             target.clientHeight + target.scrollTop
         );
     };
+
+    function addFiles(files: File[]) {
+        if (!$fileBrowserStore.viewBookmarks) {
+            let route = $fileDirectoryStore.current;
+            let values: FileUpload = { type: "file", name: "", files, route };
+            dragOn = false;
+            const cb = (): void => {
+                fileBrowserStore.setFiles(
+                    [...$fileBrowserStore.files, ...mapCustomFiles(files)],
+                    $fileDirectoryStore.current
+                );
+                dialogStore.showMessage(
+                    `${files.length} archivos subidos a ${route}`
+                );
+            };
+            const err = (err: ErrorApiResponse): void => {
+                listErrors(err);
+                let uploadedFiles = files.filter(
+                    (f) =>
+                        !err.errors.find(
+                            (errorFile) => errorFile.name === f.name
+                        )
+                );
+                fileBrowserStore.setFiles(
+                    [
+                        ...$fileBrowserStore.files,
+                        ...mapCustomFiles(uploadedFiles),
+                    ],
+                    $fileDirectoryStore.current
+                );
+            };
+            dialogStore.showLoading();
+            FileService.create(values, cb, err);
+        }
+    }
     $: if ($scrollStore.updateScroll) {
         section.scroll({ top: $scrollStore.previousHeight });
         scrollStore.restore();
@@ -43,6 +90,11 @@
             );
         }
     }}
+    class:dragOn={dragOn && !$fileBrowserStore.viewBookmarks}
+    on:dragenter|preventDefault|stopPropagation
+    on:drop|preventDefault|stopPropagation={(e) => handleDrop(e, addFiles)}
+    on:dragover|preventDefault|stopPropagation={() => (dragOn = true)}
+    on:dragleave|preventDefault|stopPropagation={() => (dragOn = false)}
 >
     <div
         class="browser-layout"
@@ -102,6 +154,9 @@
         text-align: left;
         padding: 0.5rem;
         border-bottom: 1px solid $border-light;
+    }
+    .dragOn {
+        background-color: #88888844;
     }
     @media (max-width: $responsive-size) {
         .browser-layout {

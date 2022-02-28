@@ -57,7 +57,7 @@ const directory = (user) => {
 		const fastFolderSizeAsync = promisify(fastFolderSize)
 		const bytes = await fastFolderSizeAsync(dir)
 		return {
-		
+
 			message: "Information collected",
 			data: {
 				isDirectory: true,
@@ -127,14 +127,12 @@ const directory = (user) => {
 		files.forEach(file => {
 			let destination = path.join(dir, file.originalname)
 			if (!fs.existsSync(destination)) {
-				fs.move(
-					path.join(__dirname, "tmp", file.originalname),
-					destination,
-					function (err) {
-						if (err) {
-							errors.push({ name: file.originalname, message: err.message })
-						}
+				let origin = path.join(__dirname, "../tmp", file.originalname)
+				fs.move(origin, destination, function (err) {
+					if (err) {
+						errors.push({ name: file.originalname, message: err.message })
 					}
+				}
 				)
 			} else {
 				errors.push({ route: destination, name: file.originalname, message: "File already exist" })

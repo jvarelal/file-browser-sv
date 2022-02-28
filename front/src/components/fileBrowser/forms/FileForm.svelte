@@ -9,7 +9,6 @@
     //types
     import type {
         BooleanFunction,
-        FileUI,
         FileUpload,
     } from "../../../types/UITypes";
     import type {
@@ -119,8 +118,8 @@
                 bind:this={focusElement}
             >
                 <option value="folder">Folder</option>
-                <option value="file">Archivo</option>
-                <option value="plain">Nuevo archivo plano</option>
+                <option value="plain">Archivo</option>
+                <option value="file">Carga multiple</option>
             </select>
         </div>
     </div>

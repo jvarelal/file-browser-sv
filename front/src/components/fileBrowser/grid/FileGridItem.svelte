@@ -19,11 +19,21 @@
     import fileContextMenuStore from "../../../stores/fileContextMenuStore";
     import fileGridCssStore from "../../../stores/fileGridCssStore";
     import scrollStore from "../../../stores/scrollStore";
+    import dialogStore from "../../../stores/dialogStore";
     //helpers
     import FileBrowser from "../../../constants/FileBrowser";
-    import { deleteFiles } from "../contextmenu/FileContextMenu.svelte";
-    import { isBookmark } from "../../../helpers/Media";
-    import type { FileUI } from "../../../types/UITypes";
+    import {
+        deleteFiles,
+        listErrors,
+    } from "../contextmenu/FileContextMenu.svelte";
+    import {
+        handleDrop,
+        isBookmark,
+        mapCustomFiles,
+    } from "../../../helpers/Media";
+    import type { FileUI, FileUpload } from "../../../types/UITypes";
+    import FileService from "../../../services/FileService";
+    import type { ErrorApiResponse } from "../../../types/ApiTypes";
 
     export let file: FileUI;
     export let viewItem: (file: FileUI) => void;
@@ -33,11 +43,12 @@
     let element: HTMLElement;
     let style: string = "";
     let backFocusedFlag: boolean = false;
+    let dragOn: boolean = false;
 
     function validateScroll(target: HTMLElement) {
         if (!$filePreviewStore.get(key)) {
             setTimeout(() => {
-                target.scrollIntoView({behavior: "smooth"});
+                target.scrollIntoView({ behavior: "smooth" });
             }, 500);
         }
     }
@@ -126,7 +137,44 @@
                 return;
         }
     }
-
+    function addFiles(files: File[]) {
+        let route = $fileDirectoryStore.current;
+        route += file.isDirectory ? "/" + file.name : "";
+        let values: FileUpload = { type: "file", name: "", files, route };
+        dragOn = false;
+        const cb = (): void => {
+            if (!file.isDirectory) {
+                //only update if is current folder
+                fileBrowserStore.setFiles(
+                    [...$fileBrowserStore.files, ...mapCustomFiles(files)],
+                    $fileDirectoryStore.current
+                );
+            }
+            dialogStore.showMessage(
+                `${files.length} archivos subidos a ${route}`
+            );
+        };
+        const err = (data: ErrorApiResponse): void => {
+            listErrors(data);
+            if (!file.isDirectory) {
+                let uploadedFiles = files.filter(
+                    (f) =>
+                        !data.errors.find(
+                            (errorFile) => errorFile.name === f.name
+                        )
+                );
+                fileBrowserStore.setFiles(
+                    [
+                        ...$fileBrowserStore.files,
+                        ...mapCustomFiles(uploadedFiles),
+                    ],
+                    $fileDirectoryStore.current
+                );
+            }
+        };
+        dialogStore.showLoading();
+        FileService.create(values, cb, err);
+    }
     onMount(() => {
         if (file.idxFocus === 0) {
             if (!$fileGridCssStore.previousSet) {
@@ -139,10 +187,10 @@
             }
         }
         map.set(key + file.idxFocus, element);
-        return () =>{
+        return () => {
             map.delete(key + file.idxFocus);
-            currentIdx = 0
-        }
+            currentIdx = 0;
+        };
     });
     //move focus on preview
     $: if (
@@ -177,13 +225,16 @@
     class:selected={file.checked}
     class:list
     class:grid={!list}
+    class:dragOn={dragOn && file.isDirectory}
     {style}
     tabindex="0"
     bind:this={element}
-    on:contextmenu|preventDefault|stopPropagation={({ pageX, pageY }) => {
-        element.focus();
-        fileContextMenuStore.showContextItem(file, pageX, pageY);
-    }}
+    on:contextmenu|preventDefault|stopPropagation={({ pageX, pageY }) =>
+        fileContextMenuStore.showContextItem(file, pageX, pageY)}
+    on:dragenter|preventDefault|stopPropagation
+    on:drop|preventDefault|stopPropagation={(e) => handleDrop(e, addFiles)}
+    on:dragover|preventDefault|stopPropagation={() => (dragOn = true)}
+    on:dragleave|preventDefault|stopPropagation={() => (dragOn = false)}
     on:click={processItem}
     on:keydown={validateKey}
 >
@@ -199,7 +250,8 @@
         transition: all 0.25s;
         position: relative;
         &:focus,
-        &:hover {
+        &:hover,
+        &.dragOn {
             background-color: $file-item-focus;
             transform: translateY(4%);
         }

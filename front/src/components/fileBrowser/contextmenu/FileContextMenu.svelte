@@ -10,6 +10,11 @@
                     (err) => f.route + f.name === err.route + err.name
                 )
         );
+        listErrors(data)
+        callBack(filesAfected);
+    }
+
+    export function listErrors(data: ErrorApiResponse) {
         let message: string =
             "Se presento un problema al operar los archivos: ";
         if (data?.errors?.length > 0) {
@@ -21,7 +26,6 @@
         }
         message += " " + data.message;
         dialogStore.showMessage(message);
-        callBack(filesAfected);
     }
 
     export function deleteFiles(files: FileUI[] = []): void {
