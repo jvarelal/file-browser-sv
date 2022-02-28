@@ -141,6 +141,9 @@
                 class:active-audio={FileBrowser.previews.audio.includes(
                     $filePreviewStore.get(key).type
                 )}
+                on:dragenter|preventDefault|stopPropagation
+                on:drop|preventDefault|stopPropagation
+                on:dragover|preventDefault|stopPropagation
             >
                 <FileVisor bind:expanded {active} />
             </div>
