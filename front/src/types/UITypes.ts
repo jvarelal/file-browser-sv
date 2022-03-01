@@ -21,7 +21,13 @@ export interface ContextMenuOption {
  */
 export interface Login {
     user: string;
-    key: string;
+    key?: string;
+}
+
+export interface UserApp extends Login {
+    routes: string[];
+    rol: number;
+    actions: string[]
 }
 
 export interface MediaIcon {

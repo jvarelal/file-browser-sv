@@ -3,6 +3,7 @@
     //stores
     import fileDirectoryStore from "../stores/fileDirectoryStore";
     import fileSettingStore from "../stores/fileSettingStore";
+    import appViewStore from "../stores/appViewStore";
     //Components
     import FileToolBar from "./fileBrowser/FileToolBar.svelte";
     import FileLayout from "./fileBrowser/FileLayout.svelte";
@@ -14,7 +15,6 @@
     //helpers
     import FileService from "../services/FileService";
     import type { FileUI } from "../types/UITypes";
-    import Login from "./Login.svelte";
 
     let numberItemsFiltered: number = 0;
     let fileInfo: FileUI;
@@ -34,35 +34,31 @@
             if ($fileSettingStore.cache[0]) {
                 fileDirectoryStore.setDirectory($fileSettingStore.cache[0]);
             } else {
-                showLogin = true;
+                appViewStore.setLogin();
             }
         }
     });
 </script>
 
 <section>
-    {#if showLogin}
-        <Login bind:showLogin />
-    {:else}
-        <FileToolBar {numberItemsFiltered} />
-        <FileLayout>
-            {#await fileList}
-                <FileViewWaiting />
-            {:then list}
-                <FileInit files={list.files} />
-            {:catch error}
-                <FileViewError {error} bind:showLogin />
-            {/await}
-        </FileLayout>
-        {#if fileInfo}
-            <Modal
-                icon="fas fa-info"
-                label="Detalle elemento"
-                onClose={() => (fileInfo = null)}
-            >
-                <FileInfo file={fileInfo} />
-            </Modal>
-        {/if}
+    <FileToolBar {numberItemsFiltered} />
+    <FileLayout>
+        {#await fileList}
+            <FileViewWaiting />
+        {:then list}
+            <FileInit files={list.files} />
+        {:catch error}
+            <FileViewError {error} />
+        {/await}
+    </FileLayout>
+    {#if fileInfo}
+        <Modal
+            icon="fas fa-info"
+            label="Detalle elemento"
+            onClose={() => (fileInfo = null)}
+        >
+            <FileInfo file={fileInfo} />
+        </Modal>
     {/if}
 </section>
 

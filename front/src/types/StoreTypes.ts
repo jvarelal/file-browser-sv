@@ -1,6 +1,19 @@
 import type { FileApiResponse } from "./ApiTypes"
 import type { FileUI } from "./UITypes"
 
+export type UserProfileStore = {
+    name: string;
+    key: string;
+    routes: string[];
+    rol: number;
+    actions: string[]
+}
+
+export type AppViewStore = {
+    login: boolean;
+    browser: boolean;
+}
+
 export type DialogStore = {
     active: boolean;
     title: string;

@@ -9,11 +9,6 @@ export interface ApiResponse {
     message: string;
 }
 
-export interface LoginApiResponse extends ApiResponse {
-    token: string;
-    routes: string[];
-}
-
 export interface FileApiResponse {
     route?: string;
     isDirectory: boolean;
@@ -24,6 +19,15 @@ export interface FileApiResponse {
     width?: number;
     height?: number;
     key?: boolean;
+}
+
+export interface LoginApiResponse extends ApiResponse {
+    user: string;
+    token: string;
+    routes: string[];
+    rol: number;
+    actions: string[]
+    bookmarks: FileApiResponse[]
 }
 
 export interface FileListApiResponse extends ApiResponse {

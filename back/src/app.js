@@ -24,7 +24,7 @@ app.use(multer({ storage }).array("file", config.fileBrowser.maxNumberFilesUploa
 app.use("/", express.static(path.join(__dirname, "public")))
 
 //routes
-app.use(require("./routes/loginRoutes"))
+app.use(require("./routes/userRoutes"))
 app.use(require("./routes/filesRoutes"))
 app.use(require("./routes/filesViewRoutes"))
 

@@ -13,7 +13,14 @@
             "initialFolder": [
                 "C:/Users",
                 "C:/Windows"
-            ]
+            ],
+            "rol": 1,
+            "actions": [
+                "w",
+                "u",
+                "d"
+            ],
+            "bookmarks": []
         }
     ]
 }

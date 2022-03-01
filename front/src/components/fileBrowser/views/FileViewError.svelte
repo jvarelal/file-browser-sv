@@ -1,14 +1,14 @@
 <script lang="ts">
     import { onMount } from "svelte";
+    import appViewStore from "../../../stores/appViewStore";
     import fileBrowserStore from "../../../stores/fileBrowserStore";
     import type { ErrorApiResponse } from "../../../types/ApiTypes";
 
     export let error: ErrorApiResponse;
-    export let showLogin: boolean;
 
     onMount(() => {
         if (error.status === 401) {
-            showLogin = true;
+            appViewStore.setLogin();
         }
         fileBrowserStore.setError();
     });

@@ -1,37 +1,15 @@
 import { secure } from "../helpers/Misc"
 import type {
     FileListApiResponse,
-    LoginApiResponse,
     ErrorApiResponse,
     ApiResponse,
     FileInformationApiResponse,
     FileApiResponse
 } from "../types/ApiTypes"
-import type { FileEdit, FileExcel, FileMove, FileUI, FileUpload, Login } from "../types/UITypes";
+import type { FileEdit, FileExcel, FileMove, FileUI, FileUpload } from "../types/UITypes";
 import httpClient from "./HttpClient"
 
 const FileService = {
-
-    login: (
-        loginData: Login,
-        cb: (resp: LoginApiResponse) => void,
-        err: (resp: ErrorApiResponse) => void
-    ): void => {
-        let loginDigest: Login = {
-            user: secure.digest(loginData.user),
-            key: secure.digest(loginData.key)
-        }
-        httpClient.post(`login`, loginDigest)
-            .then((data: LoginApiResponse): void => {
-                if (data.token) {
-                    httpClient.setToken(data.token)
-                }
-                data.routes = data.routes.map(r => secure.recover(r)) 
-                cb(data)
-            })
-            .catch(err)
-    },
-
     list: (route: string): Promise<FileListApiResponse> => {
         if (route) {
             return httpClient.post(`files`, { route: secure.digest(route) })

@@ -1,13 +1,13 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import FileService from "../services/FileService";
+    import UserService from "../services/UserService";
     import dialogStore from "../stores/dialogStore";
-    import fileDirectoryStore from "../stores/fileDirectoryStore";
     import fileSettingStore from "../stores/fileSettingStore";
+    import userProfileStore from "../stores/userProfileStore";
+    import fileBrowserStore from "../stores/fileBrowserStore";
+    import appViewStore from "../stores/appViewStore";
     import InputText from "./commons/InputText.svelte";
     import type { Login } from "../types/UITypes";
-
-    export let showLogin: boolean;
 
     let finalError: string = "";
     let values: Login = { user: "", key: "" };
@@ -15,13 +15,15 @@
 
     function handleSubmit() {
         dialogStore.showLoading();
-        FileService.login(
+        UserService.login(
             values,
             (data) => {
                 fileSettingStore.initCache(data.routes);
-                fileDirectoryStore.setInit(data.routes[0]);
+                fileBrowserStore.setBookmarks(data.bookmarks);
+                userProfileStore.setProfile({ ...data, key: values.key });
+
                 dialogStore.closeDialog();
-                showLogin = false
+                appViewStore.setBrowser();
             },
             (err) => dialogStore.showMessage(err.message)
         );

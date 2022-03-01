@@ -2,6 +2,7 @@ import { writable } from "svelte/store";
 import FileBrowser from "../constants/FileBrowser";
 import { getFileIcon, isBookmark } from "../helpers/Media";
 import { secure } from "../helpers/Misc";
+import UserService from "../services/UserService";
 import type { FileApiResponse } from "../types/ApiTypes";
 import type { FileBrowserStore } from "../types/StoreTypes";
 import type { FileUI } from "../types/UITypes";
@@ -40,12 +41,13 @@ function getLocalBookmarks(): FileUI[] {
 }
 
 function setLocalBookmarks(bookmarks: FileUI[] = []): FileUI[] {
-    let localBookmarks: FileApiResponse[] = bookmarks.map((b) => ({
+    /*let localBookmarks: FileApiResponse[] = bookmarks.map((b) => ({
         isDirectory: false,
         route: secure.digest(b.route),
         name: secure.digest(b.name)
     }))
-    localStorage.setItem(FileBrowser.localStorageKeys.bookmarks, JSON.stringify(localBookmarks))
+    localStorage.setItem(FileBrowser.localStorageKeys.bookmarks, JSON.stringify(localBookmarks))*/
+    UserService.updateBookmarks(bookmarks, (data) => console.log(data), (err) => alert(err.message))
     return bookmarks
 }
 
@@ -63,6 +65,19 @@ function createfileBrowserStore() {
             error: false,
             viewBookmarks: false,
         })),
+        setBookmarks: (bookmarks: FileApiResponse[]) => update((s) => {
+            return {
+                ...s,
+                bookmarks: bookmarks.map((b): FileUI => {
+                    let data: FileApiResponse = ({
+                        route: secure.recover(b.route),
+                        name: secure.recover(b.name),
+                        isDirectory: false,
+                    })
+                    return { ...data, ...getFileIcon(data) }
+                })
+            }
+        }),
         setViewBookmarks: () => update((s) => ({
             ...s,
             viewBookmarks: !s.viewBookmarks,
