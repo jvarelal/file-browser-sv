@@ -107,7 +107,8 @@ export interface FileBrowserSettings {
         },
         asText: string[],
         excel: string[],
-        audio: string[]
+        audio: string[],
+        video: string[]
     };
     visor: string[],
     editables: string[]

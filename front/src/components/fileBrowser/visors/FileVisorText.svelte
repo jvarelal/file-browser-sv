@@ -133,7 +133,7 @@
             }
         }
         &-linenumber {
-            width: 2.25rem;
+            width: 2.5rem;
             text-align: right;
             position: absolute;
             top: 0;
@@ -143,7 +143,7 @@
             border: 1px solid $border-light;
         }
         &-file {
-            width: calc(100% - 3.75rem);
+            width: calc(100% - 3.5rem);
             background-color: transparent;
             color: $color-text;
             margin: 0;

@@ -11,6 +11,7 @@
     import FileVisorText from "./FileVisorText.svelte";
     import FIleVisorAudio from "./FIleVisorAudio.svelte";
     import FileVisorExcel from "./FileVisorExcel.svelte";
+    import FileVisorVideo from "./FileVisorVideo.svelte";
     //helpers
     import FileService from "../../../services/FileService";
     import { isBookmark } from "../../../helpers/Media";
@@ -114,6 +115,8 @@
         <FileVisorExcel file={preview} />
     {:else if FileBrowser.previews.audio.includes(preview.type)}
         <FIleVisorAudio file={preview} />
+    {:else if FileBrowser.previews.video.includes(preview.type)}
+        <FileVisorVideo file={preview} />
     {:else}
         <iframe
             title="file"

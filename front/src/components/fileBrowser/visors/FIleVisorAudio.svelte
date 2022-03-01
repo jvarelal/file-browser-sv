@@ -3,6 +3,7 @@
     import FileService from "../../../services/FileService";
     import type { FileUI } from "../../../types/UITypes";
     import { secondsStrToTime } from "../../../helpers/Date";
+    import { getVolumeIcon } from "../../../helpers/Media";
 
     export let file: FileUI;
     let init = false;
@@ -25,7 +26,7 @@
         init = true;
     }
 
-    function playAudio(): void {
+    function playData(): void {
         if (isPaused) {
             isStoped = false;
             audioElement.play();
@@ -35,20 +36,9 @@
         isPaused = !isPaused;
     }
 
-    function getVolumeIcon(value: string): string {
-        let val = Number(value || "0");
-        if (val > 0.75) {
-            return "up";
-        } else if (val > 0.15) {
-            return "down";
-        } else if (val > 0) {
-            return "off";
-        }
-        return "mute";
-    }
     $: if (file && init) {
         resetAudio();
-        playAudio();
+        playData();
     }
 
     onMount(resetAudio);
@@ -87,7 +77,7 @@
         <button
             class="audio-control audio-play m-auto"
             bind:this={playButton}
-            on:click={playAudio}
+            on:click={playData}
         >
             <i class={`far fa-${isPaused ? "play" : "pause"}-circle`} />
         </button>

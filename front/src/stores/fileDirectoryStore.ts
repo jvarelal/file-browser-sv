@@ -15,7 +15,7 @@ function directoryStore() {
         setInit: (directory: string) => update((s) => {
             return ({
                 ...s,
-                current: directory
+                current: s.current ? s.current : directory
             })
         }),
         setDirectory: (directory: string = "", itemFocus: string = null) => update((s) => {

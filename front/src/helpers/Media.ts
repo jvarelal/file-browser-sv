@@ -113,6 +113,18 @@ function handleDrop(dragEvent: DragEvent, callback: (files: File[]) => void): vo
     callback(files);
 }
 
+function getVolumeIcon(value: string): string {
+    let val = Number(value || "0");
+    if (val > 0.75) {
+        return "up";
+    } else if (val > 0.15) {
+        return "down";
+    } else if (val > 0) {
+        return "off";
+    }
+    return "mute";
+}
+
 export {
     getFileType,
     getFileIcon,
@@ -120,5 +132,6 @@ export {
     mapCustomFiles,
     isBookmark,
     getLastTreeName,
-    handleDrop
+    handleDrop,
+    getVolumeIcon
 }

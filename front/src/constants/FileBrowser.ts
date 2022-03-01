@@ -4,6 +4,7 @@ const IMG_PREVIEW: string[] = ["jpg", "png", "jpeg", "svg", "gif", "webp"]
 const FILE_AS_TEXT: string[] = ["css", "md", "svelte", "ts", "json", "js", "txt", "yml"]
 const EXCEL: string[] = ["csv", "ods", "pods", "xls", "xlsm", "xlsx"]
 const AUDIO: string[] = ["mp3", "flac", "wav"]
+const VIDEO: string[] = ["mp4", "webm"]
 const EDITABLES: string[] = [...FILE_AS_TEXT, "html", "xml"]
 
 const FileBrowser: FileBrowserSettings = {
@@ -42,7 +43,8 @@ const FileBrowser: FileBrowserSettings = {
         },
         asText: FILE_AS_TEXT,
         excel: EXCEL,
-        audio: AUDIO
+        audio: AUDIO,
+        video: VIDEO
     },
     visor: [...IMG_PREVIEW, ...EDITABLES, ...EXCEL, ...AUDIO, "pdf", "mp4", "webm"],
     editables: EDITABLES
