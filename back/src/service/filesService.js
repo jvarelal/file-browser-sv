@@ -1,21 +1,24 @@
-const fs = require('fs-extra')
-const sizeOf = require('image-size');
-const path = require("path")
-const fastFolderSize = require('fast-folder-size')
-const { promisify } = require('util')
-const secure = require("../helpers/secure")
-const FileOperationError = require("../errors/FileOperationError")
+import fs from 'fs-extra';
+import sizeOf from 'image-size';
+import { resolve, join, dirname } from "path";
+import { fileURLToPath } from "url";
+import fastFolderSize from 'fast-folder-size';
+import { promisify } from 'util';
+import secure from "../helpers/secure.js";
+import FileOperationError from "../errors/FileOperationError.js";
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 const directory = (user) => {
 	function getRouteFile(route, name) {
 		let processRoute = secure.process(route);
-		let filePath = { dir: path.resolve(processRoute) };
+		let filePath = { dir: resolve(processRoute) };
 		if (name) {
-			filePath.dir = path.join(filePath.dir, secure.process(name));
+			filePath.dir = join(filePath.dir, secure.process(name));
 			filePath.name = secure.process(name);
 			filePath.route = processRoute;
 		}
-		if (user.initialFolder.filter(r => filePath.dir.startsWith(path.resolve(r))).length === 0) {
+		if (user.initialFolder.filter(r => filePath.dir.startsWith(resolve(r))).length === 0) {
 			throw new Error("Ruta invalida para el usuario");
 		}
 		return filePath;
@@ -26,7 +29,7 @@ const directory = (user) => {
 		let dirFiles = fs.readdirSync(dir) || []
 		let files = dirFiles.map(file => {
 			try {
-				let innerFile = path.join(dir, file)
+				let innerFile = join(dir, file)
 				let fileOwnData = fs.statSync(innerFile)
 				let data = {
 					isDirectory: fileOwnData.isDirectory(),
@@ -86,7 +89,7 @@ const directory = (user) => {
 			try {
 				let { route, name } = file;
 				let fileDir = getRouteFile(route, name);
-				fs[move ? "renameSync" : "copySync"](fileDir.dir, path.join(dir, fileDir.name));
+				fs[move ? "renameSync" : "copySync"](fileDir.dir, join(dir, fileDir.name));
 			} catch (e) {
 				errors.push({ route: fileDir.route, name: fileDir.name, message: e.message });
 			}
@@ -100,7 +103,7 @@ const directory = (user) => {
 	function renameElement(data) {
 		let { name, route, newName } = data
 		let { dir } = getRouteFile(route)
-		fs.renameSync(path.join(dir, secure.process(name)), path.join(dir, secure.process(newName)))
+		fs.renameSync(join(dir, secure.process(name)), join(dir, secure.process(newName)))
 		return { message: "Files modified" }
 	}
 
@@ -125,9 +128,9 @@ const directory = (user) => {
 			throw new FileOperationError({ message: "Files not found", errors, status: 400 });
 		}
 		files.forEach(file => {
-			let destination = path.join(dir, file.originalname)
+			let destination = join(dir, file.originalname)
 			if (!fs.existsSync(destination)) {
-				let origin = path.join(__dirname, "../tmp", file.originalname)
+				let origin = join(__dirname, "../tmp", file.originalname)
 				fs.move(origin, destination, function (err) {
 					if (err) {
 						errors.push({ name: file.originalname, message: err.message })
@@ -193,4 +196,4 @@ const directory = (user) => {
 	}
 }
 
-module.exports = directory
+export default directory

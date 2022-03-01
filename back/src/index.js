@@ -1,5 +1,7 @@
-const app = require("./app")
+import app from "./app.js"
+import { createConnection } from "./database.js";
 
+createConnection();
 app.listen(app.get("port"), () => {
 	console.log(`File Browser running ${app.get("port")}`)
 })

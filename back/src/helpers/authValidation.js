@@ -1,19 +1,20 @@
-const jwt = require("jsonwebtoken")
-const secure = require("./secure");
-const config = require("../../config.json")
-const filesService = require('../service/filesService')
+import jsonwebtoken from "jsonwebtoken";
+import secure from "./secure.js";
+import CONFIG from "../constants/config.js";
+import filesService from '../service/filesService.js';
+import { getUserByName } from "../service/userService.js"
 
 const authValidation = (req, res, next) => {
     let { tmp } = req.query
     let token = tmp ? secure.process(decodeURIComponent(tmp)) : (req.headers["authorization"] || "").split(" ")[1];
     if (token) {
-        jwt.verify(token, config.tokenKey, (error, authData = {}) => {
-            let foundUser = config.users.find(u => u.user === authData.user)
+        jsonwebtoken.verify(token, CONFIG.tokenKey, (error, authData = {}) => {
+            let foundUser = getUserByName(authData.user)
             if (error || !foundUser) {
                 res.status(401).send({ status: 401, message: "Invalid Session" })
             } else {
                 req.body.user = foundUser
-                req.appOperator = filesService(foundUser)
+                req.appOperator = filesService({ ...foundUser, initialFolder: foundUser.initialFolder.map(f => secure.process(f)) })
                 next()
             }
         })
@@ -22,4 +23,4 @@ const authValidation = (req, res, next) => {
     }
 }
 
-module.exports = authValidation
+export default authValidation

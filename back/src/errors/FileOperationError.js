@@ -1,4 +1,4 @@
-const secure = require("../helpers/secure")
+import secure from "../helpers/secure.js";
 
 class FileOperationError extends Error {
     constructor({ message = "", errors = [], status = 500 }) {
@@ -21,4 +21,4 @@ class FileOperationError extends Error {
     }
 }
 
-module.exports = FileOperationError
+export default FileOperationError

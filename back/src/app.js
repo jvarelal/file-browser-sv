@@ -1,34 +1,39 @@
 //Express
-const express = require('express')
-const cors = require('cors')
-const multer = require('multer')
-const config = require("../config.json")
+import express from 'express'
+import cors from 'cors'
+import multer, { diskStorage } from 'multer'
 //util
-const path = require("path")
-const errorHandler = require('./helpers/errorHandler')
+import { join, dirname } from "path"
+import { fileURLToPath } from "url";
+import errorHandler from './helpers/errorHandler.js';
+import CONFIG from './constants/config.js';
+//routes
+import userRoutes from "./routes/userRoutes.js";
+import filesRoutes from "./routes/filesRoutes.js";
+import filesViewRoutes from "./routes/filesViewRoutes.js";
 
+const __dirname = dirname(fileURLToPath(import.meta.url));
 const app = express()
-const storage = multer.diskStorage({
-	destination: path.join(__dirname, "tmp"),
+const storage = diskStorage({
+	destination: join(__dirname, "tmp"),
 	filename: (req, file, cb) => cb(null, file.originalname)
 })
 //settings
-app.set("port", config.port)
+app.set("port", CONFIG.port)
 
 //middleware
 app.use(cors())
 app.use(express.json())
-app.use(multer({ storage }).array("file", config.fileBrowser.maxNumberFilesUpload))
+app.use(multer({ storage }).array("file", 10))
 
 //front page
-app.use("/", express.static(path.join(__dirname, "public")))
+app.use("/", express.static(join(__dirname, "public")))
 
-//routes
-app.use(require("./routes/userRoutes"))
-app.use(require("./routes/filesRoutes"))
-app.use(require("./routes/filesViewRoutes"))
+app.use(userRoutes)
+app.use(filesRoutes)
+app.use(filesViewRoutes)
 
 //errors
 app.use(errorHandler)
 
-module.exports = app
+export default app

@@ -1,16 +1,16 @@
-const router = require('express').Router()
+import { Router } from 'express'
+import secure from "../helpers/secure.js"
+import { resolve } from "path"
+import sharp from 'sharp'
+import authValidation from "../helpers/authValidation.js"
+import XLSX from "xlsx"
 
-const secure = require("../helpers/secure")
-const path = require("path")
-const sharp = require('sharp')
-const authValidation = require("../helpers/authValidation")
-const XLSX = require("xlsx");
-
+const router = Router();
 const parentPath = '/api/files/view'
 
 router.get(`${parentPath}/image`, (req, res) => {
     let { name, preview } = req.query
-    let route = path.resolve(secure.process(decodeURIComponent(name)))
+    let route = resolve(secure.process(decodeURIComponent(name)))
     res.setHeader('Content-Disposition', `inline`);
     if (preview && !isNaN(preview)) {
         let pvSize = parseInt(preview)
@@ -54,4 +54,4 @@ router.get(`${parentPath}/raw`, authValidation, (req, res) => {
     res.sendFile(route)
 })
 
-module.exports = router
+export default router

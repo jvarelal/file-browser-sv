@@ -1,9 +1,10 @@
-const CryptoJS = require("crypto-js")
-const config = require("../../config.json")
+import CryptoJS from "crypto-js"
+import CONFIG from "../constants/config.js"
 
 const secure = {
-    digest: (clearText) => CryptoJS.AES.encrypt(clearText, config.key).toString(),
-    process: (text) => CryptoJS.AES.decrypt(text, config.key).toString(CryptoJS.enc.Utf8)
+    digest: (clearText) => CryptoJS.AES.encrypt(clearText, CONFIG.key).toString(),
+    process: (text) => CryptoJS.AES.decrypt(text, CONFIG.key).toString(CryptoJS.enc.Utf8)
 }
 
-module.exports = secure
+
+export default secure

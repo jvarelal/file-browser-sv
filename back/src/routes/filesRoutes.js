@@ -1,7 +1,8 @@
-const router = require('express').Router()
-const archiver = require('archiver');
-const authValidation = require("../helpers/authValidation")
+import { Router } from 'express'
+import archiver from 'archiver';
+import authValidation from "../helpers/authValidation.js";
 
+const router = Router();
 const parentPath = '/api/files'
 
 router.post(parentPath, authValidation, (req, res) => res.send(req.appOperator.listFiles((req.body))))
@@ -61,4 +62,4 @@ router.post(`${parentPath}/download`, authValidation, (req, res) => {
 	}
 })
 
-module.exports = router
+export default router

@@ -133,17 +133,17 @@
             }
         }
         &-linenumber {
-            width: 2.5rem;
+            width: 2.75rem;
             text-align: right;
             position: absolute;
             top: 0;
             left: 0;
-            padding: 0.5rem 0.1rem;
+            padding: 0.5rem 0.25rem;
             background-color: $bg-btn;
             border: 1px solid $border-light;
         }
         &-file {
-            width: calc(100% - 3.5rem);
+            width: calc(100% - 4.25rem);
             background-color: transparent;
             color: $color-text;
             margin: 0;

@@ -1,5 +1,6 @@
 <script lang="ts">
     import { onMount, setContext } from "svelte";
+    import { fly } from "svelte/transition";
     //stores
     import fileDirectoryStore from "../stores/fileDirectoryStore";
     import fileSettingStore from "../stores/fileSettingStore";
@@ -40,7 +41,7 @@
     });
 </script>
 
-<section>
+<section transition:fly>
     <FileToolBar {numberItemsFiltered} />
     <FileLayout>
         {#await fileList}

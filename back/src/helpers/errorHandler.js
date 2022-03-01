@@ -1,4 +1,4 @@
-const secure = require("../helpers/secure")
+import secure from "../helpers/secure.js"
 
 const errorHandler = (err, req, res, next) => {
 	let respError = {
@@ -12,4 +12,4 @@ const errorHandler = (err, req, res, next) => {
 	return res.status(respError.status).send(respError)
 }
 
-module.exports = errorHandler
+export default errorHandler
