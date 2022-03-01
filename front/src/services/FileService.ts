@@ -26,6 +26,7 @@ const FileService = {
                 if (data.token) {
                     httpClient.setToken(data.token)
                 }
+                data.routes = data.routes.map(r => secure.recover(r)) 
                 cb(data)
             })
             .catch(err)
