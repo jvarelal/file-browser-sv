@@ -1,8 +1,9 @@
 import { Router } from 'express'
 import jsonwebtoken from "jsonwebtoken"
 import CONFIG from '../constants/config.js';
+import authValidation from '../helpers/authValidation.js';
 import secure from '../helpers/secure.js'
-import { getUserByName } from "../service/userService.js"
+import { getUserByName, updateUserBookmarks } from "../service/userService.js"
 
 const router = Router();
 const parentPath = '/api/user'
@@ -30,9 +31,15 @@ router.post(`${parentPath}/login`, (req, res) => {
 		res.status(403).send({ status: 403, message: "Invalid User or Password" })
 	}
 })
-/*
-router.post(`${parentPath}/bookmarks`, authValidation, (req, res) => {
-	res.send({ bookmarks: req.body.bookmarks })
+
+router.post(`${parentPath}/bookmarks`, authValidation, async (req, res) => {
+	let { user, bookmarks } = req.body
+	try{
+		await updateUserBookmarks(user.user, bookmarks)
+		res.send({status: 200, message: "Bookmarks updated" })
+	}catch(e){
+		res.status(500).send({ status: 500, message: e.message })
+	}
 })
-*/
+
 export default router
