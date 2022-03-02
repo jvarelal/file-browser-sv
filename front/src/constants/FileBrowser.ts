@@ -1,4 +1,4 @@
-import type { FileBrowserSettings } from "../types/UITypes";
+import type { Select } from "../types/UITypes";
 
 const IMG_PREVIEW: string[] = ["jpg", "png", "jpeg", "svg", "gif", "webp"]
 const FILE_AS_TEXT: string[] = ["css", "md", "svelte", "ts", "json", "js", "txt", "yml"]
@@ -6,6 +6,35 @@ const EXCEL: string[] = ["csv", "ods", "pods", "xls", "xlsm", "xlsx"]
 const AUDIO: string[] = ["mp3", "flac", "wav"]
 const VIDEO: string[] = ["mp4", "webm"]
 const EDITABLES: string[] = [...FILE_AS_TEXT, "html", "xml"]
+
+interface FileBrowserSettings {
+    baseUrl: string;
+    secureKey: string;
+    localStorageKeys: {
+        settings: string,
+        bookmarks: string,
+    },
+    regexp: {
+        folderName: RegExp;
+    },
+    themes: Select[];
+    sortOptions: Select[];
+    groupOptions: Select[];
+    previews: {
+        scalePreview: string[];
+        image: string[];
+        icons: {
+            png: string[];
+            svg: string[];
+        },
+        asText: string[],
+        excel: string[],
+        audio: string[],
+        video: string[]
+    };
+    visor: string[],
+    editables: string[]
+}
 
 const FileBrowser: FileBrowserSettings = {
     baseUrl: process.env.NODE_ENV === "build" ? `${window.location.origin}/api` : "http://localhost:4000/api",

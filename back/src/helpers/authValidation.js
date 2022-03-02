@@ -14,7 +14,10 @@ const authValidation = (req, res, next) => {
                 res.status(401).send({ status: 401, message: "Invalid Session" })
             } else {
                 req.body.user = foundUser
-                req.appOperator = filesService({ ...foundUser, initialFolder: foundUser.initialFolder.map(f => secure.process(f)) })
+                req.appOperator = filesService({
+                    ...foundUser,
+                    initialFolder: foundUser.initialFolder.map(f => secure.process(f))
+                })
                 next()
             }
         })

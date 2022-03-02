@@ -1,6 +1,6 @@
 import { writable } from "svelte/store";
 import FileBrowser from "../constants/FileBrowser";
-import { getFileIcon, isBookmark } from "../helpers/Media";
+import { getFileIcon, isBookmark, mapCustomFiles } from "../helpers/Media";
 import { secure } from "../helpers/Misc";
 import UserService from "../services/UserService";
 import type { FileApiResponse } from "../types/ApiTypes";
@@ -94,6 +94,17 @@ function createfileBrowserStore() {
             }),
             origin: origin
         })),
+        addFiles: (files: File[]) => update((s) => {
+            let updatedFiles = [
+                ...s.files,
+                ...mapCustomFiles(files, s.origin),
+            ]
+            return {
+                ...s,
+                numberItems: updatedFiles.length,
+                files: updatedFiles,
+            }
+        }),
         setFilter: (filter: string) => update((s) => ({ ...s, filter: filter })),
         setCheck: (file: FileUI) => update((s) => {
             let checkAll = s.checkAll

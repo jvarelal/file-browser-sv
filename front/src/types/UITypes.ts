@@ -1,4 +1,4 @@
-import type { FileApiResponse } from "./ApiTypes";
+import type { FileApiResponse, UserActionsType } from "./ApiTypes";
 
 export type BooleanFunction = (value: boolean) => void
 export type NumberFunction = (value: number) => void
@@ -13,7 +13,13 @@ export interface ContextMenuOption {
     icon: string;
     label: string;
     action: VoidFunction;
-    hide?: boolean
+    hide?: boolean;
+    typeOperation: UserActionsType;
+}
+
+export interface FileSettingAction extends ContextMenuOption {
+    cssClass?: string;
+    disabled: boolean;
 }
 
 /**
@@ -27,7 +33,7 @@ export interface Login {
 export interface UserApp extends Login {
     routes: string[];
     rol: number;
-    actions: string[]
+    actions: UserActionsType[]
 }
 
 export interface MediaIcon {
@@ -86,36 +92,4 @@ export interface FileExcel {
     sheetName: string;
     data: string[];
     maxNumberOnCol?: number;
-}
-
-/**
- * 
- */
-export interface FileBrowserSettings {
-    baseUrl: string;
-    secureKey: string;
-    localStorageKeys: {
-        settings: string,
-        bookmarks: string,
-    },
-    regexp: {
-        folderName: RegExp;
-    },
-    themes: Select[];
-    sortOptions: Select[];
-    groupOptions: Select[];
-    previews: {
-        scalePreview: string[];
-        image: string[];
-        icons: {
-            png: string[];
-            svg: string[];
-        },
-        asText: string[],
-        excel: string[],
-        audio: string[],
-        video: string[]
-    };
-    visor: string[],
-    editables: string[]
 }

@@ -26,11 +26,7 @@
         deleteFiles,
         listErrors,
     } from "../contextmenu/FileContextMenu.svelte";
-    import {
-        handleDrop,
-        isBookmark,
-        mapCustomFiles,
-    } from "../../../helpers/Media";
+    import { handleDrop, isBookmark } from "../../../helpers/Media";
     import type { FileUI, FileUpload } from "../../../types/UITypes";
     import FileService from "../../../services/FileService";
     import type { ErrorApiResponse } from "../../../types/ApiTypes";
@@ -145,10 +141,7 @@
         const cb = (): void => {
             if (!file.isDirectory) {
                 //only update if is current folder
-                fileBrowserStore.setFiles(
-                    [...$fileBrowserStore.files, ...mapCustomFiles(files)],
-                    $fileDirectoryStore.current
-                );
+                fileBrowserStore.addFiles(files);
             }
             dialogStore.showMessage(
                 `${files.length} archivos subidos a ${route}`
@@ -163,13 +156,7 @@
                             (errorFile) => errorFile.name === f.name
                         )
                 );
-                fileBrowserStore.setFiles(
-                    [
-                        ...$fileBrowserStore.files,
-                        ...mapCustomFiles(uploadedFiles),
-                    ],
-                    $fileDirectoryStore.current
-                );
+                fileBrowserStore.addFiles(uploadedFiles);
             }
         };
         dialogStore.showLoading();

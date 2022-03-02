@@ -1,9 +1,11 @@
 <script lang="ts">
     import { onMount } from "svelte";
     import fileBrowserStore from "../../../stores/fileBrowserStore";
+    import fileContextMenuStore from "../../../stores/fileContextMenuStore";
 
     onMount(() => {
         fileBrowserStore.setWaiting(true);
+        fileContextMenuStore.reset();
         document.title = "FileBrowser";
         return () => fileBrowserStore.setWaiting(false);
     });

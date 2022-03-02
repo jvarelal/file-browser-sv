@@ -24,6 +24,7 @@ export async function createConnection() {
         ],
         "rol": 1,
         "actions": [
+          "r",
           "w",
           "u",
           "d"

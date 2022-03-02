@@ -1,6 +1,5 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import { fade } from "svelte/transition";
     import UserService from "../services/UserService";
     import dialogStore from "../stores/dialogStore";
     import fileSettingStore from "../stores/fileSettingStore";
@@ -34,7 +33,7 @@
     });
 </script>
 
-<div class="login" transition:fade>
+<div class="login">
     <fieldset class="login-container">
         <legend>File Browser</legend>
         <div class="login-section">

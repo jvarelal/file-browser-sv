@@ -6,9 +6,11 @@
     import fileDirectoryStore from "../../../stores/fileDirectoryStore";
     import fileSettingStore from "../../../stores/fileSettingStore";
     import fileDownloadStore from "../../../stores/fileDownloadStore";
+    import userProfileStore from "../../../stores/userProfileStore";
     //components
     import FileContextMenuOption from "./FileContextMenuOption.svelte";
     //types
+    import userOperations from "../../../constants/UserOperations";
     import type { ContextMenuOption, FileMove } from "../../../types/UITypes";
 
     export let pasteFiles: (fileData: FileMove) => void;
@@ -24,6 +26,7 @@
             hide:
                 $fileBrowserStore.viewBookmarks ||
                 $fileDownloadStore.isDownloading,
+            typeOperation: userOperations.write,
         },
         {
             icon: "fas fa-eye",
@@ -35,6 +38,7 @@
                 $fileSettingStore.viewOptions ? "Ocultar" : "Mostrar"
             } opciones de archivo`,
             hide: $fileBrowserStore.numberItems === 0,
+            typeOperation: userOperations.read,
         },
         {
             icon: "fas fa-check-square",
@@ -44,6 +48,7 @@
                 ? "Deseleccionar todos"
                 : "Seleccionar todos",
             hide: $fileBrowserStore.numberItems === 0,
+            typeOperation: userOperations.read,
         },
         {
             icon: "fas fa-paste",
@@ -61,6 +66,7 @@
                 $fileBrowserStore.clipboard[0].route ===
                     $fileDirectoryStore.current ||
                 $fileDownloadStore.isDownloading,
+            typeOperation: userOperations.write,
         },
         {
             icon: "fas fa-info",
@@ -75,8 +81,9 @@
                 });
             },
             hide: $fileBrowserStore.viewBookmarks,
+            typeOperation: userOperations.read,
         },
-    ];
+    ].filter((opt) => $userProfileStore.actions.includes(opt.typeOperation));
 </script>
 
 <div>

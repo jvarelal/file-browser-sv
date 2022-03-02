@@ -23,7 +23,6 @@ router.post(`${parentPath}/login`, (req, res) => {
 					token,
 					routes: foundUser.initialFolder,
 					rol: foundUser.rol,
-					actions: foundUser.actions,
 					bookmarks: foundUser.bookmarks
 				})
 			})

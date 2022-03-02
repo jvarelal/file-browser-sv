@@ -7,17 +7,13 @@
     import InputText from "../../commons/InputText.svelte";
     import InputFile from "../../commons/InputFile.svelte";
     //types
-    import type {
-        BooleanFunction,
-        FileUpload,
-    } from "../../../types/UITypes";
+    import type { BooleanFunction, FileUpload } from "../../../types/UITypes";
     import type {
         ErrorApiResponse,
         FileApiResponse,
     } from "../../../types/ApiTypes";
     //helpers
     import FileService from "../../../services/FileService";
-    import { mapCustomFiles } from "../../../helpers/Media";
     import FileBrowser from "../../../constants/FileBrowser";
 
     const closeModal = getContext<VoidFunction>("closeModal");
@@ -41,13 +37,7 @@
                     );
                     break;
                 case "file":
-                    fileBrowserStore.setFiles(
-                        [
-                            ...$fileBrowserStore.files,
-                            ...mapCustomFiles(values?.files),
-                        ],
-                        $fileDirectoryStore.current
-                    );
+                    fileBrowserStore.addFiles(values?.files);
                     break;
                 case "plain":
                     let customFile: FileApiResponse = {
@@ -81,7 +71,9 @@
         }
         if (values.type === "plain") {
             if ($fileBrowserStore.files.find((f) => f.name === values?.name)) {
-                errors.files = [`El archivo ${values.name} ya existe en la ruta`];
+                errors.files = [
+                    `El archivo ${values.name} ya existe en la ruta`,
+                ];
                 return;
             }
         }

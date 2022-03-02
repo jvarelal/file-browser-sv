@@ -1,6 +1,5 @@
 <script lang="ts">
     import { onMount, setContext } from "svelte";
-    import { fly } from "svelte/transition";
     //stores
     import fileDirectoryStore from "../stores/fileDirectoryStore";
     import fileSettingStore from "../stores/fileSettingStore";
@@ -19,7 +18,6 @@
 
     let numberItemsFiltered: number = 0;
     let fileInfo: FileUI;
-    let showLogin = false;
 
     $: fileList = FileService.list($fileDirectoryStore.current);
 
@@ -41,13 +39,13 @@
     });
 </script>
 
-<section transition:fly>
+<section>
     <FileToolBar {numberItemsFiltered} />
     <FileLayout>
         {#await fileList}
             <FileViewWaiting />
         {:then list}
-            <FileInit files={list.files} />
+            <FileInit apiResponse={list} />
         {:catch error}
             <FileViewError {error} />
         {/await}

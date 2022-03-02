@@ -4,18 +4,24 @@
     import fileBrowserStore from "../../stores/fileBrowserStore";
     import fileDirectoryStore from "../../stores/fileDirectoryStore";
     import fileSettingStore from "../../stores/fileSettingStore";
+    import userProfileStore from "../../stores/userProfileStore";
     //components
     import FileView from "./views/FileView.svelte";
     //types
-    import type { FileApiResponse } from "../../types/ApiTypes";
+    import type { FileListApiResponse } from "../../types/ApiTypes";
     //helpers
     import { getLastTreeName } from "../../helpers/Media";
 
-    export let files: FileApiResponse[] = [];
+    export let apiResponse: FileListApiResponse;
 
     onMount(() => {
-        fileBrowserStore.setFiles(files, $fileDirectoryStore.current);
+        fileBrowserStore.setFiles(
+            apiResponse.files,
+            $fileDirectoryStore.current
+        );
         fileSettingStore.updateCache($fileDirectoryStore.current);
+        userProfileStore.setActions(apiResponse.actions);
+        
         document.title = `FileBrowser - ${getLastTreeName(
             $fileDirectoryStore.current
         )}`;

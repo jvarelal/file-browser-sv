@@ -21,11 +21,12 @@ const directory = (user) => {
 		if (user.initialFolder.filter(r => filePath.dir.startsWith(resolve(r))).length === 0) {
 			throw new Error("Ruta invalida para el usuario");
 		}
+		filePath.actions = user.actions
 		return filePath;
 	}
 
 	function listFiles({ route }) {
-		let { dir } = getRouteFile(route)
+		let { dir, actions } = getRouteFile(route)
 		let dirFiles = fs.readdirSync(dir) || []
 		let files = dirFiles.map(file => {
 			try {
@@ -51,7 +52,7 @@ const directory = (user) => {
 				return { name: file }
 			}
 		})
-		return { message: "Information collected", files }
+		return { message: "Information collected", files, actions }
 	}
 
 	async function getFolderInformation({ name, route }) {
@@ -152,11 +153,11 @@ const directory = (user) => {
 		let errors = []
 		files.forEach(file => {
 			let { route, name } = file
-			let { dir } = getRouteFile(route, name)
+			let pathData = getRouteFile(route, name)
 			try {
-				fs.lstatSync(dir).isDirectory() ? fs.rmdirSync(dir) : fs.unlinkSync(dir)
+				fs.lstatSync(pathData.dir).isDirectory() ? fs.rmdirSync(pathData.dir) : fs.unlinkSync(pathData.dir)
 			} catch (err) {
-				errors.push({ route: dir.route, name: dir.name, message: err.message })
+				errors.push({ route: pathData.route, name: pathData.name, message: err.message })
 			}
 		})
 		if (errors.length > 0) {

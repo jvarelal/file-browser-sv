@@ -14,11 +14,7 @@
     import type { FileUpload } from "../../types/UITypes";
     import type { ErrorApiResponse } from "../../types/ApiTypes";
     //helpers
-    import {
-        getLastTreeName,
-        handleDrop,
-        mapCustomFiles,
-    } from "../../helpers/Media";
+    import { getLastTreeName, handleDrop } from "../../helpers/Media";
     import { listErrors } from "./contextmenu/FileContextMenu.svelte";
     import FileService from "../../services/FileService";
 
@@ -39,10 +35,7 @@
             let values: FileUpload = { type: "file", name: "", files, route };
             dragOn = false;
             const cb = (): void => {
-                fileBrowserStore.setFiles(
-                    [...$fileBrowserStore.files, ...mapCustomFiles(files)],
-                    $fileDirectoryStore.current
-                );
+                fileBrowserStore.addFiles(files);
                 dialogStore.showMessage(
                     `${files.length} archivos subidos a ${route}`
                 );
@@ -55,13 +48,7 @@
                             (errorFile) => errorFile.name === f.name
                         )
                 );
-                fileBrowserStore.setFiles(
-                    [
-                        ...$fileBrowserStore.files,
-                        ...mapCustomFiles(uploadedFiles),
-                    ],
-                    $fileDirectoryStore.current
-                );
+                fileBrowserStore.addFiles(uploadedFiles);
             };
             dialogStore.showLoading();
             FileService.create(values, cb, err);
@@ -141,7 +128,8 @@
     .download-alert {
         position: fixed;
         bottom: 0;
-        background-color: $bg-main;
+        background-color: $bg-label;
+        color: $color-label;
         min-width: 200px;
         width: 25%;
         font-size: 0.9rem;

@@ -5,17 +5,23 @@
     import fileDirectoryStore from "../../../stores/fileDirectoryStore";
     import fileSettingStore from "../../../stores/fileSettingStore";
     import fileDownloadStore from "../../../stores/fileDownloadStore";
+    import dialogStore from "../../../stores/dialogStore";
+    import userProfileStore from "../../../stores/userProfileStore";
     //components
     import ActionButton from "../../commons/ActionButton.svelte";
     //types
-    import type { FileMove, FileUI } from "../../../types/UITypes";
+    import type {
+        FileMove,
+        FileSettingAction,
+        FileUI,
+    } from "../../../types/UITypes";
     //functions
     import {
         deleteFiles,
         pasteFiles,
     } from "../contextmenu/FileContextMenu.svelte";
     import FileService from "../../../services/FileService";
-    import dialogStore from "../../../stores/dialogStore";
+    import userOperations from "../../../constants/UserOperations";
 
     const activateModal = getContext<VoidFunction>("fileAdd");
 
@@ -29,33 +35,39 @@
     }
 
     function prepareDelete(): void {
-        deleteFiles($fileBrowserStore[prop].filter((f: FileUI) => f.checked));
+        deleteFiles(
+            $fileBrowserStore[
+                $fileBrowserStore.viewBookmarks ? "bookmarks" : "files"
+            ].filter((f: FileUI) => f.checked)
+        );
     }
 
-    $: prop = $fileBrowserStore.viewBookmarks ? "bookmarks" : "files";
-</script>
+    $: hideSeveralOptions =
+        !$fileSettingStore.viewOptions || $fileDownloadStore.isDownloading;
 
-<div>
-    {#if !$fileBrowserStore.viewBookmarks && !$fileBrowserStore.error}
-        <ActionButton
-            on:click={activateModal}
-            icon="fas fa-folder-plus"
-            title="New Element"
-        />
-    {/if}
-    {#if $fileSettingStore.viewOptions && !$fileDownloadStore.isDownloading}
-        <ActionButton
-            icon="fas fa-check-square"
-            title="Check"
-            className={$fileBrowserStore.checkAll ? "btn-active" : ""}
-            on:click={() =>
-                fileBrowserStore.setCheckAll(!$fileBrowserStore.checkAll)}
-        />
-        <ActionButton
-            icon="fas fa-download"
-            title="Download"
-            disabled={!$fileBrowserStore.numberItemsChecked}
-            on:click={() => {
+    $: settingAction = [
+        {
+            icon: "fas fa-folder-plus",
+            label: "New Element",
+            action: activateModal,
+            typeOperation: userOperations.write,
+            hide: $fileBrowserStore.viewBookmarks || $fileBrowserStore.error,
+            disabled: false,
+        },
+        {
+            icon: "fas fa-check-square",
+            label: "Check",
+            action: () =>
+                fileBrowserStore.setCheckAll(!$fileBrowserStore.checkAll),
+            cssClass: $fileBrowserStore.checkAll ? "btn-active" : "",
+            typeOperation: userOperations.read,
+            hide: hideSeveralOptions,
+            disabled: false,
+        },
+        {
+            icon: "fas fa-download",
+            label: "Download",
+            action: () => {
                 let files = $fileBrowserStore.files.filter((f) => f.checked);
                 fileDownloadStore.setDownload(files);
                 FileService.download(
@@ -66,55 +78,81 @@
                         fileDownloadStore.finishDownload();
                     }
                 );
-            }}
-        />
-        <ActionButton
-            icon="fas fa-clone"
-            title={`Copying ${
+            },
+            typeOperation: userOperations.read,
+            hide: hideSeveralOptions,
+            disabled: !$fileBrowserStore.numberItemsChecked,
+        },
+        {
+            icon: "fas fa-clone",
+            label: `Copying ${
                 $fileBrowserStore.clipboard.length && !$fileBrowserStore.move
                     ? $fileBrowserStore.clipboard.length + " elements"
                     : ""
-            }`}
-            disabled={!$fileBrowserStore.numberItemsChecked}
-            className={$fileBrowserStore.clipboard.length &&
-            !$fileBrowserStore.move
-                ? "btn-active"
-                : ""}
-            on:click={() =>
+            }`,
+            action: () =>
                 fileBrowserStore.setCopy(
                     $fileBrowserStore.files.filter((f) => f.checked)
-                )}
-        />
-        <ActionButton
-            icon="fas fa-file-export"
-            title={`Moving ${
+                ),
+            cssClass:
+                $fileBrowserStore.clipboard.length && !$fileBrowserStore.move
+                    ? "btn-active"
+                    : "",
+            typeOperation: userOperations.write,
+            hide: hideSeveralOptions,
+            disabled: !$fileBrowserStore.numberItemsChecked,
+        },
+        {
+            icon: "fas fa-file-export",
+            label: `Moving ${
                 $fileBrowserStore.clipboard.length && $fileBrowserStore.move
                     ? $fileBrowserStore.clipboard.length + " elements"
                     : ""
-            }`}
-            disabled={!$fileBrowserStore.numberItemsChecked}
-            className={$fileBrowserStore.clipboard.length &&
-            $fileBrowserStore.move
-                ? "btn-active"
-                : ""}
-            on:click={() =>
+            }`,
+            disabled: !$fileBrowserStore.numberItemsChecked,
+            cssClass:
+                $fileBrowserStore.clipboard.length && $fileBrowserStore.move
+                    ? "btn-active"
+                    : "",
+            action: () =>
                 fileBrowserStore.setMove(
                     $fileBrowserStore.files.filter((f) => f.checked)
-                )}
-        />
-        <ActionButton
-            icon="fas fa-paste"
-            title="Paste"
-            disabled={$fileBrowserStore.clipboard.length === 0 ||
+                ),
+            hide: hideSeveralOptions,
+            typeOperation: userOperations.write,
+        },
+        {
+            icon: "fas fa-paste",
+            label: "Paste",
+            disabled:
+                $fileBrowserStore.clipboard.length === 0 ||
                 $fileBrowserStore.clipboard[0].route ===
-                    $fileDirectoryStore.current}
-            on:click={preparePasteFiles}
-        />
-        <ActionButton
-            disabled={$fileBrowserStore.numberItemsChecked <= 0}
-            icon="fas fa-trash"
-            title="Eliminate"
-            on:click={prepareDelete}
-        />
-    {/if}
+                    $fileDirectoryStore.current,
+            action: preparePasteFiles,
+            hide: hideSeveralOptions,
+            typeOperation: userOperations.write,
+        },
+        {
+            icon: "fas fa-trash",
+            label: "Eliminate",
+            action: prepareDelete,
+            disabled: $fileBrowserStore.numberItemsChecked <= 0,
+            hide: hideSeveralOptions,
+            typeOperation: userOperations.delete,
+        },
+    ].filter((opt) => $userProfileStore.actions.includes(opt.typeOperation));
+</script>
+
+<div>
+    {#each settingAction as option}
+        {#if !option.hide}
+            <ActionButton
+                on:click={option.action}
+                icon={option.icon}
+                title={option.label}
+                className={option.cssClass || ""}
+                disabled={option.disabled}
+            />
+        {/if}
+    {/each}
 </div>

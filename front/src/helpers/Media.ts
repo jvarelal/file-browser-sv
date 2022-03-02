@@ -82,14 +82,16 @@ function isBookmark(bookmarks: FileApiResponse[] = [], item: FileUI): boolean {
     return bookmarks.find(bookmark => item.route + item.name === bookmark.route + bookmark.name) ? true : false
 }
 
-function mapCustomFiles(files: File[] = []): FileApiResponse[] {
-    return files.map(f => ({
+function mapCustomFiles(files: File[] = [], route: string): FileUI[] {
+    let filesUi = files.map(f => ({
         isDirectory: false,
         name: f.name,
         size: f.size,
         creation: new Date().toISOString(),
         modification: new Date(f.lastModified).toISOString(),
+        route
     }))
+    return filesUi.map(f => ({ ...f, ...getFileIcon(f) }))
 }
 
 function getLastTreeName(route: string): string {

@@ -7,7 +7,7 @@
         let filesAfected: FileUI[] = files.filter(
             (f) =>
                 !data?.errors?.find(
-                    (err) => f.route + f.name === err.route + err.name
+                    (err) => f.name === err.name
                 )
         );
         listErrors(data)

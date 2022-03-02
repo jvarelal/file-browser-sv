@@ -4,6 +4,9 @@ interface FileApiError {
     route: string;
 }
 
+
+export type UserActionsType = 'r' | 'w' | 'u' | 'd'
+
 export interface ApiResponse {
     status: number;
     message: string;
@@ -26,12 +29,13 @@ export interface LoginApiResponse extends ApiResponse {
     token: string;
     routes: string[];
     rol: number;
-    actions: string[]
-    bookmarks: FileApiResponse[]
+    actions: UserActionsType[];
+    bookmarks: FileApiResponse[];
 }
 
 export interface FileListApiResponse extends ApiResponse {
     files: FileApiResponse[];
+    actions: UserActionsType[];
 }
 
 export interface FileInformationApiResponse extends ApiResponse {

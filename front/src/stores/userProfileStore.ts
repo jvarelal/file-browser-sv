@@ -1,4 +1,5 @@
 import { writable } from "svelte/store";
+import type { UserActionsType } from "../types/ApiTypes";
 import type { UserProfileStore } from "../types/StoreTypes";
 import type { UserApp } from "../types/UITypes";
 
@@ -15,11 +16,15 @@ function creatUserProfileStore() {
     return {
         subscribe,
         setProfile: (userApp: UserApp) => update((s): UserProfileStore => ({
+            ...s,
             name: userApp.user,
             key: userApp.key,
-            actions: userApp.actions,
             rol: userApp.rol,
             routes: userApp.routes
+        })),
+        setActions: (actions: UserActionsType[]) => update((s): UserProfileStore => ({
+            ...s,
+            actions: actions,
         })),
         reset: () => set(initialState)
     };

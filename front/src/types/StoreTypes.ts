@@ -1,4 +1,4 @@
-import type { FileApiResponse } from "./ApiTypes"
+import type { FileApiResponse, UserActionsType } from "./ApiTypes"
 import type { FileUI } from "./UITypes"
 
 export type UserProfileStore = {
@@ -6,7 +6,7 @@ export type UserProfileStore = {
     key: string;
     routes: string[];
     rol: number;
-    actions: string[]
+    actions: UserActionsType[]
 }
 
 export type AppViewStore = {
