@@ -5,7 +5,7 @@
     import fileBrowserStore from "../../../stores/fileBrowserStore";
     import fileContextMenuStore from "../../../stores/fileContextMenuStore";
     import fileSettingStore from "../../../stores/fileSettingStore";
-    import fileToolbarCollapsedStore from "../../../stores/fileToolbarCollapsedStore";
+    import fileToolbarStore from "../../../stores/fileToolbarStore";
     //components
     import FileContextMenu from "../contextmenu/FileContextMenu.svelte";
     import FileSettingsActions from "./FileSettingsActions.svelte";
@@ -17,7 +17,7 @@
     import FileForm from "../forms/FileForm.svelte";
 
     export let numberItemsFiltered: number = 0;
-    export let isToolbarCollapsed: boolean = $fileToolbarCollapsedStore;
+    export let isToolbarCollapsed: boolean = $fileToolbarStore.isCollapsed;
 
     let newFile: boolean = false;
 
@@ -61,7 +61,7 @@
         id="sortGroup"
         renderDefault={false}
         bind:collapse={isToolbarCollapsed}
-        on:change={() => fileToolbarCollapsedStore.set(isToolbarCollapsed)}
+        on:change={() => fileToolbarStore.setCollapse(isToolbarCollapsed)}
         cssClass="f-09"
     >
         <div class="options-wrapper" transition:fly>

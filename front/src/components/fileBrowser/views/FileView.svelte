@@ -5,7 +5,7 @@
     import filePreviewStore from "../../../stores/filePreviewStore";
     import fileSettingStore from "../../../stores/fileSettingStore";
     import fileGridCssStore from "../../../stores/fileGridCssStore";
-    import fileToolbarCollapsedStore from "../../../stores/fileToolbarCollapsedStore";
+    import fileToolbarStore from "../../../stores/fileToolbarStore";
     //components
     import FileGrid from "../grid/FileGrid.svelte";
     import FileVisor from "../visors/FileVisor.svelte";
@@ -117,7 +117,7 @@
                     $filePreviewStore.get(key).type
                 )}
             class:statusToolbar={$filePreviewStore.get(key)}
-            class:toolbarExpanded={!$fileToolbarCollapsedStore}
+            class:toolbarExpanded={!$fileToolbarStore.isCollapsed}
             class:expanded
             bind:this={grid}
         >

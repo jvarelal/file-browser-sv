@@ -34,6 +34,11 @@ export type FileDirectoryStore = {
     itemFocus: string;
 }
 
+export type FileToolbarStore = {
+    isCollapsed: boolean;
+    show: boolean;
+}
+
 export type FileSettingStore = {
     sortBy: string;
     groupBy: string;

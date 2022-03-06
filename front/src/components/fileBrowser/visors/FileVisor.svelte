@@ -4,7 +4,7 @@
     import fileBrowserStore from "../../../stores/fileBrowserStore";
     import filePreviewStore from "../../../stores/filePreviewStore";
     import scrollStore from "../../../stores/scrollStore";
-    import fileToolbarCollapsedStore from "../../../stores/fileToolbarCollapsedStore";
+    import fileToolbarStore from "../../../stores/fileToolbarStore";
     //components
     import FileVisorImage from "./FileVisorImage.svelte";
     import ActionButton from "../../commons/ActionButton.svelte";
@@ -33,9 +33,7 @@
                 return preview.prev();
             }
             if (e.key === "Escape") {
-                filePreviewStore.removePreview(key);
-                scrollStore.triggerPrevious();
-                return;
+                return closePreview()
             }
         }
     }
@@ -54,20 +52,27 @@
     }
     function closePreview(): void {
         filePreviewStore.removePreview(key);
+        fileToolbarStore.setShow(true);
         scrollStore.triggerPrevious();
+    }
+
+    function expandPreview(): void {
+        expanded = !expanded;
+        fileToolbarStore.setShow(!expanded);
     }
 </script>
 
 <svelte:window on:keydown={validateKey} />
 <div
     class="file-visor statusToolbar"
-    class:toolbarExpanded={!$fileToolbarCollapsedStore}
+    class:toolbarExpanded={!$fileToolbarStore.isCollapsed && $fileToolbarStore.show}
+    class:toolbarHided={!$fileToolbarStore.show}
     on:contextmenu|preventDefault|stopPropagation
 >
     <div class="d-flex">
         <div class="d-flex">
             <ActionButton
-                on:click={() => (expanded = !expanded)}
+                on:click={expandPreview}
                 className={"expand"}
                 title={expanded ? "Contraer" : "Expandir"}
                 icon={`fas fa-${expanded ? "compress-alt" : "expand-alt"}`}

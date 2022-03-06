@@ -7,7 +7,7 @@
     import fileDownloadStore from "../../stores/fileDownloadStore";
     import dialogStore from "../../stores/dialogStore";
     import scrollStore from "../../stores/scrollStore";
-    import fileToolbarCollapsed from "../../stores/fileToolbarCollapsedStore";
+    import fileToolbarStore from "../../stores/fileToolbarStore";
     //components
     import Accordion from "../commons/Accordion.svelte";
     //types
@@ -85,8 +85,9 @@
 >
     <div
         class="browser-layout"
-        class:active={!$fileToolbarCollapsed &&
+        class:active={!$fileToolbarStore.isCollapsed &&
             $scrollStore.startHeight < 16 * 8}
+        class:expand={!$fileToolbarStore.show}
     >
         <slot />
     </div>
@@ -123,6 +124,9 @@
         padding-top: 4rem;
         &.active {
             padding-top: 8.25rem;
+        }
+        &.expand {
+            padding-top: 0;
         }
     }
     .download-alert {

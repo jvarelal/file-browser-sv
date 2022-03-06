@@ -197,6 +197,9 @@ option {
     &.toolbarExpanded {
         height: calc(100vh - 8.25rem);
     }
+    &.toolbarHided {
+        height: 100vh;
+    }
 }
 
 .form-field-control {
