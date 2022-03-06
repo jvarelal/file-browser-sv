@@ -3,7 +3,7 @@ import jsonwebtoken from "jsonwebtoken"
 import CONFIG from '../constants/config.js';
 import authValidation from '../helpers/authValidation.js';
 import secure from '../helpers/secure.js'
-import { getUserByName, updateUserBookmarks } from "../service/userService.js"
+import { getUserByName, updateProp } from "../service/userService.js"
 
 const router = Router();
 const parentPath = '/api/user'
@@ -17,14 +17,18 @@ router.post(`${parentPath}/login`, (req, res) => {
 		jsonwebtoken.sign(
 			{ user },
 			CONFIG.tokenKey,
-			{ expiresIn: CONFIG.expiresIn },
+			{ expiresIn: foundUser.sessionTime },
 			(err, token) => {
-				res.status(200).send({
+				if (err) {
+					return res.status(500).send({ message: "Can not login: " + err.message })
+				}
+				return res.status(200).send({
 					status: 200,
 					token,
 					routes: foundUser.initialFolder,
 					rol: foundUser.rol,
-					bookmarks: foundUser.bookmarks
+					bookmarks: foundUser.bookmarks,
+					sessionTime: foundUser.sessionTime
 				})
 			})
 	} else {
@@ -34,10 +38,36 @@ router.post(`${parentPath}/login`, (req, res) => {
 
 router.post(`${parentPath}/bookmarks`, authValidation, async (req, res) => {
 	let { user, bookmarks } = req.body
-	try{
-		await updateUserBookmarks(user.user, bookmarks)
-		res.send({status: 200, message: "Bookmarks updated" })
-	}catch(e){
+	try {
+		await updateProp(user.user, "bookmarks", bookmarks)
+		res.send({ status: 200, message: "Bookmarks updated" })
+	} catch (e) {
+		res.status(500).send({ status: 500, message: e.message })
+	}
+})
+
+router.post(`${parentPath}/changeSession`, authValidation, async (req, res) => {
+	let { user, sessionTime } = req.body
+	try {
+		console.log(sessionTime)
+		await updateProp(user.user, "sessionTime", sessionTime)
+		res.send({ status: 200, message: "Session time updated" })
+	} catch (e) {
+		res.status(500).send({ status: 500, message: e.message })
+	}
+})
+
+router.post(`${parentPath}/changePassword`, authValidation, async (req, res) => {
+	let { user, key, prevKey } = req.body
+	try {
+		let previousPassword = secure.process(user.key)
+		prevKey = secure.process(prevKey)
+		if(previousPassword !== prevKey){
+			throw new Error("Current Password invalid") 
+		}
+		await updateProp(user.user, "key", secure.process(key))
+		res.send({ status: 200, message: "Password updated" })
+	} catch (e) {
 		res.status(500).send({ status: 500, message: e.message })
 	}
 })

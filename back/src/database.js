@@ -22,6 +22,7 @@ export async function createConnection() {
           "U2FsdGVkX1916F3vzBKEpjW44d3FTtB0xtfe67lFiaU=",
           "U2FsdGVkX19fIailUKdIeTlkUh8qSOwMaRfiKiOqxsM="
         ],
+        "sessionTime": "1h",
         "rol": 1,
         "actions": [
           "r",
