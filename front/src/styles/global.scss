@@ -106,6 +106,14 @@ body {
     overflow: auto;
 }
 
+.close-arrow {
+    background-color: transparent;
+    color: $color-text;
+    border: 1px solid transparent;
+    width: 2.5rem;
+    cursor: pointer;
+}
+
 @each $align in left, right, center, justify {
     .t-#{$align} {
         text-align: $align;
@@ -184,9 +192,9 @@ option {
     width: 0%;
 }
 
-.statusToolbar{
+.statusToolbar {
     height: calc(100vh - 4rem);
-    &.toolbarExpanded{
+    &.toolbarExpanded {
         height: calc(100vh - 8.25rem);
     }
 }
@@ -249,11 +257,16 @@ option {
     cursor: pointer;
     border: 1px solid $border-medium;
     border-radius: 0.25rem;
-    padding: 0.25rem;
+    padding: 0.5rem;
     box-shadow: 0px 0px;
     background-color: $bg-btn;
     color: $color-text;
     font-size: 0.9rem;
+    &:disabled {
+        background-color: $bg-inp-disable;
+        color: $color-inp-disable;
+        cursor: none;
+    }
     &-active {
         color: white !important;
         background-color: #2288ff !important;
@@ -264,6 +277,20 @@ ul {
     list-style-position: outside;
     list-style-image: none;
     padding: 0.25rem 1rem;
+}
+
+.user-settings {
+    width: 100%;
+    max-width: 70rem;
+    margin: auto;
+    text-align: left;
+    &-row {
+        display: flex;
+        margin: 0.5rem 0;
+        > div {
+            width: 50%;
+        }
+    }
 }
 
 .underline {
@@ -279,5 +306,15 @@ ul {
     }
     .d-responsive {
         display: block;
+    }
+
+    .user-settings {
+        &-row {
+            display: flex;
+            flex-direction: column;
+            > div {
+                width: 100%;
+            }
+        }
     }
 }

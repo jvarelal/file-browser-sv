@@ -10,11 +10,7 @@
     //components
     import ActionButton from "../../commons/ActionButton.svelte";
     //types
-    import type {
-        FileMove,
-        FileSettingAction,
-        FileUI,
-    } from "../../../types/UITypes";
+    import type { FileMove, FileUI } from "../../../types/UITypes";
     //functions
     import {
         deleteFiles,

@@ -31,6 +31,7 @@ export interface LoginApiResponse extends ApiResponse {
     rol: number;
     actions: UserActionsType[];
     bookmarks: FileApiResponse[];
+    sessionTime: string;
 }
 
 export interface FileListApiResponse extends ApiResponse {

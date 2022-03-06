@@ -1,13 +1,11 @@
 <script>
     //stores
     import fileBrowserStore from "../../../stores/fileBrowserStore";
-    import fileSettingStore from "../../../stores/fileSettingStore";
+    import appViewStore from "../../../stores/appViewStore";
     //components
     import FilePathActions from "./FilePathActions.svelte";
     import ActionButton from "../../commons/ActionButton.svelte";
     import FilePathEdit from "./FilePathEdit.svelte";
-    //helpers
-    import FileBrowser from "../../../constants/FileBrowser";
 </script>
 
 <nav class="route">
@@ -23,10 +21,7 @@
         <i class="fas fa-search icon m-l-auto" />
     </div>
     <div class="route-actions d-flex">
-        <ActionButton
-            on:click={fileSettingStore.setThemeId}
-            icon={FileBrowser.themes[$fileSettingStore.themeId].label}
-        />
+        <ActionButton icon="fas fa-cog" on:click={appViewStore.setUserControl} />
     </div>
 </nav>
 
@@ -49,8 +44,8 @@
         }
         .file-search {
             display: flex;
-            min-width: 180px;
-            max-width: 20%;
+            min-width: 160px;
+            width: 20%;
             align-items: center;
             position: relative;
             .icon {
@@ -58,12 +53,6 @@
                 right: 0;
                 margin: 0 0.5rem;
             }
-        }
-    }
-    @media (max-width: $responsive-size) {
-        .file-search {
-            max-width: 100%;
-            width: 100%;
         }
     }
 </style>

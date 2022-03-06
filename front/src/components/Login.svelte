@@ -20,7 +20,7 @@
             (data) => {
                 fileSettingStore.initCache(data.routes);
                 fileBrowserStore.setBookmarks(data.bookmarks);
-                userProfileStore.setProfile({ ...data, key: values.key });
+                userProfileStore.setProfile({ ...data, user: values.user, key: values.key });
 
                 dialogStore.closeDialog();
                 appViewStore.setBrowser();

@@ -116,10 +116,8 @@
             case "ArrowLeft":
                 return focusPrev();
             case "ArrowDown":
-                e.preventDefault();
                 return focusDown();
             case "ArrowUp":
-                e.preventDefault();
                 return focusUp();
             case "C":
             case "c":
@@ -223,7 +221,7 @@
     on:dragover|preventDefault|stopPropagation={() => (dragOn = true)}
     on:dragleave|preventDefault|stopPropagation={() => (dragOn = false)}
     on:click={processItem}
-    on:keydown={validateKey}
+    on:keydown|preventDefault={validateKey}
 >
     <slot />
 </div>

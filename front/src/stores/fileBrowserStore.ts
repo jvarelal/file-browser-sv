@@ -16,37 +16,14 @@ const initialState = {
     numberItemsChecked: 0,
     viewBookmarks: false,
     editRoute: false,
-    bookmarks: getLocalBookmarks(),
+    bookmarks: [],
     clipboard: [],
     move: false,
     origin: "",
     error: false
 }
 
-function getLocalBookmarks(): FileUI[] {
-    try {
-        let data = localStorage.getItem(FileBrowser.localStorageKeys.bookmarks)
-        let localBookmarks: FileApiResponse[] = JSON.parse(data)
-        return localBookmarks.map((b): FileUI => {
-            let data: FileApiResponse = ({
-                route: secure.recover(b.route),
-                name: secure.recover(b.name),
-                isDirectory: false,
-            })
-            return { ...data, ...getFileIcon(data) }
-        })
-    } catch (e) {
-        return []
-    }
-}
-
 function setLocalBookmarks(bookmarks: FileUI[] = []): FileUI[] {
-    /*let localBookmarks: FileApiResponse[] = bookmarks.map((b) => ({
-        isDirectory: false,
-        route: secure.digest(b.route),
-        name: secure.digest(b.name)
-    }))
-    localStorage.setItem(FileBrowser.localStorageKeys.bookmarks, JSON.stringify(localBookmarks))*/
     UserService.updateBookmarks(bookmarks, (data) => console.log(data), (err) => alert(err.message))
     return bookmarks
 }
@@ -65,19 +42,17 @@ function createfileBrowserStore() {
             error: false,
             viewBookmarks: false,
         })),
-        setBookmarks: (bookmarks: FileApiResponse[]) => update((s) => {
-            return {
-                ...s,
-                bookmarks: bookmarks.map((b): FileUI => {
-                    let data: FileApiResponse = ({
-                        route: secure.recover(b.route),
-                        name: secure.recover(b.name),
-                        isDirectory: false,
-                    })
-                    return { ...data, ...getFileIcon(data) }
+        setBookmarks: (bookmarks: FileApiResponse[]) => update((s) => ({
+            ...s,
+            bookmarks: bookmarks.map((b): FileUI => {
+                let data: FileApiResponse = ({
+                    route: secure.recover(b.route),
+                    name: secure.recover(b.name),
+                    isDirectory: false,
                 })
-            }
-        }),
+                return { ...data, ...getFileIcon(data) }
+            })
+        })),
         setViewBookmarks: () => update((s) => ({
             ...s,
             viewBookmarks: !s.viewBookmarks,

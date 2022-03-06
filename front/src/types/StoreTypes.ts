@@ -6,12 +6,14 @@ export type UserProfileStore = {
     key: string;
     routes: string[];
     rol: number;
+    sessionTime: string;
     actions: UserActionsType[]
 }
 
 export type AppViewStore = {
     login: boolean;
     browser: boolean;
+    userControl: boolean
 }
 
 export type DialogStore = {
@@ -38,11 +40,11 @@ export type FileSettingStore = {
     orderAsc: boolean;
     viewList: boolean;
     viewOptions: boolean;
-    themeId: number;
+    theme: string;
     cache: string[];
 }
 
-export type FileSettingProps = "sortBy" | "groupBy" | "orderAsc" | "viewList" | "viewOptions" | "themeId" | "cache";
+export type FileSettingProps = "sortBy" | "groupBy" | "orderAsc" | "viewList" | "viewOptions" | "theme" | "cache";
 
 export type FileBrowserStore = {
     waiting: boolean,

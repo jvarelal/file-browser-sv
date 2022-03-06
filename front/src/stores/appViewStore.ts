@@ -3,7 +3,8 @@ import type { AppViewStore } from "../types/StoreTypes";
 
 const initialState: AppViewStore = {
     browser: true,
-    login: false
+    login: false,
+    userControl: false
 }
 
 function createAppViewStore() {
@@ -13,12 +14,20 @@ function createAppViewStore() {
         setLogin: () => update(s => ({
             ...s,
             login: true,
-            browser: false
+            browser: false,
+            userControl: false
         })),
         setBrowser: () => update(s => ({
             ...s,
             login: false,
-            browser: true
+            browser: true,
+            userControl: false
+        })),
+        setUserControl: () => update(s => ({
+            ...s,
+            login: false,
+            browser: false,
+            userControl: true
         })),
         reset: () => set(initialState)
     };

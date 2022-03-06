@@ -34,7 +34,7 @@
         class:text-center={labelCenter}
         for={id}
         tabindex="0"
-        on:keypress={handleFocusEnter}
+        on:keypress|preventDefault={handleFocusEnter}
     >
         {title}
     </label>

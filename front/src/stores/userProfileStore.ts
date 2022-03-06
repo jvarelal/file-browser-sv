@@ -7,6 +7,7 @@ const initialState: UserProfileStore = {
     name: "",
     key: "",
     rol: 2,
+    sessionTime: "",
     routes: [],
     actions: []
 }
@@ -20,7 +21,12 @@ function creatUserProfileStore() {
             name: userApp.user,
             key: userApp.key,
             rol: userApp.rol,
-            routes: userApp.routes
+            routes: userApp.routes,
+            sessionTime: userApp.sessionTime
+        })),
+        setSessionTime: (sessionTime: string) => update((s): UserProfileStore => ({
+            ...s,
+            sessionTime: sessionTime
         })),
         setActions: (actions: UserActionsType[]) => update((s): UserProfileStore => ({
             ...s,

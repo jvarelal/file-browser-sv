@@ -33,7 +33,8 @@ export interface Login {
 export interface UserApp extends Login {
     routes: string[];
     rol: number;
-    actions: UserActionsType[]
+    actions: UserActionsType[];
+    sessionTime: string;
 }
 
 export interface MediaIcon {
@@ -92,4 +93,10 @@ export interface FileExcel {
     sheetName: string;
     data: string[];
     maxNumberOnCol?: number;
+}
+
+export interface ChangePassword {
+    prevKey: string;
+    key: string;
+    validateKey: string;
 }

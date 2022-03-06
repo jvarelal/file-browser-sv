@@ -9,7 +9,7 @@ const defaultState: FileSettingStore = {
     orderAsc: true,
     viewList: false,
     viewOptions: false,
-    themeId: 0,
+    theme: FileBrowser.themes[0].value,
     cache: []
 }
 
@@ -26,6 +26,7 @@ function createfileSettingStore() {
             settings = { ...s, [prop]: value };
         }
         setLocalSetting({ ...s })
+        console.log(s)
         return settings;
     }
 
@@ -36,7 +37,7 @@ function createfileSettingStore() {
             if (localSettings.cache.length > 0) {
                 localSettings.cache = localSettings.cache.map(dir => secure.recover(dir))
             }
-            document.documentElement.setAttribute("data-theme", FileBrowser.themes[localSettings.themeId].value)
+            document.documentElement.setAttribute("data-theme", localSettings.theme)
             return localSettings
         } catch (e) {
             return defaultState
@@ -58,10 +59,9 @@ function createfileSettingStore() {
         setView: () => update((s) => localUpdate(s, "viewList", !s.viewList)),
         setViewOptions: () => update((s) => localUpdate(s, "viewOptions", !s.viewOptions)),
         updateCache: (dir: string) => update((s) => localUpdate(s, "cache", dir)),
-        setThemeId: () => update((s) => {
-            let val = s.themeId < FileBrowser.themes.length - 1 ? s.themeId + 1 : 0
-            document.documentElement.setAttribute("data-theme", FileBrowser.themes[val].value)
-            return localUpdate(s, "themeId", val)
+        setTheme: (theme:string) => update((s) => {
+            document.documentElement.setAttribute("data-theme", theme)
+            return localUpdate(s, "theme", theme)
         }),
         initCache: (routes: string[]) => update((s) => {
             let cache = new Set([...s.cache, ...routes])

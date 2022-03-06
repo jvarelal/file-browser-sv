@@ -6,6 +6,7 @@
     //components
     import FileService from "../../../services/FileService";
     import InputText from "../../commons/InputText.svelte";
+    import InputLabel from "../../commons/InputLabel.svelte";
     //types
     import { getSizeMb } from "../../../helpers/Media";
     import type { BooleanFunction, FileUI } from "../../../types/UITypes";
@@ -110,55 +111,30 @@
             regex={FileBrowser.regexp.folderName}
         />
     {:else}
-        <div class="form-field-control">
-            <label for="type">Nombre</label>
-            <div class="form-field">
-                <span class="inp-type disable p-3 w-100 f-08 t-left">
-                    {file.name}
-                </span>
-                {#if !$fileBrowserStore.viewBookmarks}
-                    <button
-                        on:click|preventDefault={() => (editName = !editName)}
-                        class="inp-type disable pointer"
-                    >
-                        <i class="fas fa-edit" />
-                    </button>
-                {/if}
-            </div>
-        </div>
+        <InputLabel
+            label="Nombre"
+            value={file.name}
+            action={() => (editName = !editName)}
+            iconAction="fas fa-edit"
+        />
     {/if}
 
     {#if file.size !== undefined}
-        <div class="form-field-control">
-            <label for="type">Tamaño</label>
-            <div class="form-field">
-                <span class="inp-type disable p-3 w-100 f-08 t-left">
-                    {getSizeMb(file.size)}
-                </span>
-            </div>
-        </div>
+        <InputLabel label="Tamaño" value={getSizeMb(file.size)} />
     {/if}
 
     {#if file.creation}
-        <div class="form-field-control">
-            <label for="type">Creación</label>
-            <div class="form-field">
-                <span class="inp-type disable p-3 w-100 f-08 t-left">
-                    {setDateFormatStr(file.creation, "dd/mm/yyyy HH24:MI")}
-                </span>
-            </div>
-        </div>
+        <InputLabel
+            label="Creación"
+            value={setDateFormatStr(file.creation, "dd/mm/yyyy HH24:MI")}
+        />
     {/if}
 
     {#if file.modification}
-        <div class="form-field-control">
-            <label for="type">Ultima Modificación</label>
-            <div class="form-field">
-                <span class="inp-type disable p-3 w-100 f-08 t-left">
-                    {setDateFormatStr(file.modification, "dd/mm/yyyy HH24:MI")}
-                </span>
-            </div>
-        </div>
+        <InputLabel
+            label="Ultima Modificación"
+            value={setDateFormatStr(file.modification, "dd/mm/yyyy HH24:MI")}
+        />
     {/if}
     {#if finalError}
         <div class="f-08" style="color: red">

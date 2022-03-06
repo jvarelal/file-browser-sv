@@ -81,13 +81,6 @@
             &-content {
                 padding: 0.5rem 1rem;
             }
-            .close-arrow {
-                background-color: transparent;
-                color: $color-text;
-                border: 1px solid transparent;
-                width: 2rem;
-                cursor: pointer;
-            }
         }
         &-body {
             padding: 1rem;

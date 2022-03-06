@@ -5,7 +5,7 @@ import type {
     FileApiResponse,
     ApiResponse,
 } from "../types/ApiTypes"
-import type { FileUI, Login } from "../types/UITypes";
+import type { ChangePassword, FileUI, Login } from "../types/UITypes";
 import httpClient from "./HttpClient"
 
 const UserService = {
@@ -15,7 +15,6 @@ const UserService = {
         cb: (resp: LoginApiResponse) => void,
         err: (resp: ErrorApiResponse) => void
     ): void => {
-        console.log("ëntro")
         let loginDigest: Login = {
             user: secure.digest(loginData.user),
             key: secure.digest(loginData.key)
@@ -44,6 +43,30 @@ const UserService = {
         httpClient.post(`user/bookmarks`, { bookmarks: transferBookmarks })
             .then(cb)
             .catch(err)
+    },
+
+    changePassword: (
+        data: ChangePassword,
+        cb: (resp: ApiResponse) => void,
+        err: (resp: ErrorApiResponse) => void
+    ) => {
+        let key: string = secure.digest(data.key)
+        let prevKey: string = secure.digest(data.prevKey)
+        httpClient.post(`user/changekey`, { key, prevKey })
+            .then(cb)
+            .catch(err)
+
+    },
+
+    changeSession: (
+        data: string,
+        cb: (resp: ApiResponse) => void,
+        err: (resp: ErrorApiResponse) => void
+    ) => {
+        httpClient.post(`user/changesession`, { sessionTime: data })
+            .then(cb)
+            .catch(err)
+
     },
 
 }

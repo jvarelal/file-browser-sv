@@ -10,6 +10,7 @@ const EDITABLES: string[] = [...FILE_AS_TEXT, "html", "xml"]
 interface FileBrowserSettings {
     baseUrl: string;
     secureKey: string;
+    sessionTime: string[];
     localStorageKeys: {
         settings: string,
         bookmarks: string,
@@ -39,6 +40,7 @@ interface FileBrowserSettings {
 const FileBrowser: FileBrowserSettings = {
     baseUrl: process.env.NODE_ENV === "build" ? `${window.location.origin}/api` : "http://localhost:4000/api",
     secureKey: "fB*",
+    sessionTime: ["15m", "30m", "45m", "1h", "2h", "4h", "1d"],
     regexp: {
         folderName: /^["/?*:|<>\\]/
     },
@@ -47,9 +49,9 @@ const FileBrowser: FileBrowserSettings = {
         bookmarks: "fe-bookmarks"
     },
     themes: [
-        { value: "", label: "fas fa-adjust" },
-        { value: "night-light", label: "far fa-moon" },
-        { value: "dark", label: "far fa-sun" },
+        { value: "", label: "White" },
+        { value: "night-light", label: "Wheat" },
+        { value: "dark", label: "Dark" },
     ],
     sortOptions: [
         { value: "name", label: "Nombre" },
