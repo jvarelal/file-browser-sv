@@ -4,9 +4,11 @@
     import { getVolumeIcon } from "../../../helpers/Media";
     import FileService from "../../../services/FileService";
 
-    import type { FileUI } from "../../../types/UITypes";
+    import type { FileUIPreview } from "../../../types/UITypes";
 
-    export let file: FileUI;
+    export let preview: FileUIPreview;
+    export let timer: boolean;
+
     let videoElement: HTMLVideoElement;
     let seekbar: HTMLInputElement;
     let volumenBar: HTMLInputElement;
@@ -43,8 +45,20 @@
         }
     }
 
-    $: if (file && init) {
-        videoElement.src = FileService.viewRawFile(file);
+    function endDataPlay() {
+        if (timer) {
+            if (!preview.next) {
+                timer = false;
+                return resetData();
+            }
+            return preview.next();
+        }
+        return resetData();
+    }
+
+
+    $: if (preview && init) {
+        videoElement.src = FileService.viewRawFile(preview);
         resetData();
     }
 
@@ -58,9 +72,9 @@
         on:timeupdate={() =>
             (seekbar.value = videoElement?.currentTime.toString())}
         on:canplay={() => (seekbar.max = videoElement?.duration.toString())}
-        on:ended={resetData}
+        on:ended={endDataPlay}
     >
-        <source type={`audio/${file?.type}`} />
+        <source type={`audio/${preview?.type}`} />
     </video>
     <div class="video-player-controls w-100">
         <div class="video-player-time w-100 d-flex">

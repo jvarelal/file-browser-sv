@@ -21,7 +21,8 @@
     export let active: boolean;
 
     const key: string = getContext<string>("id");
-    let enableEdit = false;
+    let timer: boolean = false;
+    let enableEdit: boolean = false;
     $: preview = $filePreviewStore.get(key);
 
     function validateKey(e: KeyboardEvent): any {
@@ -33,10 +34,11 @@
                 return preview.prev();
             }
             if (e.key === "Escape") {
-                return closePreview()
+                return closePreview();
             }
         }
     }
+
     function updateBookmark(): void {
         let p = { ...preview };
         fileBrowserStore.updateBookmarks(p);
@@ -50,6 +52,7 @@
             }
         }
     }
+
     function closePreview(): void {
         filePreviewStore.removePreview(key);
         fileToolbarStore.setShow(true);
@@ -65,7 +68,8 @@
 <svelte:window on:keydown={validateKey} />
 <div
     class="file-visor statusToolbar"
-    class:toolbarExpanded={!$fileToolbarStore.isCollapsed && $fileToolbarStore.show}
+    class:toolbarExpanded={!$fileToolbarStore.isCollapsed &&
+        $fileToolbarStore.show}
     class:toolbarHided={!$fileToolbarStore.show}
     on:contextmenu|preventDefault|stopPropagation
 >
@@ -94,6 +98,14 @@
                     icon="fas fa-edit"
                 />
             {/if}
+            {#if [...FileBrowser.previews.image, ...FileBrowser.previews.audio, ...FileBrowser.previews.video].includes(preview.type)}
+                <ActionButton
+                    on:click={() => (timer = !timer)}
+                    className={timer ? "btn-active" : ""}
+                    title="Presentacion"
+                    icon="fas fa-hourglass-half"
+                />
+            {/if}
             <ActionButton
                 on:click={updateBookmark}
                 className={isBookmark($fileBrowserStore.bookmarks, preview)
@@ -113,15 +125,15 @@
         </div>
     </div>
     {#if FileBrowser.previews.image.includes(preview.type)}
-        <FileVisorImage {preview} />
+        <FileVisorImage {preview} bind:timer />
+    {:else if FileBrowser.previews.audio.includes(preview.type)}
+        <FIleVisorAudio {preview} bind:timer />
+    {:else if FileBrowser.previews.video.includes(preview.type)}
+        <FileVisorVideo {preview} bind:timer />
     {:else if FileBrowser.previews.asText.includes(preview.type) || enableEdit}
         <FileVisorText file={preview} bind:enableEdit />
     {:else if FileBrowser.previews.excel.includes(preview.type)}
         <FileVisorExcel file={preview} />
-    {:else if FileBrowser.previews.audio.includes(preview.type)}
-        <FIleVisorAudio file={preview} />
-    {:else if FileBrowser.previews.video.includes(preview.type)}
-        <FileVisorVideo file={preview} />
     {:else}
         <iframe
             title="file"

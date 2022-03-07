@@ -1,9 +1,10 @@
 <script lang="ts">
     import { onMount } from "svelte";
     import ActionButton from "../../commons/ActionButton.svelte";
-    import type { FileUI } from "../../../types/UITypes";
+    import type { FileUIPreview } from "../../../types/UITypes";
 
-    export let preview: FileUI;
+    export let preview: FileUIPreview;
+    export let timer: boolean;
 
     let imageVisorWrapper: HTMLElement;
     let imageVisor: HTMLImageElement;
@@ -52,6 +53,15 @@
         loading = true;
         imageVisor.src = preview.src;
         imageVisorWrapper?.scrollTo(0, 0);
+    }
+    $: if (timer) {
+        setTimeout(() => {
+            if (preview.next) {
+                preview.next();
+            } else {
+                timer = false;
+            }
+        }, 30000);
     }
 </script>
 

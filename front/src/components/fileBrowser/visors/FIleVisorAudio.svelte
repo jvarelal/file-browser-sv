@@ -1,11 +1,13 @@
 <script lang="ts">
     import { onMount } from "svelte";
     import FileService from "../../../services/FileService";
-    import type { FileUI } from "../../../types/UITypes";
+    import type { FileUIPreview } from "../../../types/UITypes";
     import { secondsStrToTime } from "../../../helpers/Date";
     import { getVolumeIcon } from "../../../helpers/Media";
 
-    export let file: FileUI;
+    export let preview: FileUIPreview;
+    export let timer: boolean;
+
     let init = false;
     let audioElement: HTMLAudioElement;
     let seekbar: HTMLInputElement;
@@ -18,7 +20,7 @@
     function resetAudio(): void {
         isPaused = true;
         isStoped = true;
-        audioElement.src = FileService.viewRawFile(file);
+        audioElement.src = FileService.viewRawFile(preview);
         audioElement.pause();
         audioElement.currentTime = 0;
         seekbar.value = "0";
@@ -36,7 +38,18 @@
         isPaused = !isPaused;
     }
 
-    $: if (file && init) {
+    function endDataPlay() {
+        if (timer) {
+            if (!preview.next) {
+                timer = false;
+                return resetAudio();
+            }
+            return preview.next();
+        }
+        return resetAudio();
+    }
+
+    $: if (preview && init) {
         resetAudio();
         playData();
     }
@@ -51,9 +64,9 @@
         on:timeupdate={() =>
             (seekbar.value = audioElement?.currentTime.toString())}
         on:canplay={() => (seekbar.max = audioElement?.duration.toString())}
-        on:ended={resetAudio}
+        on:ended={endDataPlay}
     >
-        <source type={`audio/${file.type}`} />
+        <source type={`audio/${preview.type}`} />
     </audio>
     <div class="audio-animation w-100">
         <i
