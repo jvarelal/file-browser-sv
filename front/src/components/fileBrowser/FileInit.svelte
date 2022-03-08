@@ -11,8 +11,23 @@
     import type { FileListApiResponse } from "../../types/ApiTypes";
     //helpers
     import { getLastTreeName } from "../../helpers/Media";
+    import UserService from "../../services/UserService";
 
     export let apiResponse: FileListApiResponse;
+
+    $: if (
+        $fileBrowserStore.viewBookmarks &&
+        $fileBrowserStore.bookmarks.length === 0
+    ) {
+        UserService.getBookmarks(
+            (resp) => {
+                fileBrowserStore.setBookmarks(resp.files);
+            },
+            (err) => {
+                console.log(err);
+            }
+        );
+    }
 
     onMount(() => {
         fileBrowserStore.setFiles(
@@ -21,7 +36,7 @@
         );
         fileSettingStore.updateCache($fileDirectoryStore.current);
         userProfileStore.setActions(apiResponse.actions);
-        
+
         document.title = `FileBrowser - ${getLastTreeName(
             $fileDirectoryStore.current
         )}`;

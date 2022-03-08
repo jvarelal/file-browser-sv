@@ -10,7 +10,8 @@ let token: Token = { "Authorization": "Bearer " + sessionStorage.browserToken }
 
 function generateUrl(base: string, params: Map<string, string>, key: boolean) {
     let url = new URL(base)
-    params.forEach((val, key) => url.searchParams.append(key, encodeURIComponent(val)))
+    if (params)
+        params.forEach((val, key) => url.searchParams.append(key, encodeURIComponent(val)))
     if (key) {
         url.searchParams.append("tmp", encodeURIComponent(secure.digest(sessionStorage.browserToken)))
     }

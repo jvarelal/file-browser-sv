@@ -56,6 +56,8 @@
     function closePreview(): void {
         filePreviewStore.removePreview(key);
         fileToolbarStore.setShow(true);
+        expanded = false
+        timer = false
         scrollStore.triggerPrevious();
     }
 

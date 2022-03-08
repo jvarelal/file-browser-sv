@@ -4,6 +4,7 @@ import type {
     ErrorApiResponse,
     FileApiResponse,
     ApiResponse,
+    FileListApiResponse,
 } from "../types/ApiTypes"
 import type { ChangePassword, FileUI, Login } from "../types/UITypes";
 import httpClient from "./HttpClient"
@@ -27,6 +28,15 @@ const UserService = {
                 data.routes = data.routes.map(r => secure.recover(r))
                 cb(data)
             })
+            .catch(err)
+    },
+
+    getBookmarks: (
+        cb: (resp: FileListApiResponse) => void,
+        err: (resp: ErrorApiResponse) => void
+    ): void => {
+        httpClient.getJson(`user/bookmarks`, null)
+            .then(cb)
             .catch(err)
     },
 

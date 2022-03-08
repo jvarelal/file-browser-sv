@@ -36,6 +36,12 @@ router.post(`${parentPath}/login`, (req, res) => {
 	}
 })
 
+router.get(`${parentPath}/bookmarks`, authValidation, async (req, res) => {
+	let { user } = req.body
+	let foundUser = getUserByName(user.user);
+	res.send({ status: 200, message: "Bookmarks retrieved", files: foundUser.bookmarks })
+})
+
 router.post(`${parentPath}/bookmarks`, authValidation, async (req, res) => {
 	let { user, bookmarks } = req.body
 	try {
@@ -62,8 +68,8 @@ router.post(`${parentPath}/changePassword`, authValidation, async (req, res) => 
 	try {
 		let previousPassword = secure.process(user.key)
 		prevKey = secure.process(prevKey)
-		if(previousPassword !== prevKey){
-			throw new Error("Current Password invalid") 
+		if (previousPassword !== prevKey) {
+			throw new Error("Current Password invalid")
 		}
 		await updateProp(user.user, "key", secure.process(key))
 		res.send({ status: 200, message: "Password updated" })

@@ -1,3 +1,4 @@
+import { onDestroy } from "svelte";
 import type { FileDatesClasification, Select } from "../types/UITypes";
 
 const MINUTE = 60;
@@ -125,4 +126,11 @@ export function secondsToTime(seconds: number): string {
         default:
             return `${Math.trunc(seconds / DAY).toString().padStart(2, "0")} Days ${secondsToTime(seconds % DAY)}`
     }
+}
+
+export function onInterval(callback: VoidFunction, milliseconds: number) {
+    const interval = setInterval(callback, milliseconds);
+    onDestroy(() => {
+        clearInterval(interval);
+    });
 }

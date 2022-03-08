@@ -112,12 +112,16 @@
                               : [file]
                       );
             case "ArrowRight":
+                e.preventDefault();
                 return focusNext();
             case "ArrowLeft":
+                e.preventDefault();
                 return focusPrev();
             case "ArrowDown":
+                e.preventDefault();
                 return focusDown();
             case "ArrowUp":
+                e.preventDefault();
                 return focusUp();
             case "C":
             case "c":
@@ -221,7 +225,7 @@
     on:dragover|preventDefault|stopPropagation={() => (dragOn = true)}
     on:dragleave|preventDefault|stopPropagation={() => (dragOn = false)}
     on:click={processItem}
-    on:keydown|preventDefault={validateKey}
+    on:keydown={validateKey}
 >
     <slot />
 </div>

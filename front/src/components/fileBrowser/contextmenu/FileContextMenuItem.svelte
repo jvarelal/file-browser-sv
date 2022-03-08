@@ -100,7 +100,11 @@
             icon: "fas fa-download",
             action: () => {
                 let files: FileUI[] = isChecked
-                    ? $fileBrowserStore.files.filter((f) => f.checked)
+                    ? $fileBrowserStore[
+                          $fileBrowserStore.viewBookmarks
+                              ? "bookmarks"
+                              : "files"
+                      ].filter((f) => f.checked)
                     : [$fileContextMenuStore.item];
                 fileDownloadStore.setDownload(files);
                 FileService.download(

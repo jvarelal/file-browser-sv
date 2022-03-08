@@ -2,10 +2,13 @@
     import { onMount } from "svelte";
     import ActionButton from "../../commons/ActionButton.svelte";
     import type { FileUIPreview } from "../../../types/UITypes";
+    import { onInterval } from "../../../helpers/Date";
 
     export let preview: FileUIPreview;
-    export let timer: boolean;
+    export let timer: boolean = false;
 
+    let seconds: number = 0;
+    let timerSet: boolean = false;
     let imageVisorWrapper: HTMLElement;
     let imageVisor: HTMLImageElement;
     let degre: number = 0;
@@ -48,21 +51,28 @@
         imageVisor.style.transform = `rotate(${degre}deg)`;
     }
 
-    onMount(initImage);
     $: if (preview.src && imageVisor && preview.src !== imageVisor?.src) {
         loading = true;
         imageVisor.src = preview.src;
         imageVisorWrapper?.scrollTo(0, 0);
+        seconds = 0;
     }
     $: if (timer) {
-        setTimeout(() => {
+        if (seconds >= 30) {
             if (preview.next) {
                 preview.next();
+                seconds = 0;
             } else {
                 timer = false;
             }
-        }, 30000);
+        }
+        if (!timerSet) {
+            seconds = 0;
+            timerSet = true;
+        }
     }
+    onInterval(() => (seconds += 1), 1000);
+    onMount(initImage);
 </script>
 
 <div class="scroll d-flex p-relative" bind:this={imageVisorWrapper}>
