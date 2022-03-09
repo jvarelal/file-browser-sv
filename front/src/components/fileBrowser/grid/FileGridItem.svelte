@@ -206,7 +206,7 @@
 </script>
 
 <div
-    class="file-item"
+    class="file-item transition"
     class:bookmark={isBookmark($fileBrowserStore.bookmarks, file)}
     class:moving={$fileBrowserStore.clipboard.find(
         (f) => f.route + f.name === file.route + file.name
@@ -236,7 +236,6 @@
         display: flex;
         cursor: pointer;
         font-size: 0.8rem;
-        transition: all 0.25s;
         position: relative;
         &:focus,
         &:hover,

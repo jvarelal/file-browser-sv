@@ -10,6 +10,7 @@ const defaultState: FileSettingStore = {
     viewList: false,
     viewOptions: false,
     theme: FileBrowser.themes[0].value,
+    transitions: true,
     cache: []
 }
 
@@ -25,8 +26,7 @@ function createfileSettingStore() {
         } else {
             settings = { ...s, [prop]: value };
         }
-        setLocalSetting({ ...s })
-        console.log(s)
+        setLocalSetting({ ...settings })
         return settings;
     }
 
@@ -58,6 +58,7 @@ function createfileSettingStore() {
         setOrderAsc: () => update((s) => localUpdate(s, "orderAsc", !s.orderAsc)),
         setView: () => update((s) => localUpdate(s, "viewList", !s.viewList)),
         setViewOptions: () => update((s) => localUpdate(s, "viewOptions", !s.viewOptions)),
+        setTransitions: () => update((s) => localUpdate(s, "transitions", !s.transitions)),
         updateCache: (dir: string) => update((s) => localUpdate(s, "cache", dir)),
         setTheme: (theme:string) => update((s) => {
             document.documentElement.setAttribute("data-theme", theme)

@@ -84,7 +84,7 @@
     on:dragleave|preventDefault|stopPropagation={() => (dragOn = false)}
 >
     <div
-        class="browser-layout"
+        class="browser-layout transition"
         class:active={!$fileToolbarStore.isCollapsed &&
             $scrollStore.startHeight < 16 * 8}
         class:expand={!$fileToolbarStore.show}
@@ -120,7 +120,6 @@
         overflow-y: auto;
     }
     .browser-layout {
-        transition: padding 0.35s;
         padding-top: 4rem;
         &.active {
             padding-top: 8.25rem;

@@ -88,13 +88,13 @@
     </div>
     <div class="audio-controls">
         <button
-            class="audio-control audio-play m-auto"
+            class="audio-control transition audio-play m-auto"
             bind:this={playButton}
             on:click={playData}
         >
             <i class={`far fa-${isPaused ? "play" : "pause"}-circle`} />
         </button>
-        <button class="audio-control audio-play m-auto" on:click={resetAudio}>
+        <button class="audio-control transition audio-play m-auto" on:click={resetAudio}>
             <i class="far fa-stop-circle" />
         </button>
         <div class="w-50 p-8 audio-volumen d-flex">
@@ -148,7 +148,6 @@
             height: 4rem;
             border-radius: 50%;
             padding: 0;
-            transition: all 0.2s;
             display: flex;
             align-items: center;
             cursor: pointer;

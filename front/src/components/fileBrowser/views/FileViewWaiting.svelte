@@ -11,7 +11,7 @@
     });
 </script>
 
-<div class="d-flex m-auto loader-container w-50">
+<div class="d-flex m-auto loader-container w-50 transition">
     <div class="loader" />
     <div class="loader" />
     <div class="loader" />
@@ -20,7 +20,6 @@
 <style>
     .loader-container {
         padding: 2rem;
-        transition: all 0.15s;
     }
     .loader {
         border: 4px solid #e7b2b1;

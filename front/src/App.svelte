@@ -4,10 +4,11 @@
 	import Dialog from "./components/modal/Dialog.svelte";
 	import UserControl from "./components/UserControl.svelte";
 	import appViewStore from "./stores/appViewStore";
+	import fileSettingStore from "./stores/fileSettingStore";
 	import dialogStore from "./stores/dialogStore";
 </script>
 
-<main>
+<main class:main-transition={$fileSettingStore.transitions}>
 	{#if $appViewStore.login}
 		<Login />
 	{:else if $appViewStore.browser}

@@ -44,7 +44,13 @@
         </div>
         <div class="d-flex f-08">
             <div class="m-auto">
-                <input type="checkbox" class="check" id="individualMark" />
+                <input
+                    type="checkbox"
+                    class="check"
+                    id="individualMark"
+                    checked={$fileSettingStore.transitions}
+                    on:change={fileSettingStore.setTransitions}
+                />
                 <label for="individualMark"> Animaciones de explorador </label>
             </div>
         </div>

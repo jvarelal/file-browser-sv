@@ -37,7 +37,7 @@
     on:introend={() => (translatePorcentage = 0)}
 >
     <div
-        class="modal"
+        class="modal transition"
         style={`transform: translateX(-${translatePorcentage}%);`}
     >
         <div class="modal-title d-flex">
@@ -74,7 +74,6 @@
         min-width: 320px;
         height: 100vh;
         background-color: $bg-main;
-        transition: all 0.3s;
         height: 100vh;
         &-title {
             border-bottom: 1px solid $color-text;

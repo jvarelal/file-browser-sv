@@ -296,6 +296,12 @@ ul {
     }
 }
 
+.main-transition {
+    .transition {
+        transition: all 0.25s;
+    }
+}
+
 .underline {
     text-decoration: underline;
 }

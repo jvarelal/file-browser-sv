@@ -13,7 +13,7 @@
     function handleFocusEnter(e: KeyboardEvent): void {
         if (e.key === "Enter") {
             collapse = !collapse;
-            onChange()
+            onChange();
         }
     }
     function onChange() {
@@ -36,9 +36,13 @@
         tabindex="0"
         on:keypress|preventDefault={handleFocusEnter}
     >
+        <i
+            class="fas fa-angle-right transition"
+            class:fa-rotate-90={!collapse}
+        />
         {title}
     </label>
-    <section>
+    <section class="transition">
         {#if renderDefault || !collapse}
             <slot />
         {/if}
@@ -49,21 +53,10 @@
     @import "../../styles/vars";
     .accordion {
         border-bottom: 1px solid $border-medium;
-        > section {
-            transition: all 0.35s;
-        }
         > label {
             padding: 0.25rem;
             cursor: pointer;
             border-bottom: 1px solid $border-medium;
-            &::before {
-                content: "❯";
-                width: 1rem;
-                height: 1rem;
-                padding: 0 1rem;
-                text-align: center;
-                transition: all 0.35s;
-            }
             &:focus {
                 background-color: $bg-btn-focus;
             }
@@ -72,12 +65,6 @@
             display: none;
             position: absolute;
             opacity: 0;
-            &:checked + label {
-                &::before {
-                    padding: 0.25rem;
-                    transform: rotate(90deg);
-                }
-            }
             &:checked + label + section {
                 max-height: 0;
                 opacity: 1;

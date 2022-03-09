@@ -144,7 +144,6 @@
             position: absolute;
             bottom: 0;
             background-color: #888888aa;
-            transition: all 0.2s;
             transform: translateY(50%);
             &:hover {
                 transform: translateY(0%);

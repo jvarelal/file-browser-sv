@@ -24,7 +24,7 @@
 
 <svelte:window on:keydown={validateKey} />
 <div class="modal-wrapper" transition:fly>
-    <div class="dialog">
+    <div class="dialog transition">
         {#if $dialogStore.title}
             <div class="dialog-title t-center p-5 m-b-5">
                 {$dialogStore.title}
@@ -73,7 +73,6 @@
         min-width: 275px;
         height: 50%;
         background-color: $bg-main;
-        transition: all 0.3s;
         margin: auto;
         border-radius: 1rem;
         padding: 1.5rem 1.5rem;

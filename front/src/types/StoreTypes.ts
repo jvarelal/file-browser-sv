@@ -46,10 +46,11 @@ export type FileSettingStore = {
     viewList: boolean;
     viewOptions: boolean;
     theme: string;
+    transitions: boolean
     cache: string[];
 }
 
-export type FileSettingProps = "sortBy" | "groupBy" | "orderAsc" | "viewList" | "viewOptions" | "theme" | "cache";
+export type FileSettingProps = "sortBy" | "groupBy" | "orderAsc" | "viewList" | "viewOptions" | "transitions" | "theme" | "cache";
 
 export type FileBrowserStore = {
     waiting: boolean,

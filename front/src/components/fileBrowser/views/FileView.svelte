@@ -110,7 +110,7 @@
         <FileViewEmpty />
     {:else}
         <div
-            class="scroll browser-wrapper"
+            class="scroll browser-wrapper transition"
             class:active={$filePreviewStore.get(key)}
             class:active-audio={$filePreviewStore.get(key) &&
                 FileBrowser.previews.audio.includes(
@@ -136,7 +136,7 @@
         </div>
         {#if $filePreviewStore.get(key)}
             <div
-                class="browser-preview"
+                class="browser-preview transition"
                 class:expanded
                 class:active-audio={FileBrowser.previews.audio.includes(
                     $filePreviewStore.get(key).type
@@ -159,11 +159,9 @@
     .browser-wrapper {
         overflow-y: auto;
         width: 100%;
-        transition: all 0.2s;
         &.active {
             overflow-y: auto;
             width: 10rem;
-            transition: all 0.2s;
             &.active-audio {
                 width: 67%;
                 &.expanded {
@@ -178,7 +176,6 @@
     .browser-preview {
         position: relative;
         width: calc(100% - 10rem);
-        transition: all 0.25s;
         &.active-audio {
             width: 33%;
             &.expanded {
