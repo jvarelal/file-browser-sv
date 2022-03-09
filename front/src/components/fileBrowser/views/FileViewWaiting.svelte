@@ -2,6 +2,7 @@
     import { onMount } from "svelte";
     import fileBrowserStore from "../../../stores/fileBrowserStore";
     import fileContextMenuStore from "../../../stores/fileContextMenuStore";
+    import fileSettingStore from "../../../stores/fileSettingStore";
 
     onMount(() => {
         fileBrowserStore.setWaiting(true);
@@ -12,9 +13,13 @@
 </script>
 
 <div class="d-flex m-auto loader-container w-50 transition">
-    <div class="loader" />
-    <div class="loader" />
-    <div class="loader" />
+    {#if $fileSettingStore.transitions}
+        <div class="loader" />
+        <div class="loader" />
+        <div class="loader" />
+    {:else}
+        <p class="t-center m-auto">Procesando...</p>
+    {/if}
 </div>
 
 <style>

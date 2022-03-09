@@ -1,4 +1,5 @@
 <script lang="ts">
+    import fileContextMenuStore from "../../stores/fileContextMenuStore";
     import fileToolbarStore from "../../stores/fileToolbarStore";
 
     import FilePath from "./path/FilePath.svelte";
@@ -7,7 +8,11 @@
     export let numberItemsFiltered: number = 0;
 </script>
 
-<div class="browser-toolbar transition" class:show={$fileToolbarStore.show}>
+<div
+    class="browser-toolbar transition"
+    class:show={$fileToolbarStore.show}
+    on:contextmenu={fileContextMenuStore.reset}
+>
     <FilePath />
     <FileSettings {numberItemsFiltered} />
 </div>

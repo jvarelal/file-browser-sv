@@ -121,6 +121,7 @@
     }
     .browser-layout {
         padding-top: 4rem;
+        overflow-x: hidden;
         &.active {
             padding-top: 8.25rem;
         }

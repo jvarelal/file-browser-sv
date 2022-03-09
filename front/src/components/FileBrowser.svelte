@@ -1,5 +1,6 @@
 <script lang="ts">
     import { onMount, setContext } from "svelte";
+import { fly } from "svelte/transition";
     //stores
     import fileDirectoryStore from "../stores/fileDirectoryStore";
     import fileSettingStore from "../stores/fileSettingStore";
@@ -27,7 +28,12 @@
     setContext("itemsFiltered", (size: number): void => {
         numberItemsFiltered = size;
     });
-
+    
+    function existTransition(node: HTMLElement, options: any): any {
+        if ($fileSettingStore.transitions) {
+            return options.fn(node, options);
+        }
+    }
     onMount(() => {
         if (!$fileDirectoryStore.current) {
             if ($fileSettingStore.cache[0]) {
@@ -39,7 +45,7 @@
     });
 </script>
 
-<section>
+<section transition:existTransition={{ fn: fly, x: -100, duration: 250 }}>
     <FileToolBar {numberItemsFiltered} />
     <FileLayout>
         {#await fileList}
