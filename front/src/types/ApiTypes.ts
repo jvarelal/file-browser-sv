@@ -24,19 +24,24 @@ export interface FileApiResponse {
     key?: boolean;
 }
 
-export interface LoginApiResponse extends ApiResponse {
+export interface UserApiResponse extends ApiResponse {
     user: string;
     token: string;
     routes: string[];
-    rol: number;
+    rol: string;
     actions: UserActionsType[];
     bookmarks: FileApiResponse[];
     sessionTime: string;
+    creation: string;
 }
 
 export interface FileListApiResponse extends ApiResponse {
     files: FileApiResponse[];
     actions: UserActionsType[];
+}
+
+export interface UserListApiResponse extends ApiResponse {
+    users: UserApiResponse[];
 }
 
 export interface FileInformationApiResponse extends ApiResponse {

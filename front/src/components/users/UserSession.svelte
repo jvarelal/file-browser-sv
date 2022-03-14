@@ -35,7 +35,12 @@
     }
 </script>
 
-<Accordion title="Sesion" id="session" renderDefault={false} bind:collapse>
+<Accordion
+    title={`<i class="fas fa-clock m-r-5  m-l-5"></i> Sesion`}
+    id="session"
+    renderDefault={false}
+    bind:collapse
+>
     <div class="user-settings-row">
         {#if edit}
             <div>

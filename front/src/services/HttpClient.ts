@@ -90,7 +90,7 @@ const httpClient = {
 
     getTxt: async (path: string, params: Map<string, string>): Promise<any> => getData(path, params, "text"),
 
-    getJson: async (path: string, params: Map<string, string>): Promise<any> => getData(path, params, "json"),
+    getJson: async (path: string, params: Map<string, string> = null): Promise<any> => getData(path, params, "json"),
 
     post: async (path: string = '', data: any = {}): Promise<any> => postData(path, data, "json"),
 

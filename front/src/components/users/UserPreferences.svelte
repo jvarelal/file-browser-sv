@@ -13,7 +13,7 @@
 </script>
 
 <Accordion
-    title="Preferencias"
+    title={`<i class="fab fa-themeco m-r-5  m-l-5"></i> Preferencias`}
     id="preferences"
     renderDefault={false}
     bind:collapse

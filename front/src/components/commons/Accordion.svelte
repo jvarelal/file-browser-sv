@@ -40,7 +40,7 @@
             class="fas fa-angle-right transition"
             class:fa-rotate-90={!collapse}
         />
-        {title}
+        {@html title}
     </label>
     <section class="transition">
         {#if renderDefault || !collapse}
@@ -53,8 +53,9 @@
     @import "../../styles/vars";
     .accordion {
         border-bottom: 1px solid $border-medium;
+        overflow-x: hidden;
         > label {
-            padding: 0.25rem;
+            padding: 0.25rem 0.75rem;
             cursor: pointer;
             border-bottom: 1px solid $border-medium;
             &:focus {

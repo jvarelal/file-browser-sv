@@ -4,15 +4,18 @@
     export let value: string = "";
     export let errors: string = "";
     export let regex: RegExp = null;
+    export let errorRegexp: string = "";
     export let type: string = "text";
     export let required: boolean = true;
     export let list: string = "";
+    export let action: VoidFunction = null;
+    export let iconAction: string = "";
 
     function validate(e: KeyboardEvent): boolean {
         let key = e.key;
         if (regex && regex.test(key)) {
             e.preventDefault();
-            errors = `* Los nombres de archivos no pueden contener los caracteres " / ? * : | < > \ `;
+            errors = errorRegexp;
             return false;
         }
         errors = ``;
@@ -31,6 +34,7 @@
                 {name}
                 {list}
                 bind:value
+                on:input={() => (errors = "")}
                 on:keypress={validate}
                 autocomplete="off"
                 {required}
@@ -43,13 +47,19 @@
                 id={name}
                 {name}
                 bind:value
+                on:change={() => (errors = "")}
                 on:keypress={validate}
                 autocomplete="off"
                 {required}
             />
         {/if}
+        {#if action}
+            <button on:click|preventDefault={action} class="inp-type pointer">
+                <i class={iconAction} />
+            </button>
+        {/if}
     </div>
     {#if errors}
-        <div class="form-field-error m-t-4 f-08">{errors}</div>
+        <div class="form-field-error m-t-4 f-08">* {errors}</div>
     {/if}
 </div>

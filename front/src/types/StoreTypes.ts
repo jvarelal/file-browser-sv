@@ -5,7 +5,7 @@ export type UserProfileStore = {
     name: string;
     key: string;
     routes: string[];
-    rol: number;
+    rol: string;
     sessionTime: string;
     actions: UserActionsType[]
 }

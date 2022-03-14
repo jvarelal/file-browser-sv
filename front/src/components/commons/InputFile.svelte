@@ -91,12 +91,4 @@
     .dragOn {
         font-size: 2.25rem;
     }
-    .tbl {
-        background-color: $bg-inp;
-        color: $color-text;
-        td {
-            border-bottom: 1px solid $border-light;
-            padding: 0.25rem;
-        }
-    }
 </style>

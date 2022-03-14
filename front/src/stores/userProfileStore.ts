@@ -6,7 +6,7 @@ import type { UserApp } from "../types/UITypes";
 const initialState: UserProfileStore = {
     name: "",
     key: "",
-    rol: 2,
+    rol: "2",
     sessionTime: "",
     routes: [],
     actions: []

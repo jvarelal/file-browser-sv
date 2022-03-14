@@ -2,7 +2,7 @@
 	import FileBrowser from "./components/FileBrowser.svelte";
 	import Login from "./components/Login.svelte";
 	import Dialog from "./components/modal/Dialog.svelte";
-	import UserControl from "./components/UserControl.svelte";
+	import UserOptions from "./components/UserOptions.svelte";
 	import appViewStore from "./stores/appViewStore";
 	import fileSettingStore from "./stores/fileSettingStore";
 	import dialogStore from "./stores/dialogStore";
@@ -14,7 +14,7 @@
 	{:else if $appViewStore.browser}
 		<FileBrowser />
 	{:else if $appViewStore.userControl}
-		<UserControl />
+		<UserOptions />
 	{/if}
 	{#if $dialogStore.active}
 		<Dialog />
@@ -26,5 +26,6 @@
 	main {
 		text-align: center;
 		height: 100%;
+		overflow: hidden;
 	}
 </style>

@@ -1,6 +1,6 @@
 import { secure } from "../helpers/Misc"
 import type {
-    LoginApiResponse,
+    UserApiResponse,
     ErrorApiResponse,
     FileApiResponse,
     ApiResponse,
@@ -13,7 +13,7 @@ const UserService = {
 
     login: (
         loginData: Login,
-        cb: (resp: LoginApiResponse) => void,
+        cb: (resp: UserApiResponse) => void,
         err: (resp: ErrorApiResponse) => void
     ): void => {
         let loginDigest: Login = {
@@ -21,7 +21,7 @@ const UserService = {
             key: secure.digest(loginData.key)
         }
         httpClient.post(`user/login`, loginDigest)
-            .then((data: LoginApiResponse): void => {
+            .then((data: UserApiResponse): void => {
                 if (data.token) {
                     httpClient.setToken(data.token)
                 }

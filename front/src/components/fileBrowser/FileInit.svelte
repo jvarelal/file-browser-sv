@@ -1,6 +1,5 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import { fly } from "svelte/transition";
     //stores
     import fileBrowserStore from "../../stores/fileBrowserStore";
     import fileDirectoryStore from "../../stores/fileDirectoryStore";
@@ -15,7 +14,6 @@
     import UserService from "../../services/UserService";
 
     export let apiResponse: FileListApiResponse;
-    let showBookmarks: boolean = false;
 
     $: if (
         $fileBrowserStore.viewBookmarks &&
@@ -29,11 +27,6 @@
                 console.log(err);
             }
         );
-    }
-    function existTransition(node: HTMLElement, options: any): any {
-        if ($fileSettingStore.transitions) {
-            return options.fn(node, options);
-        }
     }
 
     onMount(() => {
@@ -50,18 +43,12 @@
     });
 </script>
 
-<div class="transition" class:inactive={showBookmarks}>
+<div class:inactive={$fileBrowserStore.viewBookmarks}>
     <FileView
         files={$fileBrowserStore.files}
         active={!$fileBrowserStore.viewBookmarks}
     />
 </div>
 {#if $fileBrowserStore.viewBookmarks}
-    <div
-        transition:existTransition={{ fn: fly, y: 200, duration: 250 }}
-        on:introstart={() => (showBookmarks = true)}
-        on:outroend={() => (showBookmarks = false)}
-    >
-        <FileView files={$fileBrowserStore.bookmarks} />
-    </div>
+    <FileView files={$fileBrowserStore.bookmarks} />
 {/if}

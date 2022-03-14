@@ -122,6 +122,7 @@
             bind:value={values.name}
             bind:errors={errors.name}
             regex={FileBrowser.regexp.folderName}
+            errorRegexp={`* Los nombres de archivos no pueden contener los caracteres " / ? * : | < > \ `}
         />
     {:else}
         <InputFile

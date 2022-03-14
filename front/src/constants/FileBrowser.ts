@@ -18,6 +18,7 @@ interface FileBrowserSettings {
     regexp: {
         folderName: RegExp;
     },
+    roles: Select[];
     themes: Select[];
     sortOptions: Select[];
     groupOptions: Select[];
@@ -48,6 +49,11 @@ const FileBrowser: FileBrowserSettings = {
         settings: "fe-settings",
         bookmarks: "fe-bookmarks"
     },
+    roles: [
+        { value: "0", label: "Admin" },
+        { value: "1", label: "User" },
+        { value: "2", label: "Reader" },
+    ],
     themes: [
         { value: "", label: "White" },
         { value: "night-light", label: "Wheat" },

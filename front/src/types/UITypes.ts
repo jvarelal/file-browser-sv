@@ -3,6 +3,7 @@ import type { FileApiResponse, UserActionsType } from "./ApiTypes";
 export type BooleanFunction = (value: boolean) => void
 export type NumberFunction = (value: number) => void
 export type FileUIFunction = (fileUI: FileUI) => void
+export type UserAppFunction = (userData: UserApp) => void
 
 export interface Select {
     value: string;
@@ -32,7 +33,7 @@ export interface Login {
 
 export interface UserApp extends Login {
     routes: string[];
-    rol: number;
+    rol: string;
     actions: UserActionsType[];
     sessionTime: string;
 }

@@ -45,7 +45,7 @@ import { fly } from "svelte/transition";
     });
 </script>
 
-<section transition:existTransition={{ fn: fly, x: -100, duration: 250 }}>
+<section transition:existTransition={{ fn: fly, x: -100, duration: 300 }}>
     <FileToolBar {numberItemsFiltered} />
     <FileLayout>
         {#await fileList}

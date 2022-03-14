@@ -18,7 +18,7 @@ const directory = (user) => {
 			filePath.name = secure.process(name);
 			filePath.route = processRoute;
 		}
-		if (user.initialFolder.filter(r => filePath.dir.startsWith(resolve(r))).length === 0) {
+		if (user.routes.filter(r => filePath.dir.startsWith(resolve(r))).length === 0) {
 			throw new Error("Ruta invalida para el usuario");
 		}
 		filePath.actions = user.actions

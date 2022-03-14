@@ -18,19 +18,20 @@ export async function createConnection() {
       {
         "user": "Admin",
         "key": "U2FsdGVkX18LkNaseXY2TCpJ/J95cF9mKijsQF1EH28=",
-        "initialFolder": [
+        "routes": [
           "U2FsdGVkX1916F3vzBKEpjW44d3FTtB0xtfe67lFiaU=",
           "U2FsdGVkX19fIailUKdIeTlkUh8qSOwMaRfiKiOqxsM="
         ],
-        "sessionTime": "1h",
-        "rol": 1,
+        "sessionTime": "2h",
+        "rol": "0",
         "actions": [
           "r",
           "w",
           "u",
           "d"
         ],
-        "bookmarks": []
+        "bookmarks": [],
+        "creation": new Date().toISOString()
       }
     ]
   };

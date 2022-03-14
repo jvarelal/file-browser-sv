@@ -25,7 +25,7 @@ router.post(`${parentPath}/login`, (req, res) => {
 				return res.status(200).send({
 					status: 200,
 					token,
-					routes: foundUser.initialFolder,
+					routes: foundUser.routes,
 					rol: foundUser.rol,
 					bookmarks: foundUser.bookmarks,
 					sessionTime: foundUser.sessionTime
@@ -48,18 +48,17 @@ router.post(`${parentPath}/bookmarks`, authValidation, async (req, res) => {
 		await updateProp(user.user, "bookmarks", bookmarks)
 		res.send({ status: 200, message: "Bookmarks updated" })
 	} catch (e) {
-		res.status(500).send({ status: 500, message: e.message })
+		res.status(500).send({ status: 500, message: e.message, secure: e.secure})
 	}
 })
 
 router.post(`${parentPath}/changeSession`, authValidation, async (req, res) => {
 	let { user, sessionTime } = req.body
 	try {
-		console.log(sessionTime)
 		await updateProp(user.user, "sessionTime", sessionTime)
 		res.send({ status: 200, message: "Session time updated" })
 	} catch (e) {
-		res.status(500).send({ status: 500, message: e.message })
+		res.status(500).send({ status: 500, message: e.message, secure: e.secure})
 	}
 })
 
@@ -74,7 +73,7 @@ router.post(`${parentPath}/changePassword`, authValidation, async (req, res) => 
 		await updateProp(user.user, "key", secure.process(key))
 		res.send({ status: 200, message: "Password updated" })
 	} catch (e) {
-		res.status(500).send({ status: 500, message: e.message })
+		res.status(500).send({ status: 500, message: e.message,secure: e.secure })
 	}
 })
 

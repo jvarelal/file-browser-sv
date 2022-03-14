@@ -37,7 +37,7 @@
 </script>
 
 <Accordion
-    title="Cambiar Password"
+title={`<i class="fas fa-key m-r-5  m-l-5"></i> Cambiar Password`}
     id="changePassword"
     renderDefault={false}
     bind:collapse
