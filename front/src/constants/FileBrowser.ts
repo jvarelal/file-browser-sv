@@ -1,7 +1,7 @@
 import type { Select } from "../types/UITypes";
 
 const IMG_PREVIEW: string[] = ["jpg", "png", "jpeg", "svg", "gif", "webp"]
-const FILE_AS_TEXT: string[] = ["css", "md", "svelte", "ts", "json", "js", "txt", "yml"]
+const FILE_AS_TEXT: string[] = ["css", "md", "svelte", "ts", "java", "json", "js", "txt", "yml"]
 const EXCEL: string[] = ["csv", "ods", "pods", "xls", "xlsm", "xlsx"]
 const AUDIO: string[] = ["mp3", "flac", "wav"]
 const VIDEO: string[] = ["mp4", "webm"]

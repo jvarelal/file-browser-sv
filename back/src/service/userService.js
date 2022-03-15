@@ -30,7 +30,7 @@ export const addUser = async (userData = {}) => {
         const { user, key, rol, sessionTime, actions, routes } = userData
         let existUser = db.data.users.find(u => u.user === user)
         if (existUser) {
-            throw new FileOperationError({ message: `The user ${user} already exist`, status: 500 });
+            throw new Error(`The user ${user} already exist`);
         }
         userValidation(userData)
         db.data.users = [...db.data.users, {
@@ -48,11 +48,11 @@ export const editUser = async (userData = {}) => {
         const { user, key, rol, sessionTime, actions, routes } = userData
         let existUser = db.data.users.find(u => u.user === user)
         if (!existUser) {
-            throw new FileOperationError({ message: `The user ${user} does not exist`, status: 500 });
+            throw new Error(`The user ${user} does not exist`);
         }
         userValidation(userData)
-        db.data.users = db.data.users.map((u) => (u.user === userName ? {
-            ...u, user, key, rol, sessionTime, actions, routes
+        db.data.users = db.data.users.map((u) => (u.user === user ? {
+            ...u, key, rol, sessionTime, actions, routes
         } : u));
         await db.write();
     } catch (error) {
@@ -64,7 +64,7 @@ export const deleteUser = async (userName = "") => {
     try {
         const db = getConnection();
         if (!db.data.users.find(u => u.user === userName)) {
-            throw new FileOperationError({ message: `The user ${user} does not exist`, status: 500 });
+            throw new Error(`The user ${user} does not exist`);
         }
         db.data.users = db.data.users.filter((u) => (u.user !== userName));
         await db.write();

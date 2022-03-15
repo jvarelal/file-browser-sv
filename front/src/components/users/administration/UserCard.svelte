@@ -15,7 +15,7 @@
 </script>
 
 <Accordion
-    title={`<i class="fas fa-user m-r-5 m-l-5" /> ${userData.user}`}
+    title={`<i class="fas fa-user m-r-5 m-l-5"></i> ${userData.user}`}
     id={userData.user}
     cssClass="m-auto user-settings"
     collapse={true}

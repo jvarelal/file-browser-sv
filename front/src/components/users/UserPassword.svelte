@@ -1,5 +1,6 @@
 <script lang="ts">
     import dialogStore from "../../stores/dialogStore";
+    import userProfileStore from "../../stores/userProfileStore";
     import Accordion from "../commons/Accordion.svelte";
     import InputText from "../commons/InputText.svelte";
     import type { ChangePassword } from "../../types/UITypes";
@@ -13,11 +14,19 @@
         validateKey: "",
     };
     let values: ChangePassword = { ...initialValues };
-    let finalError: string = "";
+    let errors: ChangePassword = { ...initialValues };
 
     function handleSubmit(): void {
         if (values.key !== values.validateKey) {
-            finalError = "Los valores ingresados no coinciden";
+            errors.validateKey = "Los valores ingresados no coinciden";
+            return;
+        }
+        if (values.prevKey === values.key) {
+            errors.key = "El nuevo password no puede ser igual al anterior";
+            return;
+        }
+        if (values.prevKey !== $userProfileStore.key) {
+            errors.prevKey = "El password actual es incorrecto";
             return;
         }
         dialogStore.showLoading();
@@ -37,7 +46,7 @@
 </script>
 
 <Accordion
-title={`<i class="fas fa-key m-r-5  m-l-5"></i> Cambiar Password`}
+    title={`<i class="fas fa-key m-r-5  m-l-5"></i> Cambiar Password`}
     id="changePassword"
     renderDefault={false}
     bind:collapse
@@ -50,6 +59,7 @@ title={`<i class="fas fa-key m-r-5  m-l-5"></i> Cambiar Password`}
                     label="Password"
                     type="password"
                     bind:value={values.key}
+                    bind:errors={errors.key}
                 />
             </div>
             <div>
@@ -58,6 +68,7 @@ title={`<i class="fas fa-key m-r-5  m-l-5"></i> Cambiar Password`}
                     label="Confirmar Password"
                     type="password"
                     bind:value={values.validateKey}
+                    bind:errors={errors.validateKey}
                 />
             </div>
         </div>
@@ -68,16 +79,14 @@ title={`<i class="fas fa-key m-r-5  m-l-5"></i> Cambiar Password`}
                     label="Password previo"
                     type="password"
                     bind:value={values.prevKey}
+                    bind:errors={errors.prevKey}
                 />
             </div>
             <div class="form-field-control d-flex">
-                <button type="submit" class="btn m-auto w-50"> Actualizar </button>
+                <button type="submit" class="btn m-auto w-50">
+                    Actualizar
+                </button>
             </div>
         </div>
-        {#if finalError}
-            <div class="f-08" style="color: red">
-                * {finalError}
-            </div>
-        {/if}
     </form>
 </Accordion>

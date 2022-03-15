@@ -3,6 +3,7 @@
     //stores
     import fileBrowserStore from "../../../stores/fileBrowserStore";
     import fileDirectoryStore from "../../../stores/fileDirectoryStore";
+    import userProfileStore from "../../../stores/userProfileStore";
     //components
     import FileService from "../../../services/FileService";
     import InputText from "../../commons/InputText.svelte";
@@ -14,6 +15,7 @@
     //helpers
     import { setDateFormatStr } from "../../../helpers/Date";
     import FileBrowser from "../../../constants/FileBrowser";
+    import userOperations from "../../../constants/UserOperations";
 
     export let file: FileUI;
 
@@ -115,7 +117,9 @@
         <InputLabel
             label="Nombre"
             value={file.name}
-            action={() => (editName = !editName)}
+            action={$userProfileStore.actions.includes(userOperations.update)
+                ? () => (editName = !editName)
+                : null}
             iconAction="fas fa-edit"
         />
     {/if}

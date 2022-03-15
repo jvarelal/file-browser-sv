@@ -25,10 +25,13 @@
 
 <section transition:existTransition={{ fn: fly, x: 200, duration: 250 }}>
     <div class="user-header">
-        <button class="m-r-auto back" on:click={appViewStore.setBrowser}>
+        <button class="m-r-auto header-options"  on:click={appViewStore.setBrowser}>
             <i class="fas fa-arrow-left" /> Regresar
         </button>
         <h3 class="user-header-name"><i class="fas fa-cog" /> Configuración</h3>
+        <button  class="m-l-auto header-options" on:click={appViewStore.setLogin}>
+            <i class="fas fa-sign-out-alt"></i> Salir
+        </button>
     </div>
     <div class="user-settings user-container scroll">
         <UserPreferences />
@@ -46,5 +49,12 @@
     section {
         width: 100%;
         height: 100%;
+    }
+    .header-options {
+        background-color: transparent;
+        border: 0px;
+        color: $color-text;
+        padding: 0 1rem;
+        cursor: pointer;
     }
 </style>

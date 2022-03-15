@@ -62,7 +62,7 @@ router.post(`${parentPath}/changeSession`, authValidation, async (req, res) => {
 	}
 })
 
-router.post(`${parentPath}/changePassword`, authValidation, async (req, res) => {
+router.post(`${parentPath}/changekey`, authValidation, async (req, res) => {
 	let { user, key, prevKey } = req.body
 	try {
 		let previousPassword = secure.process(user.key)
@@ -70,7 +70,7 @@ router.post(`${parentPath}/changePassword`, authValidation, async (req, res) => 
 		if (previousPassword !== prevKey) {
 			throw new Error("Current Password invalid")
 		}
-		await updateProp(user.user, "key", secure.process(key))
+		await updateProp(user.user, "key", key)
 		res.send({ status: 200, message: "Password updated" })
 	} catch (e) {
 		res.status(500).send({ status: 500, message: e.message,secure: e.secure })

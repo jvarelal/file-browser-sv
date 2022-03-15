@@ -1,16 +1,16 @@
 <script lang="ts">
     import { onMount } from "svelte";
     import { fly } from "svelte/transition";
+    import dialogStore from "../../../stores/dialogStore";
+    import fileSettingStore from "../../../stores/fileSettingStore";
     import InputText from "../../commons/InputText.svelte";
     import UserActions from "./UserActions.svelte";
-    import type { UserApp } from "../../../types/UITypes";
     import userOperations from "../../../constants/UserOperations";
     import FileBrowser from "../../../constants/FileBrowser";
-    import fileSettingStore from "../../../stores/fileSettingStore";
-    import type { UserActionsType } from "../../../types/ApiTypes";
     import InputLabel from "../../commons/InputLabel.svelte";
+    import type { UserActionsType } from "../../../types/ApiTypes";
+    import type { UserApp } from "../../../types/UITypes";
     import AdminService from "../../../services/AdminService";
-    import dialogStore from "../../../stores/dialogStore";
 
     export let onCancel: VoidFunction;
     export let userTarget: UserApp = null;
@@ -83,6 +83,7 @@
             return;
         }
         values.routes = [...values.routes, route];
+        errors.routes = "";
         route = "";
     }
     function removeRoute(route: string): void {
@@ -95,13 +96,27 @@
             return;
         }
         if (userTarget) {
-            AdminService.edit(values, onCancel, (err) => {
-                dialogStore.showMessage(err.message);
-            });
+            AdminService.edit(
+                values,
+                () => {
+                    dialogStore.showMessage("Usuario actualizado");
+                    onCancel();
+                },
+                (err) => {
+                    dialogStore.showMessage(err.message);
+                }
+            );
         } else {
-            AdminService.add(values, onCancel, (err) => {
-                dialogStore.showMessage(err.message);
-            });
+            AdminService.add(
+                values,
+                () => {
+                    dialogStore.showMessage("Usuario creado");
+                    onCancel();
+                },
+                (err) => {
+                    dialogStore.showMessage(err.message);
+                }
+            );
         }
     }
 

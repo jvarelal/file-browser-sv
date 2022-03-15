@@ -16,6 +16,8 @@
     import FileService from "../../../services/FileService";
     import { isBookmark } from "../../../helpers/Media";
     import FileBrowser from "../../../constants/FileBrowser";
+    import userProfileStore from "../../../stores/userProfileStore";
+    import userOperations from "../../../constants/UserOperations";
 
     export let expanded: boolean;
     export let active: boolean;
@@ -56,8 +58,8 @@
     function closePreview(): void {
         filePreviewStore.removePreview(key);
         fileToolbarStore.setShow(true);
-        expanded = false
-        timer = false
+        expanded = false;
+        timer = false;
         scrollStore.triggerPrevious();
     }
 
@@ -93,7 +95,7 @@
                     }`}
                 />
             {/each}
-            {#if !enableEdit && FileBrowser.editables.includes(preview.type)}
+            {#if !enableEdit && FileBrowser.editables.includes(preview.type) && $userProfileStore.actions.includes(userOperations.update)}
                 <ActionButton
                     on:click={() => (enableEdit = true)}
                     title={"Edit element"}
