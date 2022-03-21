@@ -3,79 +3,29 @@
     //stores
     import fileBrowserStore from "../../../stores/fileBrowserStore";
     import filePreviewStore from "../../../stores/filePreviewStore";
-    import fileSettingStore from "../../../stores/fileSettingStore";
     import fileGridCssStore from "../../../stores/fileGridCssStore";
     import fileToolbarStore from "../../../stores/fileToolbarStore";
     //components
-    import FileGrid from "../grid/FileGrid.svelte";
     import FileVisor from "../visors/FileVisor.svelte";
     import FileViewEmpty from "./FileViewEmpty.svelte";
+    import FileGroup from "../grid/FileGroup.svelte";
     import Accordion from "../../commons/Accordion.svelte";
     //types
     import type {
         FileUI,
-        FileUIGroup,
         NumberFunction,
+        VirtualGroup,
     } from "../../../types/UITypes";
     //helpers
-    import { getFileType } from "../../../helpers/Media";
-    import { groupByDateClasification } from "../../../helpers/Date";
     import FileBrowser from "../../../constants/FileBrowser";
 
     export let files: FileUI[] = [];
+    export let virtualGroups: VirtualGroup[] = [];
     export let active: boolean = true;
 
     const key = new Date().toISOString();
     const itemsFiltered = getContext<NumberFunction>("itemsFiltered");
-    let grid: HTMLElement;
     let expanded: boolean = false;
-
-    function getFileGroup(file: FileUI, group: string): string {
-        switch (group) {
-            case "type":
-                return getFileType(file);
-            case "creation":
-            case "modification":
-                return groupByDateClasification(new Date(file[group]));
-            default:
-                return "";
-        }
-    }
-
-    function groupFiles(files: FileUI[] = [], group: string): FileUIGroup[] {
-        let groupedFiles: FileUIGroup[] = [];
-        let fileMap = {};
-        files.forEach((file) => {
-            let fileGroup = getFileGroup(file, group);
-            if (!fileMap[fileGroup]) {
-                fileMap[fileGroup] = [];
-            }
-            fileMap[fileGroup].push(file);
-        });
-        for (let key in fileMap) {
-            groupedFiles.push({ group: key, files: fileMap[key] });
-        }
-        groupedFiles.sort((a, b) => {
-            try {
-                if (group === "type") {
-                    return a.group > b.group ? 1 : -1;
-                }
-                let f1 = a.files[0][group];
-                let f2 = b.files[0][group];
-                return new Date(f1) > new Date(f2) ? -1 : 1;
-            } catch (e) {
-                return 0;
-            }
-        });
-        return groupedFiles;
-    }
-    function calculatePreviousLength(index: number): number {
-        let size = 0;
-        for (let i = 0; i < index; i++) {
-            size += filesGroup[i].files.length;
-        }
-        return size;
-    }
 
     $: filteredFiles = files.filter((f) => {
         if ($fileBrowserStore.filter) {
@@ -86,9 +36,6 @@
         }
         return true;
     });
-    $: filesGroup = $fileSettingStore.groupBy
-        ? groupFiles(filteredFiles, $fileSettingStore.groupBy)
-        : [];
 
     $: if ($fileBrowserStore.filter) {
         itemsFiltered(filteredFiles.length);
@@ -119,17 +66,23 @@
             class:statusToolbar={$filePreviewStore.get(key)}
             class:toolbarExpanded={!$fileToolbarStore.isCollapsed}
             class:expanded
-            bind:this={grid}
         >
-            {#if !$fileSettingStore.groupBy}
-                <FileGrid files={filteredFiles} />
+            {#if virtualGroups.length < 2}
+                <FileGroup files={filteredFiles} />
             {:else}
-                {#each filesGroup as fileGroup, index}
-                    <Accordion title={fileGroup.group} id={fileGroup.group}>
-                        <FileGrid
-                            files={fileGroup.files}
-                            parentIndex={calculatePreviousLength(index)}
-                        />
+                {#each virtualGroups as virtualGroup}
+                    <Accordion
+                        title={`<i class="fas fa-folder m-r-2  m-l-2"></i> ${virtualGroup.name}`}
+                        id={virtualGroup.id + ''}
+                        options={virtualGroup.options}
+                    >
+                        <div class="p-l-5">
+                            <FileGroup
+                                files={filteredFiles.filter(
+                                    (f) => f.virtualGroup === virtualGroup.id
+                                )}
+                            />
+                        </div>
                     </Accordion>
                 {/each}
             {/if}

@@ -22,6 +22,12 @@ export async function createConnection() {
           "U2FsdGVkX1916F3vzBKEpjW44d3FTtB0xtfe67lFiaU=",
           "U2FsdGVkX19fIailUKdIeTlkUh8qSOwMaRfiKiOqxsM="
         ],
+        "bookmarksGroup": [
+          {
+            "name": "Global",
+            "id": "0"
+          }
+        ],
         "sessionTime": "2h",
         "rol": "0",
         "actions": [

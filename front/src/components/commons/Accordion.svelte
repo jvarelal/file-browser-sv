@@ -1,5 +1,6 @@
 <script lang="ts">
     import { createEventDispatcher } from "svelte";
+    import type { BasicOption } from "../../types/UITypes";
 
     export let title: string = "";
     export let id: string = "id";
@@ -7,6 +8,7 @@
     export let cssClass: string = "";
     export let renderDefault: boolean = true;
     export let labelCenter: boolean = false;
+    export let options: BasicOption[] = [];
 
     const dispatch = createEventDispatcher();
 
@@ -22,6 +24,13 @@
 </script>
 
 <div class={"accordion " + cssClass}>
+    <div class="accordion-option">
+        {#each options as option}
+            <button title={option.label} on:click={option.action}>
+                <i class={option.icon} />
+            </button>
+        {/each}
+    </div>
     <input
         type="checkbox"
         name={id}
@@ -54,6 +63,7 @@
     .accordion {
         border-bottom: 1px solid $border-medium;
         overflow-x: hidden;
+        position: relative;
         > label {
             padding: 0.25rem 0.75rem;
             cursor: pointer;
@@ -71,6 +81,27 @@
                 opacity: 1;
                 padding: 0;
                 overflow: hidden;
+            }
+        }
+        &-option {
+            position: absolute;
+            right: 0;
+            top: 0;
+            padding: 0.25rem 0;
+            button {
+                width: 2rem;
+                border-radius: 0px;
+                border-right: 1px solid $border-medium;
+                border-left: 1px solid $border-medium;
+                border-top: 0px;
+                border-bottom: 0px;
+                background: transparent;
+                color: $color-text;
+                cursor: pointer;
+                font-size: 0.9rem;
+                &:hover {
+                    font-size: 1rem;
+                }
             }
         }
     }

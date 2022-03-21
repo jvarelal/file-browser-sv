@@ -19,12 +19,14 @@
     import fileContextMenuStore from "../../../stores/fileContextMenuStore";
     import fileGridCssStore from "../../../stores/fileGridCssStore";
     import scrollStore from "../../../stores/scrollStore";
+    import fileBookmarkGroupStore from "../../../stores/fileBookmarkGroupStore";
     import dialogStore from "../../../stores/dialogStore";
     //helpers
     import FileBrowser from "../../../constants/FileBrowser";
     import {
         deleteFiles,
         listErrors,
+        prepareBookmark,
     } from "../contextmenu/FileContextMenu.svelte";
     import { handleDrop, isBookmark } from "../../../helpers/Media";
     import type { FileUI, FileUpload } from "../../../types/UITypes";
@@ -128,9 +130,11 @@
                 return fileBrowserStore.setCheck(file);
             case "M":
             case "m":
-                return file.checked || file.isDirectory
-                    ? null
-                    : fileBrowserStore.updateBookmarks(file);
+                return prepareBookmark(
+                    file,
+                    $fileBookmarkGroupStore.groupList,
+                    $fileBrowserStore.bookmarks
+                );
             default:
                 return;
         }

@@ -114,7 +114,7 @@
                 fileBrowserStore.setMove(
                     $fileBrowserStore.files.filter((f) => f.checked)
                 ),
-            hide: hideSeveralOptions,
+            hide: hideSeveralOptions || $fileBrowserStore.viewBookmarks,
             typeOperation: userOperations.write,
         },
         {
@@ -125,7 +125,7 @@
                 $fileBrowserStore.clipboard[0].route ===
                     $fileDirectoryStore.current,
             action: preparePasteFiles,
-            hide: hideSeveralOptions,
+            hide: hideSeveralOptions || $fileBrowserStore.viewBookmarks,
             typeOperation: userOperations.write,
         },
         {
@@ -133,7 +133,7 @@
             label: "Eliminate",
             action: prepareDelete,
             disabled: $fileBrowserStore.numberItemsChecked <= 0,
-            hide: hideSeveralOptions,
+            hide: hideSeveralOptions || $fileBrowserStore.viewBookmarks,
             typeOperation: userOperations.delete,
         },
     ].filter((opt) => $userProfileStore.actions.includes(opt.typeOperation));

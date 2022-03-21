@@ -1,6 +1,6 @@
 <script lang="ts">
     import { onMount, setContext } from "svelte";
-import { fly } from "svelte/transition";
+    import { fly } from "svelte/transition";
     //stores
     import fileDirectoryStore from "../stores/fileDirectoryStore";
     import fileSettingStore from "../stores/fileSettingStore";
@@ -28,7 +28,7 @@ import { fly } from "svelte/transition";
     setContext("itemsFiltered", (size: number): void => {
         numberItemsFiltered = size;
     });
-    
+
     function existTransition(node: HTMLElement, options: any): any {
         if ($fileSettingStore.transitions) {
             return options.fn(node, options);

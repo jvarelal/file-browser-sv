@@ -24,6 +24,13 @@ export interface FileApiResponse {
     key?: boolean;
 }
 
+export interface BookmarkApiResponse {
+    isDirectory: boolean;
+    name: string;
+    route: string;
+    virtualGroup: number;
+}
+
 export interface UserApiResponse extends ApiResponse {
     user: string;
     token: string;
@@ -33,6 +40,7 @@ export interface UserApiResponse extends ApiResponse {
     bookmarks: FileApiResponse[];
     sessionTime: string;
     creation: string;
+    bookmarksGroup: VirtualGroupApiResponse[]
 }
 
 export interface FileListApiResponse extends ApiResponse {
@@ -46,6 +54,11 @@ export interface UserListApiResponse extends ApiResponse {
 
 export interface FileInformationApiResponse extends ApiResponse {
     data: FileApiResponse;
+}
+
+export interface VirtualGroupApiResponse {
+    id: number;
+    name: string;
 }
 
 export interface ErrorApiResponse extends ApiResponse {

@@ -28,27 +28,12 @@ router.post(`${parentPath}/login`, (req, res) => {
 					routes: foundUser.routes,
 					rol: foundUser.rol,
 					bookmarks: foundUser.bookmarks,
-					sessionTime: foundUser.sessionTime
+					sessionTime: foundUser.sessionTime,
+					bookmarksGroup: foundUser.bookmarksGroup
 				})
 			})
 	} else {
 		res.status(403).send({ status: 403, message: "Invalid User or Password" })
-	}
-})
-
-router.get(`${parentPath}/bookmarks`, authValidation, async (req, res) => {
-	let { user } = req.body
-	let foundUser = getUserByName(user.user);
-	res.send({ status: 200, message: "Bookmarks retrieved", files: foundUser.bookmarks })
-})
-
-router.post(`${parentPath}/bookmarks`, authValidation, async (req, res) => {
-	let { user, bookmarks } = req.body
-	try {
-		await updateProp(user.user, "bookmarks", bookmarks)
-		res.send({ status: 200, message: "Bookmarks updated" })
-	} catch (e) {
-		res.status(500).send({ status: 500, message: e.message, secure: e.secure})
 	}
 })
 
@@ -58,7 +43,7 @@ router.post(`${parentPath}/changeSession`, authValidation, async (req, res) => {
 		await updateProp(user.user, "sessionTime", sessionTime)
 		res.send({ status: 200, message: "Session time updated" })
 	} catch (e) {
-		res.status(500).send({ status: 500, message: e.message, secure: e.secure})
+		res.status(500).send({ status: 500, message: e.message, secure: e.secure })
 	}
 })
 
@@ -73,7 +58,7 @@ router.post(`${parentPath}/changekey`, authValidation, async (req, res) => {
 		await updateProp(user.user, "key", key)
 		res.send({ status: 200, message: "Password updated" })
 	} catch (e) {
-		res.status(500).send({ status: 500, message: e.message,secure: e.secure })
+		res.status(500).send({ status: 500, message: e.message, secure: e.secure })
 	}
 })
 

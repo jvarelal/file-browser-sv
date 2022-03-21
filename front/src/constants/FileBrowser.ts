@@ -13,6 +13,7 @@ interface FileBrowserSettings {
     sessionTime: string[];
     localStorageKeys: {
         settings: string,
+        bookmarksGroups: string,
         bookmarks: string,
     },
     regexp: {
@@ -47,6 +48,7 @@ const FileBrowser: FileBrowserSettings = {
     },
     localStorageKeys: {
         settings: "fe-settings",
+        bookmarksGroups: "fe-bookmarks-groups",
         bookmarks: "fe-bookmarks"
     },
     roles: [

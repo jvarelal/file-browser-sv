@@ -1,6 +1,7 @@
 <script lang="ts">
     import fileBrowserStore from "../../../stores/fileBrowserStore";
     import fileDirectoryStore from "../../../stores/fileDirectoryStore";
+    import fileBookmarkGroupStore from "../../../stores/fileBookmarkGroupStore";
     import ActionButton from "../../commons/ActionButton.svelte";
     import FilePathForm from "../forms/FilePathForm.svelte";
     import Modal from "../../modal/Modal.svelte";
@@ -30,6 +31,13 @@
                 }`}
             />
         {/each}
+    {:else}
+        <ActionButton
+            on:click={fileBookmarkGroupStore.showForm}
+            disabled={$fileBrowserStore.waiting}
+            title="New group"
+            icon="fas fa-folder-plus"
+        />
     {/if}
     <ActionButton
         on:click={() => (editPath = true)}

@@ -1,4 +1,4 @@
-import type { FileApiResponse, UserActionsType } from "./ApiTypes";
+import type { BookmarkApiResponse, FileApiResponse, UserActionsType, VirtualGroupApiResponse } from "./ApiTypes";
 
 export type BooleanFunction = (value: boolean) => void
 export type NumberFunction = (value: number) => void
@@ -10,10 +10,17 @@ export interface Select {
     label: string;
 }
 
-export interface ContextMenuOption {
+export interface VirtualGroup extends VirtualGroupApiResponse {
+    options?: BasicOption[]
+}
+
+export interface BasicOption {
     icon: string;
     label: string;
     action: VoidFunction;
+}
+
+export interface ContextMenuOption extends BasicOption {
     hide?: boolean;
     typeOperation: UserActionsType;
 }
@@ -52,6 +59,7 @@ export interface FileUI extends FileApiResponse, MediaIcon {
     newName?: string;
     index?: number;
     idxFocus?: number;
+    virtualGroup?: number;
 }
 
 export interface FileUIPreview extends FileUI {
@@ -70,6 +78,7 @@ export interface FileUIGroup {
     files: FileUI[];
 }
 
+export type BookmarkOperations = "addBookmark" | "removeBookmark" | "updateBookmarks" 
 
 export interface FileUpload {
     route: string;

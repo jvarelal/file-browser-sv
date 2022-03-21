@@ -1,8 +1,7 @@
-import ROLES from "../constants/roles.js";
-import fs from 'fs';
 import { getConnection } from "../database.js";
 import FileOperationError from "../errors/FileOperationError.js";
 import secure from "../helpers/secure.js";
+import userValidation from "../helpers/userValidation.js";
 
 export const getUserByName = (userName) => {
     const user = getConnection().data.users.find(u => u.user === userName);
@@ -11,18 +10,69 @@ export const getUserByName = (userName) => {
 
 export const getUsers = () => getConnection().data.users
 
-export const updateProp = async (userName = "", prop = "", value = null) => {
+const generalUserOperation = async (userName = "", userOperation = () => null) => {
     try {
         const db = getConnection();
-        const user = db.data.users.find(u => u.user === userName);
-        user[prop] = value
-        userValidation(user)
-        db.data.users = db.data.users.map((u) => (u.user === userName ? user : u));
+        let userFound = db.data.users.find(u => u.user === userName)
+        if (!userFound) {
+            throw new Error(`The user ${userName} does not exist`);
+        }
+        userOperation(userFound)
+        db.data.users = db.data.users.map((u) => (u.user === userName ? userFound : u));
         await db.write();
+        return userFound
     } catch (error) {
+        console.log(error)
         throw new FileOperationError({ message: `Can not update data user: ` + error.message, status: 500 });
     }
 }
+
+export const updateProp = async (userName = "", prop = "", value = null) => generalUserOperation(userName, (user) => {
+    user[prop] = value
+    userValidation(user)
+})
+
+export const updateBookmark = async (userName = "", bookmark = {}) => generalUserOperation(userName, (user) => {
+    const recoverRouteName = (item) => {
+        let { route, name } = item
+        route = secure.process(route)
+        name = secure.process(name)
+        return route + name
+    }
+    let target = recoverRouteName(bookmark)
+    let bookmarkIndex = user.bookmarks.findIndex(b => recoverRouteName(b) === target)
+    if (bookmarkIndex >= 0) {
+        if (user.bookmarks[bookmarkIndex].virtualGroup === bookmark.virtualGroup) {
+            user.bookmarks.splice(bookmarkIndex, 1)
+        } else {
+            user.bookmarks[bookmarkIndex] = bookmark
+        }
+    } else {
+        user.bookmarks = [...user.bookmarks, bookmark]
+    }
+})
+
+export const addBookmarkGroup = async (userName = "", bookmarkGroup = {}) => generalUserOperation(userName, (user) => {
+    if (user.bookmarksGroup.map(b => b.id).includes(bookmarkGroup.id)) {
+        throw new Error(`The group id already exist`);
+    }
+    user.bookmarksGroup = [...user.bookmarksGroup, bookmarkGroup]
+})
+
+export const editBookmarkGroup = async (userName = "", bookmarkGroup = {}) => generalUserOperation(userName, (user) => {
+    if (!user.bookmarksGroup.map(b => b.id).includes(bookmarkGroup.id)) {
+        throw new Error(`The group id does not exist`);
+    }
+    user.bookmarksGroup = user.bookmarksGroup.map((bg) => (bg.id === bookmarkGroup.id ? bookmarkGroup : bg));
+})
+
+export const deleteBookmarkGroup = async (userName = "", bookmarkGroup = {}) => generalUserOperation(userName, (user) => {
+    if (!user.bookmarksGroup.map(b => b.id).includes(bookmarkGroup.id)) {
+        throw new Error(`The group id does not exist`);
+    }
+    user.bookmarksGroup = user.bookmarksGroup.filter((bg) => (bg.id !== bookmarkGroup.id));
+    user.bookmarks = user.bookmarks.filter(b => b.virtualGroup !== bookmarkGroup.id)
+})
 
 export const addUser = async (userData = {}) => {
     try {
@@ -70,47 +120,5 @@ export const deleteUser = async (userName = "") => {
         await db.write();
     } catch (error) {
         throw new FileOperationError({ message: `Can not delete data user: ` + error.message, status: 500 });
-    }
-}
-
-
-const sessionDurations = ["15m", "30m", "45m", "1h", "2h", "4h", "1d"]
-const userActions = {
-    read: "r",
-    write: "w",
-    update: "u",
-    delete: "d"
-}
-const listAllActions = [userActions.read, userActions.write, userActions.update, userActions.delete]
-
-
-const userValidation = (userData = {}) => {
-    let { user, key, rol, sessionTime, actions, routes } = userData
-    if (!user || /\W/.test(user)) {
-        throw new Error("Invalid user")
-    }
-    if (!key || key.length < 4) {
-        throw new Error("A password has to had a least 4 words")
-    }
-    if (![ROLES.ADMIN, ROLES.USER, ROLES.READER].includes(rol)) {
-        throw new Error("Invalid rol")
-    }
-    if (!sessionDurations.includes(sessionTime)) {
-        throw new Error("Invalid session duration")
-    }
-    if (rol === ROLES.ADMIN && (actions.length !== 4 || !actions.every(action => listAllActions.includes(action)))) {
-        throw new Error("Invalid actions for rol Admin")
-    }
-    if (rol === ROLES.USER && (!actions.includes(userActions.read) || !actions.includes(userActions.write))) {
-        throw new Error("Invalid actions for rol User")
-    }
-    if (rol === ROLES.READER && (actions.length > 1 || !actions.includes(userActions.read))) {
-        throw new Error("Invalid actions for rol Reader")
-    }
-    if (routes.length === 0) {
-        throw new Error("At least one initial route is needed")
-    }
-    if (!routes.every(r => fs.existsSync(secure.process(r)))) {
-        throw new Error("At least one initial route is invalid")
     }
 }

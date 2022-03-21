@@ -8,6 +8,8 @@
     export let type: string = "text";
     export let required: boolean = true;
     export let list: string = "";
+    export let minlength: number = 0;
+    export let maxlength: number = 150;
     export let action: VoidFunction = null;
     export let iconAction: string = "";
 
@@ -37,6 +39,8 @@
                 on:input={() => (errors = "")}
                 on:keypress={validate}
                 autocomplete="off"
+                maxlength={maxlength}
+                minlength={minlength}
                 {required}
             />
         {/if}

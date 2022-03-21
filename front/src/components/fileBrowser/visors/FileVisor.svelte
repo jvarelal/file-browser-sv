@@ -5,6 +5,7 @@
     import filePreviewStore from "../../../stores/filePreviewStore";
     import scrollStore from "../../../stores/scrollStore";
     import fileToolbarStore from "../../../stores/fileToolbarStore";
+    import fileBookmarkGroupStore from "../../../stores/fileBookmarkGroupStore";
     //components
     import FileVisorImage from "./FileVisorImage.svelte";
     import ActionButton from "../../commons/ActionButton.svelte";
@@ -18,6 +19,7 @@
     import FileBrowser from "../../../constants/FileBrowser";
     import userProfileStore from "../../../stores/userProfileStore";
     import userOperations from "../../../constants/UserOperations";
+    import { prepareBookmark } from "../contextmenu/FileContextMenu.svelte";
 
     export let expanded: boolean;
     export let active: boolean;
@@ -43,7 +45,11 @@
 
     function updateBookmark(): void {
         let p = { ...preview };
-        fileBrowserStore.updateBookmarks(p);
+        prepareBookmark(
+            p,
+            $fileBookmarkGroupStore.groupList,
+            $fileBrowserStore.bookmarks
+        );
         if ($fileBrowserStore.viewBookmarks) {
             if (p.next) {
                 p.next();
@@ -157,6 +163,8 @@
             margin: 0.25rem;
             font-weight: lighter;
             overflow-x: auto;
+            width: 100%;
+            height: 2rem;
         }
     }
     .file-iframe {

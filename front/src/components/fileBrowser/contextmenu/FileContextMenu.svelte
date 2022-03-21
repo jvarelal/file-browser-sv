@@ -5,12 +5,9 @@
         callBack: (filesAfected: FileUI[]) => void
     ): void {
         let filesAfected: FileUI[] = files.filter(
-            (f) =>
-                !data?.errors?.find(
-                    (err) => f.name === err.name
-                )
+            (f) => !data?.errors?.find((err) => f.name === err.name)
         );
-        listErrors(data)
+        listErrors(data);
         callBack(filesAfected);
     }
 
@@ -81,6 +78,25 @@
             );
         }
     }
+
+    export function prepareBookmark(
+        file: FileUI,
+        groupList: VirtualGroup[],
+        bookmarks: FileUI[]
+    ): void {
+        if (file.checked || file.isDirectory) {
+            return;
+        }
+        let exist = isBookmark(bookmarks, file);
+        if (groupList.length > 1 && !exist) {
+            fileBookmarkGroupStore.setFileTarget(file);
+        } else {
+            fileBrowserStore.updateBookmarks({
+                ...file,
+                virtualGroup: exist ? file.virtualGroup : groupList[0].id,
+            });
+        }
+    }
 </script>
 
 <script lang="ts">
@@ -88,14 +104,20 @@
     import fileContextMenuStore from "../../../stores/fileContextMenuStore";
     import fileBrowserStore from "../../../stores/fileBrowserStore";
     import dialogStore from "../../../stores/dialogStore";
+    import fileBookmarkGroupStore from "../../../stores/fileBookmarkGroupStore";
     //components
     import FileContextMenuItem from "./FileContextMenuItem.svelte";
     import FileContextMenuParent from "./FileContextMenuParent.svelte";
     //types
-    import type { FileMove, FileUI } from "../../../types/UITypes";
+    import type {
+        FileMove,
+        FileUI,
+        VirtualGroup,
+    } from "../../../types/UITypes";
     import type { ErrorApiResponse } from "../../../types/ApiTypes";
     //helpers
     import FileService from "../../../services/FileService";
+    import { isBookmark } from "../../../helpers/Media";
 </script>
 
 <svelte:window
@@ -115,7 +137,7 @@
     on:contextmenu|preventDefault
 >
     {#if $fileContextMenuStore.showItem}
-        <FileContextMenuItem {deleteFiles} />
+        <FileContextMenuItem {deleteFiles} {prepareBookmark} />
     {:else}
         <FileContextMenuParent {pasteFiles} />
     {/if}

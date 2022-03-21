@@ -16,16 +16,44 @@ const initialState = {
     numberItemsChecked: 0,
     viewBookmarks: false,
     editRoute: false,
-    bookmarks: [],
+    bookmarks: getLocalBookmarks(),
     clipboard: [],
     move: false,
     origin: "",
     error: false
 }
 
+function getLocalBookmarks(): FileUI[] {
+    let data = localStorage.getItem(FileBrowser.localStorageKeys.bookmarks)
+    if (!data) {
+        return []
+    }
+    let bookmarks: FileUI[] = JSON.parse(data)
+    return bookmarks
+}
+
 function setLocalBookmarks(bookmarks: FileUI[] = []): FileUI[] {
     UserService.updateBookmarks(bookmarks, (data) => console.log(data), (err) => alert(err.message))
+    localStorage.setItem(FileBrowser.localStorageKeys.bookmarks, JSON.stringify(bookmarks))
     return bookmarks
+}
+
+
+function setLocalBookmarkUnit(bookmarks: FileUI[] = [], item: FileUI): FileUI[] {
+    let updatedBookmarks = [...bookmarks]
+    let indexBookmark = updatedBookmarks.findIndex(bookmark => item.route + item.name === bookmark.route + bookmark.name)
+    if (indexBookmark >= 0) {
+        if (updatedBookmarks[indexBookmark].virtualGroup === item.virtualGroup) {
+            updatedBookmarks.splice(indexBookmark, 1)
+        } else {
+            updatedBookmarks[indexBookmark] = item
+        }
+    } else {
+        updatedBookmarks = [...updatedBookmarks, item]
+    }
+    UserService.updateBookmark(item, (data) => console.log(data), (err) => alert(err.message))
+    localStorage.setItem(FileBrowser.localStorageKeys.bookmarks, JSON.stringify(updatedBookmarks))
+    return updatedBookmarks
 }
 
 function createfileBrowserStore() {
@@ -46,9 +74,9 @@ function createfileBrowserStore() {
             ...s,
             bookmarks: bookmarks.map((b): FileUI => {
                 let data: FileApiResponse = ({
+                    ...b,
                     route: secure.recover(b.route),
                     name: secure.recover(b.name),
-                    isDirectory: false,
                 })
                 return { ...data, ...getFileIcon(data) }
             })
@@ -117,15 +145,10 @@ function createfileBrowserStore() {
                 checkAll: status,
             }
         }),
-        updateBookmarks: (item: FileUI) => update((s) => {
-            let updatedBookmarks = isBookmark(s.bookmarks, item) ?
-                s.bookmarks.filter(b => b.route + b.name !== item.route + item.name) :
-                [...s.bookmarks, item]
-            return ({
-                ...s,
-                bookmarks: setLocalBookmarks(updatedBookmarks)
-            })
-        }),
+        updateBookmarks: (item: FileUI) => update((s) => ({
+            ...s,
+            bookmarks: setLocalBookmarkUnit(s.bookmarks, item)
+        })),
         setEditRoute: (editRoute: boolean) => update((s) => ({ ...s, editRoute: editRoute })),
         setFileNameUpdate: (item: FileUI) => update((s) => {
             let nFiles = [...s.files];
@@ -156,7 +179,8 @@ function createfileBrowserStore() {
             } else {
                 let bookmarkIdx = nBookmarks.findIndex(b => item.route + item.name === b.route + b.name)
                 if (bookmarkIdx >= 0) {
-                    nBookmarks[bookmarkIdx] = nFiles[idx]
+                    nBookmarks[bookmarkIdx].name = nFiles[idx].name
+                    nBookmarks[bookmarkIdx] = { ...nBookmarks[bookmarkIdx], ...getFileIcon(nBookmarks[bookmarkIdx]) }
                     isInBookmarks = true
                 }
             }

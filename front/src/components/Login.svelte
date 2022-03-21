@@ -1,9 +1,11 @@
 <script lang="ts">
     import { onMount } from "svelte";
     import UserService from "../services/UserService";
+    import fileBookmarkGroupStore from "../stores/fileBookmarkGroupStore";
     import dialogStore from "../stores/dialogStore";
     import fileSettingStore from "../stores/fileSettingStore";
     import userProfileStore from "../stores/userProfileStore";
+    import fileBrowserStore from "../stores/fileBrowserStore";
     import appViewStore from "../stores/appViewStore";
     import InputText from "./commons/InputText.svelte";
     import type { Login } from "../types/UITypes";
@@ -18,8 +20,13 @@
             values,
             (data) => {
                 fileSettingStore.initCache(data.routes);
-                userProfileStore.setProfile({ ...data, user: values.user, key: values.key });
-
+                userProfileStore.setProfile({
+                    ...data,
+                    user: values.user,
+                    key: values.key,
+                });
+                fileBookmarkGroupStore.setGroupList(data.bookmarksGroup);
+                fileBrowserStore.setBookmarks(data.bookmarks);
                 dialogStore.closeDialog();
                 appViewStore.setBrowser();
             },

@@ -7,16 +7,22 @@
     import dialogStore from "../../../stores/dialogStore";
     import fileDownloadStore from "../../../stores/fileDownloadStore";
     import userProfileStore from "../../../stores/userProfileStore";
+    import fileBookmarkGroupStore from "../../../stores/fileBookmarkGroupStore";
     //components
     import FileContextMenuOption from "./FileContextMenuOption.svelte";
     //types
     import userOperations from "../../../constants/UserOperations";
-    import type { ContextMenuOption, FileUI } from "../../../types/UITypes";
+    import type {
+        ContextMenuOption,
+        FileUI,
+        VirtualGroup,
+    } from "../../../types/UITypes";
     //helpers
     import { isBookmark } from "../../../helpers/Media";
     import FileService from "../../../services/FileService";
 
     export let deleteFiles: (files: FileUI[]) => void;
+    export let prepareBookmark: (file: FileUI, groups: VirtualGroup[], bookmarks: FileUI[]) => void;
 
     const fileInfo = getContext<Function>("fileInfo");
 
@@ -134,7 +140,11 @@
         {
             icon: "fas fa-star",
             action: () =>
-                fileBrowserStore.updateBookmarks($fileContextMenuStore?.item),
+                prepareBookmark(
+                    $fileContextMenuStore?.item,
+                    $fileBookmarkGroupStore.groupList,
+                    $fileBrowserStore.bookmarks
+                ),
             label: `${
                 validateBookmark ? "Quitar de " : "Agregar a "
             } Marcadores`,

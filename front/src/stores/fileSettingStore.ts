@@ -66,7 +66,6 @@ function createfileSettingStore() {
         }),
         initCache: (routes: string[]) => update((s) => {
             let cache = new Set([...s.cache, ...routes])
-            console.log(cache)
             return ({
                 ...s,
                 cache: Array.from(cache)

@@ -1,9 +1,11 @@
 <script lang="ts">
     import { getContext } from "svelte";
     import fileBrowserStore from "../../../stores/fileBrowserStore";
+    import fileBookmarkGroupStore from "../../../stores/fileBookmarkGroupStore";
     import ActionButton from "../../commons/ActionButton.svelte";
     import type { FileUI, FileUIFunction } from "../../../types/UITypes";
     import { isBookmark } from "../../../helpers/Media";
+    import { prepareBookmark } from "../contextmenu/FileContextMenu.svelte";
 
     export let file: FileUI;
     export let list: boolean;
@@ -26,7 +28,8 @@
         />
         {#if !file.isDirectory}
             <ActionButton
-                on:click={() => fileBrowserStore.updateBookmarks(file)}
+                on:click={() =>
+                    prepareBookmark(file, $fileBookmarkGroupStore.groupList, $fileBrowserStore.bookmarks)}
                 className={isBookmark($fileBrowserStore.bookmarks, file)
                     ? "btn-active"
                     : ""}

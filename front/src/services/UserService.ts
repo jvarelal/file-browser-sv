@@ -2,11 +2,11 @@ import { secure } from "../helpers/Misc"
 import type {
     UserApiResponse,
     ErrorApiResponse,
-    FileApiResponse,
     ApiResponse,
     FileListApiResponse,
+    BookmarkApiResponse,
 } from "../types/ApiTypes"
-import type { ChangePassword, FileUI, Login } from "../types/UITypes";
+import type { ChangePassword, FileUI, Login, VirtualGroup } from "../types/UITypes";
 import httpClient from "./HttpClient"
 
 const UserService = {
@@ -40,17 +40,64 @@ const UserService = {
             .catch(err)
     },
 
+    updateBookmark: (
+        item: FileUI,
+        cb: (resp: ApiResponse) => void,
+        err: (resp: ErrorApiResponse) => void
+    ): void => {
+        let bookmark: BookmarkApiResponse = {
+            isDirectory: item.isDirectory,
+            virtualGroup: item.virtualGroup,
+            route: secure.digest(item.route),
+            name: secure.digest(item.name)
+        }
+        httpClient.post(`user/bookmarks/update`, { bookmark })
+            .then(cb)
+            .catch(err)
+    },
+
     updateBookmarks: (
         bookmarks: FileUI[],
         cb: (resp: ApiResponse) => void,
         err: (resp: ErrorApiResponse) => void
     ): void => {
-        let transferBookmarks: FileApiResponse[] = bookmarks.map((b) => ({
-            isDirectory: false,
+        let transferBookmarks: BookmarkApiResponse[] = bookmarks.map((b) => ({
+            isDirectory: b.isDirectory,
+            virtualGroup: b.virtualGroup,
             route: secure.digest(b.route),
             name: secure.digest(b.name)
         }))
         httpClient.post(`user/bookmarks`, { bookmarks: transferBookmarks })
+            .then(cb)
+            .catch(err)
+    },
+
+    addBookmarkGroup: (
+        bookmarkGroup: VirtualGroup,
+        cb: (resp: ApiResponse) => void,
+        err: (resp: ErrorApiResponse) => void
+    ): void => {
+        httpClient.post(`user/bookmarks/groups`, { bookmarkGroup })
+            .then(cb)
+            .catch(err)
+    },
+
+    editBookmarkGroup: (
+        bookmarkGroup: VirtualGroup,
+        cb: (resp: ApiResponse) => void,
+        err: (resp: ErrorApiResponse) => void
+    ): void => {
+        httpClient.post(`user/bookmarks/groups/edit`, { bookmarkGroup })
+            .then(cb)
+            .catch(err)
+    },
+
+    deleteBookmarkGroup: (
+        bookmarkGroup: VirtualGroup,
+        cb: (resp: FileListApiResponse) => void,
+        err: (resp: ErrorApiResponse) => void
+    ): void => {
+        httpClient.post(`user/bookmarks/groups/delete`, { bookmarkGroup })
             .then(cb)
             .catch(err)
     },

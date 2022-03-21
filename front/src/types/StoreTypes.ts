@@ -1,5 +1,5 @@
 import type { FileApiResponse, UserActionsType } from "./ApiTypes"
-import type { FileUI } from "./UITypes"
+import type { FileUI, VirtualGroup } from "./UITypes"
 
 export type UserProfileStore = {
     name: string;
@@ -100,4 +100,13 @@ export interface FileContextMenuStore extends ContextMenuPosition {
 export interface FileDownloadStore {
     isDownloading: boolean;
     files: FileUI[]
+}
+
+export interface FileBookmarkGroupStore {
+    showForm: boolean;
+    formTitle: string;
+    formIcon: string;
+    fileTarget: FileUI;
+    groupTarget: VirtualGroup;
+    groupList: VirtualGroup[]
 }
