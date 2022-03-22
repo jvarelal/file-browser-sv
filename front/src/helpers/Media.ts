@@ -115,7 +115,7 @@ function handleDrop(dragEvent: DragEvent, callback: (files: File[]) => void): vo
     callback(files);
 }
 
-function getVolumeIcon(value: string): string {
+function getVolumeIcon(value: string | number): string {
     let val = Number(value || "0");
     if (val > 0.75) {
         return "up";

@@ -53,7 +53,7 @@
 
 <svelte:window on:resize={fileGridCssStore.updateGridInfo} />
 <div class="browser-container t-left scroll">
-    {#if filteredFiles.length === 0}
+    {#if filteredFiles.length === 0 && virtualGroups.length < 2}
         <FileViewEmpty />
     {:else}
         <div

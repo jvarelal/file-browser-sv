@@ -3,6 +3,7 @@ import type { Select } from "../types/UITypes";
 const IMG_PREVIEW: string[] = ["jpg", "png", "jpeg", "svg", "gif", "webp"]
 const FILE_AS_TEXT: string[] = ["css", "md", "svelte", "ts", "java", "json", "js", "txt", "yml"]
 const EXCEL: string[] = ["csv", "ods", "pods", "xls", "xlsm", "xlsx"]
+const WORD: string[] = ["doc", "docx"]
 const AUDIO: string[] = ["mp3", "flac", "wav"]
 const VIDEO: string[] = ["mp4", "webm"]
 const EDITABLES: string[] = [...FILE_AS_TEXT, "html", "xml"]
@@ -32,6 +33,7 @@ interface FileBrowserSettings {
         },
         asText: string[],
         excel: string[],
+        word: string[],
         audio: string[],
         video: string[]
     };
@@ -82,10 +84,11 @@ const FileBrowser: FileBrowserSettings = {
         },
         asText: FILE_AS_TEXT,
         excel: EXCEL,
+        word: WORD,
         audio: AUDIO,
         video: VIDEO
     },
-    visor: [...IMG_PREVIEW, ...EDITABLES, ...EXCEL, ...AUDIO, "pdf", "mp4", "webm"],
+    visor: [...IMG_PREVIEW, ...EDITABLES, ...EXCEL, ...AUDIO, ...VIDEO, ...WORD, "pdf"],
     editables: EDITABLES
 }
 

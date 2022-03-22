@@ -10,7 +10,6 @@
     import FileContextMenu from "../contextmenu/FileContextMenu.svelte";
     import FileSettingsActions from "./FileSettingsActions.svelte";
     import Accordion from "../../commons/Accordion.svelte";
-    import ActionButton from "../../commons/ActionButton.svelte";
     //helpers
     import FileBrowser from "../../../constants/FileBrowser";
     import Modal from "../../modal/Modal.svelte";
@@ -63,6 +62,22 @@
         bind:collapse={isToolbarCollapsed}
         on:change={() => fileToolbarStore.setCollapse(isToolbarCollapsed)}
         cssClass="f-09"
+        options={[
+            {
+                label: "Order elements",
+                icon: `fas fa-sort-amount-${
+                            $fileSettingStore.orderAsc ? "down" : "up"
+                        }-alt`,
+                action: fileSettingStore.setOrderAsc,
+            },
+            {
+                label: "Grid/List",
+                icon: `fas fa-${
+                            $fileSettingStore.viewList ? "th" : "list"
+                        }`,
+                action: fileSettingStore.setView,
+            }
+        ]}
     >
         <div class="options-wrapper" transition:fly>
             <div class="form-field-control">
@@ -77,18 +92,6 @@
                             <option value={option.value}>{option.label}</option>
                         {/each}
                     </select>
-                    <ActionButton
-                        on:click={fileSettingStore.setOrderAsc}
-                        icon={`fas fa-sort-amount-${
-                            $fileSettingStore.orderAsc ? "down" : "up"
-                        }-alt`}
-                    />
-                    <ActionButton
-                        on:click={fileSettingStore.setView}
-                        icon={`fas fa-${
-                            $fileSettingStore.viewList ? "list" : "th"
-                        }`}
-                    />
                 </div>
             </div>
             <div class="form-field-control">

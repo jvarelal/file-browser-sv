@@ -1,6 +1,6 @@
 import { writable } from "svelte/store";
 import FileBrowser from "../constants/FileBrowser";
-import { getFileIcon, isBookmark, mapCustomFiles } from "../helpers/Media";
+import { getFileIcon, mapCustomFiles } from "../helpers/Media";
 import { secure } from "../helpers/Misc";
 import UserService from "../services/UserService";
 import type { FileApiResponse } from "../types/ApiTypes";
@@ -39,7 +39,7 @@ function setLocalBookmarks(bookmarks: FileUI[] = []): FileUI[] {
 }
 
 
-function setLocalBookmarkUnit(bookmarks: FileUI[] = [], item: FileUI): FileUI[] {
+function setLocalBookmarkItem(bookmarks: FileUI[] = [], item: FileUI): FileUI[] {
     let updatedBookmarks = [...bookmarks]
     let indexBookmark = updatedBookmarks.findIndex(bookmark => item.route + item.name === bookmark.route + bookmark.name)
     if (indexBookmark >= 0) {
@@ -147,7 +147,7 @@ function createfileBrowserStore() {
         }),
         updateBookmarks: (item: FileUI) => update((s) => ({
             ...s,
-            bookmarks: setLocalBookmarkUnit(s.bookmarks, item)
+            bookmarks: setLocalBookmarkItem(s.bookmarks, item)
         })),
         setEditRoute: (editRoute: boolean) => update((s) => ({ ...s, editRoute: editRoute })),
         setFileNameUpdate: (item: FileUI) => update((s) => {

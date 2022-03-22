@@ -1,9 +1,10 @@
 import { Router } from 'express'
-import secure from "../helpers/secure.js"
+import mammoth from 'mammoth';
+import XLSX from "xlsx"
 import { resolve } from "path"
 import sharp from 'sharp'
+import secure from "../helpers/secure.js"
 import authValidation from "../helpers/authValidation.js"
-import XLSX from "xlsx"
 
 const router = Router();
 const parentPath = '/api/files/view'
@@ -45,6 +46,17 @@ router.get(`${parentPath}/excel`, authValidation, (req, res) => {
         data: XLSX.utils.sheet_to_json(excel.Sheets[sheet], { header: 1 })
     }))
     res.send(excelData)
+})
+
+router.get(`${parentPath}/doc`, authValidation, (req, res) => {
+    let { name } = req.query
+    let route = req.appOperator.getRouteFile(decodeURIComponent(name))?.dir
+    mammoth.convertToHtml({ path: route })
+        .then(function (result) {
+            var html = result.value; // The generated HTML
+            res.send(html)
+        }).catch(err => res.status(500).send(err))
+        .done();
 })
 
 router.get(`${parentPath}/raw`, authValidation, (req, res) => {

@@ -242,9 +242,12 @@
         font-size: 0.8rem;
         position: relative;
         &:focus,
-        &:hover,
         &.dragOn {
             background-color: $file-item-focus;
+            transform: translateY(4%);
+        }
+        &:hover{
+            background-color: $file-item-hover;
             transform: translateY(4%);
         }
         &.bookmark {

@@ -147,7 +147,11 @@
     {:else}
         <iframe
             title="file"
-            src={FileService.viewRawFile(preview)}
+            src={FileService[
+                FileBrowser.previews.word.includes(preview.type)
+                    ? "viewPreviewWord"
+                    : "viewRawFile"
+            ](preview)}
             class="file-iframe scroll"
         />
     {/if}

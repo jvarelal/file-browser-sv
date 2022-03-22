@@ -22,7 +22,8 @@ html {
     --color-border-s: #999;
     --color-route: #7d3500b8;
     --color-route-disable: #7d350088;
-    --color-item: rgba(25, 75, 250, 0.2);
+    --color-hover: rgba(25, 75, 250, 0.2);
+    --color-item: rgba(25, 75, 250, 0.25);
     --color-folder: rgb(250, 220, 20);
     --color-file-icon: rgba(150, 160, 150, 0.5);
     --color-bg-iframe: #f8f8f8;
@@ -42,7 +43,8 @@ html[data-theme="night-light"] {
     --color-border-s: #999;
     --color-route-disable: #7d350088;
     --color-route: #7d3500b8;
-    --color-item: rgba(220, 180, 125, 0.2);
+    --color-hover: rgba(220, 180, 125, 0.2);
+    --color-item: rgba(220, 180, 125, 0.25);
     --color-folder: rgba(240, 160, 20, 0.5);
     --color-file-icon: rgba(140, 60, 20, 0.5);
     --color-bg-iframe: #ecd7cd;
@@ -62,7 +64,8 @@ html[data-theme="dark"] {
     --color-border-s: #999;
     --color-route-disable: #eee;
     --color-route: #eeea;
-    --color-item: rgba(250, 100, 220, 0.25);
+    --color-hover: rgba(250, 100, 220, 0.25);
+    --color-item: rgba(250, 100, 220, 0.4);
     --color-folder: rgba(200, 175, 150, 0.5);
     --color-file-icon: rgba(100, 100, 120, 0.5);
     --color-bg-iframe: wheat;

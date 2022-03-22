@@ -31,6 +31,12 @@ const FileService = {
         parameters.set("name", secure.digest(file.route + "/" + file.name))
         return httpClient.getAuthUrl("files/view/raw", parameters)
     },
+    
+    viewPreviewWord: (file: FileApiResponse, reduce: number = 0): string => {
+        let parameters: Map<string, string> = new Map();
+        parameters.set("name", secure.digest(file.route + "/" + file.name))
+        return httpClient.getAuthUrl("files/view/doc", parameters)
+    },
 
     getAsTxt: (file: FileApiResponse,
         cb: (data: string) => void,
