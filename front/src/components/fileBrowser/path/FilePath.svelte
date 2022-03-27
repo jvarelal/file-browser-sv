@@ -21,13 +21,13 @@
         <ActionButton
             icon="fas fa-cog"
             title="settings"
-            on:click={appViewStore.setUserControl}
+            on:click={() => appViewStore.config()}
         />
         <ActionButton
             icon="fas fa-sign-out-alt"
             cssClass="d-responsive"
             title="logout"
-            on:click={appViewStore.setLogin}
+            on:click={() => appViewStore.login()}
         />
     </div>
 </nav>

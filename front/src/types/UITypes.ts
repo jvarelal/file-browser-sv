@@ -78,7 +78,7 @@ export interface FileUIGroup {
     files: FileUI[];
 }
 
-export type BookmarkOperations = "addBookmark" | "removeBookmark" | "updateBookmarks" 
+export type AppPages = "browser" | "login" | "config" 
 
 export interface FileUpload {
     route: string;

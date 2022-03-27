@@ -1,0 +1,28 @@
+{
+  "users": [
+    {
+      "user": "Admin",
+      "key": "U2FsdGVkX18VQI+6jA3qJgPDVRrYV29ihBz9W8V2LT0=",
+      "routes": [
+        "U2FsdGVkX1916F3vzBKEpjW44d3FTtB0xtfe67lFiaU=",
+        "U2FsdGVkX19fIailUKdIeTlkUh8qSOwMaRfiKiOqxsM="
+      ],
+      "sessionTime": "2h",
+      "rol": "0",
+      "actions": [
+        "r",
+        "w",
+        "u",
+        "d"
+      ],
+      "bookmarksGroup": [
+        {
+          "name": "Bookmarks",
+          "id": 0
+        }
+      ],
+      "bookmarks": [],
+      "creation": "2022-03-14T02:36:41.268Z"
+    }
+  ]
+}

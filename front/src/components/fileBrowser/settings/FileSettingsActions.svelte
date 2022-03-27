@@ -43,6 +43,17 @@
 
     $: settingAction = [
         {
+            icon: $fileSettingStore.viewOptions ? "fas fa-book-open" : "fas fa-book",
+            label: "View options",
+            action: () => {
+                fileSettingStore.setViewOptions();
+                fileBrowserStore.setCheckAll(false);
+            },
+            cssClass: $fileSettingStore.viewOptions ? "btn-active" : "",
+            typeOperation: userOperations.read,
+            disabled: false,
+        },
+        {
             icon: "fas fa-folder-plus",
             label: "New Element",
             action: activateModal,
@@ -139,7 +150,7 @@
     ].filter((opt) => $userProfileStore.actions.includes(opt.typeOperation));
 </script>
 
-<div>
+<div class="m-auto">
     {#each settingAction as option}
         {#if !option.hide}
             <ActionButton

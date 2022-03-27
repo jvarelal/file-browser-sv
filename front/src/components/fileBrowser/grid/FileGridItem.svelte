@@ -102,6 +102,7 @@
         }
     }
     function validateKey(e: KeyboardEvent): void {
+        console.log(e.key);
         switch (e.key) {
             case "Enter":
                 return processItem(e);
@@ -135,6 +136,9 @@
                     $fileBookmarkGroupStore.groupList,
                     $fileBrowserStore.bookmarks
                 );
+            case "Backspace":
+                fileDirectoryStore.backward();
+                return;
             default:
                 return;
         }
@@ -246,7 +250,7 @@
             background-color: $file-item-focus;
             transform: translateY(4%);
         }
-        &:hover{
+        &:hover {
             background-color: $file-item-hover;
             transform: translateY(4%);
         }

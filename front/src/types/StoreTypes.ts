@@ -1,5 +1,5 @@
 import type { FileApiResponse, UserActionsType } from "./ApiTypes"
-import type { FileUI, VirtualGroup } from "./UITypes"
+import type { AppPages, FileUI, VirtualGroup } from "./UITypes"
 
 export type UserProfileStore = {
     name: string;
@@ -13,7 +13,8 @@ export type UserProfileStore = {
 export type AppViewStore = {
     login: boolean;
     browser: boolean;
-    userControl: boolean
+    userControl: boolean;
+    fordward: AppPages;
 }
 
 export type DialogStore = {

@@ -3,7 +3,9 @@
   "version": "1.2.0",
   "private": true,
   "scripts": {
+    "prebuild": "npm install",
     "build": "rollup -c",
+    "postbuild": "rm -f -r ../src/public && cp -r ./public ../src/public",
     "dev": "rollup -c -w",
     "start": "sirv public --dev -s",
     "check": "svelte-check --tsconfig ./tsconfig.json"
@@ -29,6 +31,7 @@
   },
   "dependencies": {
     "crypto-js": "^4.0.0",
+    "file-browser-sv": "file:",
     "sirv-cli": "^1.0.0"
   }
 }

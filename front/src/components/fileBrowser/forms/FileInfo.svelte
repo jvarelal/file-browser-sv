@@ -143,7 +143,7 @@
     {#if $fileBrowserStore.viewBookmarks}
         {#if editVirutalGroup}
             <div class="form-field-control">
-                <label for="type">Grupo</label>
+                <label for="type">Grupo Marcadores</label>
                 <div class="form-field">
                     <select
                         id="type"
@@ -162,7 +162,7 @@
             </div>
         {:else}
             <InputLabel
-                label="Grupo"
+                label="Grupo Marcadores"
                 value={$fileBookmarkGroupStore.groupList.find(
                     (g) => g.id === file.virtualGroup
                 ).name}
@@ -174,22 +174,27 @@
         {/if}
     {/if}
 
-    {#if file.size !== undefined}
-        <InputLabel label="Tamaño" value={getSizeMb(file.size)} />
-    {/if}
+    {#if !editVirutalGroup}
+        {#if file.size !== undefined}
+            <InputLabel label="Tamaño" value={getSizeMb(file.size)} />
+        {/if}
 
-    {#if file.creation}
-        <InputLabel
-            label="Creación"
-            value={setDateFormatStr(file.creation, "dd/mm/yyyy HH24:MI")}
-        />
-    {/if}
+        {#if file.creation}
+            <InputLabel
+                label="Creación"
+                value={setDateFormatStr(file.creation, "dd/mm/yyyy HH24:MI")}
+            />
+        {/if}
 
-    {#if file.modification}
-        <InputLabel
-            label="Ultima Modificación"
-            value={setDateFormatStr(file.modification, "dd/mm/yyyy HH24:MI")}
-        />
+        {#if file.modification}
+            <InputLabel
+                label="Ultima Modificación"
+                value={setDateFormatStr(
+                    file.modification,
+                    "dd/mm/yyyy HH24:MI"
+                )}
+            />
+        {/if}
     {/if}
     {#if finalError}
         <div class="f-08" style="color: red">

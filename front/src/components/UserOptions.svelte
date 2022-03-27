@@ -18,18 +18,18 @@
     }
     onMount(() => {
         if (!$userProfileStore.name) {
-            appViewStore.setLogin();
+            appViewStore.login("config");
         }
     });
 </script>
 
 <section transition:existTransition={{ fn: fly, x: 200, duration: 250 }}>
     <div class="user-header">
-        <button class="m-r-auto header-options"  on:click={appViewStore.setBrowser}>
+        <button class="m-r-auto header-options"  on:click={appViewStore.browser}>
             <i class="fas fa-arrow-left" /> Regresar
         </button>
         <h3 class="user-header-name"><i class="fas fa-cog" /> Configuración</h3>
-        <button  class="m-l-auto header-options" on:click={appViewStore.setLogin}>
+        <button  class="m-l-auto header-options" on:click={() => appViewStore.login()}>
             <i class="fas fa-sign-out-alt"></i> Salir
         </button>
     </div>

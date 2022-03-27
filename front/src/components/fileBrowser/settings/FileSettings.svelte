@@ -109,19 +109,6 @@
                 </div>
             </div>
             <div class="options-aditional">
-                <div class="options-title w-100">
-                    <input
-                        type="checkbox"
-                        class="check"
-                        id="individualMark"
-                        on:change={() => {
-                            fileSettingStore.setViewOptions();
-                            fileBrowserStore.setCheckAll(false);
-                        }}
-                        checked={$fileSettingStore.viewOptions}
-                    />
-                    <label for="individualMark">Opciones de archivo</label>
-                </div>
                 <FileSettingsActions />
             </div>
         </div>
@@ -141,12 +128,9 @@
     .options-wrapper {
         display: flex;
     }
-    .options-title {
-        font-size: 0.75rem;
-        margin: 0.25rem;
-    }
     .options-aditional {
         margin: 0 auto;
+        display: flex;
     }
     @media (max-width: 560px) {
         .options-wrapper {

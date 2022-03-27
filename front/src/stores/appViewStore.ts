@@ -1,29 +1,32 @@
 import { writable } from "svelte/store";
 import type { AppViewStore } from "../types/StoreTypes";
+import type { AppPages } from "../types/UITypes";
 
 const initialState: AppViewStore = {
     browser: true,
     login: false,
-    userControl: false
+    userControl: false,
+    fordward: "browser"
 }
 
 function createAppViewStore() {
     const { subscribe, set, update } = writable<AppViewStore>(initialState);
     return {
         subscribe,
-        setLogin: () => update(s => ({
+        login: (fordward: AppPages = "browser") => update(s => ({
             ...s,
             login: true,
             browser: false,
-            userControl: false
+            userControl: false,
+            fordward
         })),
-        setBrowser: () => update(s => ({
+        browser: () => update(s => ({
             ...s,
             login: false,
             browser: true,
             userControl: false
         })),
-        setUserControl: () => update(s => ({
+        config: () => update(s => ({
             ...s,
             login: false,
             browser: false,

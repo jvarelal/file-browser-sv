@@ -39,7 +39,7 @@
             if ($fileSettingStore.cache[0]) {
                 fileDirectoryStore.setDirectory($fileSettingStore.cache[0]);
             } else {
-                appViewStore.setLogin();
+                appViewStore.login("browser");
             }
         }
     });

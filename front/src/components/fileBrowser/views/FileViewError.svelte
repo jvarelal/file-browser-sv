@@ -8,7 +8,7 @@
 
     onMount(() => {
         if (error.status === 401) {
-            appViewStore.setLogin();
+            appViewStore.login("browser");
         }
         fileBrowserStore.setError();
     });

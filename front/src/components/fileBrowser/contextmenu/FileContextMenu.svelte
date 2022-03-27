@@ -87,13 +87,19 @@
         if (file.checked || file.isDirectory) {
             return;
         }
-        let exist = isBookmark(bookmarks, file);
+        let bookmarkIndex = bookmarks.findIndex(
+            (bookmark) =>
+                file.route + file.name === bookmark.route + bookmark.name
+        );
+        let exist = bookmarkIndex >= 0;
         if (groupList.length > 1 && !exist) {
             fileBookmarkGroupStore.setFileTarget(file);
         } else {
             fileBrowserStore.updateBookmarks({
                 ...file,
-                virtualGroup: exist ? file.virtualGroup : groupList[0].id,
+                virtualGroup: exist
+                    ? bookmarks[bookmarkIndex].virtualGroup
+                    : groupList[0].id,
             });
         }
     }

@@ -28,7 +28,8 @@
                 fileBookmarkGroupStore.setGroupList(data.bookmarksGroup);
                 fileBrowserStore.setBookmarks(data.bookmarks);
                 dialogStore.closeDialog();
-                appViewStore.setBrowser();
+                console.log($appViewStore.fordward)
+                appViewStore[$appViewStore.fordward]();
             },
             (err) => dialogStore.showMessage(err.message)
         );
