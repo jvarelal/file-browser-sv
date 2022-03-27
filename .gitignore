@@ -1,6 +1,6 @@
 node_modules/
 .vscode/
 tmp/
-back/src/public
-back/db.json
+src/public
+db.json
 front/public/build
