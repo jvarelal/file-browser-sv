@@ -1,16 +1,15 @@
 {
-  "name": "try-on",
+  "name": "file-browser-sv",
   "version": "1.1.0",
-  "description": "Rest Services File Browser",
+  "description": "Web based file browser",
+  "main": "index.js",
   "scripts": {
-    "prefirstTry": "npm install",
-    "firstTry": "npm --prefix ./front run build",
-    "postfirstTry": "node src/index.js",
+    "pretryon": "npm install",
+    "tryon": "npm --prefix ./front run build",
+    "posttryon": "node src/index.js",
     "start": "node src/index.js",
     "dev": "nodemon src/index.js --ignore db.json"
   },
-  "author": "",
-  "license": "ISC",
   "dependencies": {
     "archiver": "^5.3.0",
     "cors": "^2.8.5",
@@ -30,6 +29,21 @@
   "devDependencies": {
     "nodemon": "^2.0.15"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jvarelal/file-browser-sv.git"
+  },
+  "keywords": [
+    "file-browser",
+    "svelte",
+    "JS"
+  ],
+  "author": "Jose Abraham Varela Leon",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jvarelal/file-browser-sv/issues"
+  },
+  "homepage": "https://github.com/jvarelal/file-browser-sv#readme",
   "engines": {
     "node": "^12.20.0 || ^14.13.1 || >=16.0.0"
   },
