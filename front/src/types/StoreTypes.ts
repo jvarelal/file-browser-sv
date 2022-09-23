@@ -40,6 +40,8 @@ export type FileToolbarStore = {
     show: boolean;
 }
 
+export type AppLanguages = "ES" | "EN"
+
 export type FileSettingStore = {
     sortBy: string;
     groupBy: string;
@@ -47,11 +49,12 @@ export type FileSettingStore = {
     viewList: boolean;
     viewOptions: boolean;
     theme: string;
-    transitions: boolean
+    transitions: boolean;
+    lang: AppLanguages;
     cache: string[];
 }
 
-export type FileSettingProps = "sortBy" | "groupBy" | "orderAsc" | "viewList" | "viewOptions" | "transitions" | "theme" | "cache";
+export type FileSettingProps = "sortBy" | "groupBy" | "orderAsc" | "viewList" | "viewOptions" | "transitions" | "lang" | "theme" | "cache";
 
 export type FileBrowserStore = {
     waiting: boolean,

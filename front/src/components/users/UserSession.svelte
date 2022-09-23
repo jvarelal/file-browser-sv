@@ -3,9 +3,12 @@
     import UserService from "../../services/UserService";
     import dialogStore from "../../stores/dialogStore";
     import userProfileStore from "../../stores/userProfileStore";
+    import type { FormLang } from "../../types/UITypes";
 
     import Accordion from "../commons/Accordion.svelte";
     import InputLabel from "../commons/InputLabel.svelte";
+
+    export let lang: FormLang;
 
     let edit: boolean = false;
     let value: string = $userProfileStore.sessionTime;
@@ -21,7 +24,7 @@
         UserService.changeSession(
             selectValue,
             () => {
-                dialogStore.showMessage("Tiempo de sesion actualizado");
+                dialogStore.showMessage(lang.success);
                 userProfileStore.setSessionTime(selectValue);
                 value = selectValue;
                 edit = false;
@@ -36,7 +39,7 @@
 </script>
 
 <Accordion
-    title={`<i class="fas fa-clock m-r-5  m-l-5"></i> Sesion`}
+    title={`<i class="fas fa-clock m-r-5  m-l-5"></i> ${lang.title}`}
     id="session"
     renderDefault={false}
     bind:collapse
@@ -45,7 +48,7 @@
         {#if edit}
             <div>
                 <div class="form-field-control">
-                    <label for="type">Duracion</label>
+                    <label for="type">{lang.labels.duration}</label>
                     <div class="form-field">
                         <select
                             id="type"
@@ -72,19 +75,19 @@
                         disabled={selectValue === value}
                         on:click={changeSession}
                     >
-                        Actualizar
+                        {lang.options.submit}
                     </button>
                 </div>
                 <div class="m-auto">
                     <button class="btn" on:click={toogleEdit}>
-                        Cancelar
+                        {lang.options.cancel}
                     </button>
                 </div>
             </div>
         {:else}
             <div>
                 <InputLabel
-                    label="Duracion"
+                    label={lang.labels.duration}
                     {value}
                     action={toogleEdit}
                     iconAction="fas fa-edit"

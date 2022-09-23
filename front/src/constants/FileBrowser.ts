@@ -22,6 +22,7 @@ interface FileBrowserSettings {
     },
     roles: Select[];
     themes: Select[];
+    langs: Select[];
     sortOptions: Select[];
     groupOptions: Select[];
     previews: {
@@ -60,8 +61,11 @@ const FileBrowser: FileBrowserSettings = {
     ],
     themes: [
         { value: "", label: "White" },
-        { value: "night-light", label: "Wheat" },
         { value: "dark", label: "Dark" },
+    ],
+    langs: [
+        { value: "ES", label: "Español" },
+        { value: "EN", label: "English" },
     ],
     sortOptions: [
         { value: "name", label: "Nombre" },

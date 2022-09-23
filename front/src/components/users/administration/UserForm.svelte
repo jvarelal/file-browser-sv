@@ -9,11 +9,12 @@
     import FileBrowser from "../../../constants/FileBrowser";
     import InputLabel from "../../commons/InputLabel.svelte";
     import type { UserActionsType } from "../../../types/ApiTypes";
-    import type { UserApp } from "../../../types/UITypes";
+    import type { FormLang, UserApp } from "../../../types/UITypes";
     import AdminService from "../../../services/AdminService";
 
     export let onCancel: VoidFunction;
     export let userTarget: UserApp = null;
+    export let lang: FormLang;
 
     const allAction: UserActionsType[] = [
         userOperations.read,
@@ -72,14 +73,14 @@
 
     function addRoute(): void {
         if (!route) {
-            errors.routes = "Debe agregar una ruta";
+            errors.routes = lang.validations.routesRequired;
             return;
         }
         let findRelatives = values.routes.filter(
             (r) => r.startsWith(route) || route.startsWith(r)
         );
         if (findRelatives.length > 0) {
-            errors.routes = "Existe ya una ruta relacionada a la ingresada";
+            errors.routes = lang.validations.routesExist;
             return;
         }
         values.routes = [...values.routes, route];
@@ -92,14 +93,14 @@
 
     function onSubmit() {
         if (values.routes.length === 0) {
-            errors.routes = "Es necesario ingresar al menos una ruta inicial";
+            errors.routes = lang.validations.routeInitial;
             return;
         }
         if (userTarget) {
             AdminService.edit(
                 values,
                 () => {
-                    dialogStore.showMessage("Usuario actualizado");
+                    dialogStore.showMessage(lang.successEdit);
                     onCancel();
                 },
                 (err) => {
@@ -110,7 +111,7 @@
             AdminService.add(
                 values,
                 () => {
-                    dialogStore.showMessage("Usuario creado");
+                    dialogStore.showMessage(lang.success);
                     onCancel();
                 },
                 (err) => {
@@ -133,9 +134,11 @@
             </button>
             <h4 class="user-header-name">
                 {#if userTarget}
-                    <i class="far fa-edit" /> Editar {userTarget.user}
+                    <i class="far fa-edit" />
+                    {lang.options.editAction}
+                    {userTarget.user}
                 {:else}
-                    <i class="fas fa-plus" /> Nuevo acceso
+                    <i class="fas fa-plus" /> {lang.options.createAction}
                 {/if}
             </h4>
         </div>
@@ -143,11 +146,14 @@
             <div class="user-settings-row">
                 <div>
                     {#if userTarget}
-                        <InputLabel label="Usuario" value={values.user} />
+                        <InputLabel
+                            label={lang.labels.user}
+                            value={values.user}
+                        />
                     {:else}
                         <InputText
                             name="user"
-                            label="Usuario"
+                            label={lang.labels.user}
                             bind:value={values.user}
                             bind:errors={errors.user}
                             regex={/\W/}
@@ -157,7 +163,7 @@
                 <div>
                     <InputText
                         name="key"
-                        label="Password"
+                        label={lang.labels.password}
                         type="password"
                         bind:value={values.key}
                         bind:errors={errors.key}
@@ -187,7 +193,7 @@
                 </div>
                 <div>
                     <div class="form-field-control">
-                        <label for="type">Tiempo de sesión</label>
+                        <label for="type">{lang.labels.sessionTime}</label>
                         <div class="form-field">
                             <select
                                 id="type"
@@ -215,7 +221,7 @@
                 <div>
                     <InputText
                         name="route"
-                        label="Rutas"
+                        label={lang.labels.routes}
                         required={false}
                         list="cache"
                         bind:value={route}
@@ -250,13 +256,15 @@
             </div>
             <div class="form-field-control d-flex">
                 <button type="submit" class="btn m-auto w-25"
-                    >{userTarget ? "Modificar" : "Agregar"}</button
+                    >{userTarget
+                        ? lang.options.edit
+                        : lang.options.create}</button
                 >
                 <button
                     on:click|preventDefault={onCancel}
                     class="btn m-auto w-25"
                 >
-                    Cancelar
+                    {lang.options.cancel}
                 </button>
             </div>
         </form>

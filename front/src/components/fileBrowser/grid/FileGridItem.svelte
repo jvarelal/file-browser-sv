@@ -21,6 +21,7 @@
     import scrollStore from "../../../stores/scrollStore";
     import fileBookmarkGroupStore from "../../../stores/fileBookmarkGroupStore";
     import dialogStore from "../../../stores/dialogStore";
+    import fileSettingStore from "../../../stores/fileSettingStore";
     //helpers
     import FileBrowser from "../../../constants/FileBrowser";
     import {
@@ -32,6 +33,7 @@
     import type { FileUI, FileUpload } from "../../../types/UITypes";
     import FileService from "../../../services/FileService";
     import type { ErrorApiResponse } from "../../../types/ApiTypes";
+    import TextLanguage from "../../../constants/TextLanguage";
 
     export let file: FileUI;
     export let viewItem: (file: FileUI) => void;
@@ -154,7 +156,10 @@
                 fileBrowserStore.addFiles(files);
             }
             dialogStore.showMessage(
-                `${files.length} archivos subidos a ${route}`
+                TextLanguage[$fileSettingStore.lang].dialogs.uploadFile(
+                    files.length,
+                    route
+                )
             );
         };
         const err = (data: ErrorApiResponse): void => {

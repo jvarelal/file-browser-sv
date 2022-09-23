@@ -7,7 +7,7 @@
     export let error: ErrorApiResponse;
 
     onMount(() => {
-        if (error.status === 401) {
+        if (error?.status === 401) {
             appViewStore.login("browser");
         }
         fileBrowserStore.setError();
@@ -16,7 +16,7 @@
 
 <div class="alert-danger">
     <h1 class="alert-icon"><i class="fas fa-exclamation-triangle" /></h1>
-    <h2>{error.message}</h2>
+    <h2>{error?.message}</h2>
 </div>
 
 <style>

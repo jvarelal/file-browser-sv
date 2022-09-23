@@ -11,6 +11,7 @@ const defaultState: FileSettingStore = {
     viewOptions: false,
     theme: FileBrowser.themes[0].value,
     transitions: true,
+    lang: "ES",
     cache: []
 }
 
@@ -59,6 +60,7 @@ function createfileSettingStore() {
         setView: () => update((s) => localUpdate(s, "viewList", !s.viewList)),
         setViewOptions: () => update((s) => localUpdate(s, "viewOptions", !s.viewOptions)),
         setTransitions: () => update((s) => localUpdate(s, "transitions", !s.transitions)),
+        setLanguage: (lang: string) => update((s) => localUpdate(s, "lang", lang)),
         updateCache: (dir: string) => update((s) => localUpdate(s, "cache", dir)),
         setTheme: (theme:string) => update((s) => {
             document.documentElement.setAttribute("data-theme", theme)

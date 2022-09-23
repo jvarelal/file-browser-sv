@@ -3,9 +3,11 @@
     import userProfileStore from "../../stores/userProfileStore";
     import Accordion from "../commons/Accordion.svelte";
     import InputText from "../commons/InputText.svelte";
-    import type { ChangePassword } from "../../types/UITypes";
+    import type { ChangePassword, FormLang } from "../../types/UITypes";
     import UserService from "../../services/UserService";
 
+    export let lang: FormLang;
+    
     let collapse = true;
 
     let initialValues: ChangePassword = {
@@ -18,22 +20,22 @@
 
     function handleSubmit(): void {
         if (values.key !== values.validateKey) {
-            errors.validateKey = "Los valores ingresados no coinciden";
+            errors.validateKey = lang.validations.validateKey;
             return;
         }
         if (values.prevKey === values.key) {
-            errors.key = "El nuevo password no puede ser igual al anterior";
+            errors.key = lang.validations.key;
             return;
         }
         if (values.prevKey !== $userProfileStore.key) {
-            errors.prevKey = "El password actual es incorrecto";
+            errors.prevKey = lang.validations.prevKey;
             return;
         }
         dialogStore.showLoading();
         UserService.changePassword(
             values,
             () => {
-                dialogStore.showMessage("Password actualizado");
+                dialogStore.showMessage(lang.success);
                 values = { ...initialValues };
                 collapse = true;
             },
@@ -46,7 +48,7 @@
 </script>
 
 <Accordion
-    title={`<i class="fas fa-key m-r-5  m-l-5"></i> Cambiar Password`}
+    title={`<i class="fas fa-key m-r-5  m-l-5"></i> ${lang.title}`}
     id="changePassword"
     renderDefault={false}
     bind:collapse
@@ -56,7 +58,7 @@
             <div>
                 <InputText
                     name="key"
-                    label="Password"
+                    label={lang.labels.password}
                     type="password"
                     bind:value={values.key}
                     bind:errors={errors.key}
@@ -65,7 +67,7 @@
             <div>
                 <InputText
                     name="repeatkey"
-                    label="Confirmar Password"
+                    label={lang.labels.confirmPassword}
                     type="password"
                     bind:value={values.validateKey}
                     bind:errors={errors.validateKey}
@@ -76,7 +78,7 @@
             <div>
                 <InputText
                     name="prevKey"
-                    label="Password previo"
+                    label={lang.labels.prevPassword}
                     type="password"
                     bind:value={values.prevKey}
                     bind:errors={errors.prevKey}
@@ -84,7 +86,7 @@
             </div>
             <div class="form-field-control d-flex">
                 <button type="submit" class="btn m-auto w-50">
-                    Actualizar
+                    {lang.options.submit}
                 </button>
             </div>
         </div>

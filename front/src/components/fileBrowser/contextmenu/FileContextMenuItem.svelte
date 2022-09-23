@@ -15,6 +15,7 @@
     import type {
         ContextMenuOption,
         FileUI,
+        TxtLang,
         VirtualGroup,
     } from "../../../types/UITypes";
     //helpers
@@ -22,7 +23,12 @@
     import FileService from "../../../services/FileService";
 
     export let deleteFiles: (files: FileUI[]) => void;
-    export let prepareBookmark: (file: FileUI, groups: VirtualGroup[], bookmarks: FileUI[]) => void;
+    export let prepareBookmark: (
+        file: FileUI,
+        groups: VirtualGroup[],
+        bookmarks: FileUI[]
+    ) => void;
+    export let lang: TxtLang;
 
     const fileInfo = getContext<Function>("fileInfo");
 
@@ -40,7 +46,7 @@
                     $fileContextMenuStore.item.route,
                     $fileContextMenuStore.item.name
                 ),
-            label: "Ir a ubicación del archivo",
+            label: lang.contextMenu.items.ubication(),
             hide:
                 !$fileBrowserStore.viewBookmarks ||
                 ($fileContextMenuStore.item.checked &&
@@ -50,9 +56,9 @@
         {
             icon: "fas fa-check-square",
             action: () => fileBrowserStore.setCheck($fileContextMenuStore.item),
-            label: $fileContextMenuStore.item.checked
-                ? "Deseleccionar elemento"
-                : "Seleccionar elemento",
+            label: lang.contextMenu.items.selection(
+                $fileContextMenuStore.item.checked
+            ),
             typeOperation: userOperations.read,
         },
         {
@@ -65,9 +71,9 @@
                 );
                 fileContextMenuStore.reset();
             },
-            label: $fileContextMenuStore.item.checked
-                ? `Copiar seleccionados`
-                : "Copiar",
+            label: lang.contextMenu.items.copy(
+                $fileContextMenuStore.item.checked
+            ),
             typeOperation: userOperations.write,
         },
         {
@@ -80,9 +86,9 @@
                 );
                 fileContextMenuStore.reset();
             },
-            label: $fileContextMenuStore.item.checked
-                ? `Mover seleccionados`
-                : "Mover",
+            label: lang.contextMenu.items.move(
+                $fileContextMenuStore.item.checked
+            ),
             hide: $fileBrowserStore.viewBookmarks,
             typeOperation: userOperations.write,
         },
@@ -94,9 +100,9 @@
                     : [$fileContextMenuStore.item];
                 deleteFiles(files);
             },
-            label: $fileContextMenuStore.item.checked
-                ? `Eliminar seleccionados`
-                : "Eliminar",
+            label: lang.contextMenu.items.trash(
+                $fileContextMenuStore.item.checked
+            ),
             hide:
                 $fileBrowserStore.viewBookmarks ||
                 $fileDownloadStore.isDownloading,
@@ -122,16 +128,16 @@
                     }
                 );
             },
-            label: $fileContextMenuStore.item.checked
-                ? `Descargar seleccionados`
-                : "Descargar",
+            label: lang.contextMenu.items.download(
+                $fileContextMenuStore.item.checked
+            ),
             hide: $fileDownloadStore.isDownloading,
             typeOperation: userOperations.read,
         },
         {
             icon: "fas fa-info",
             action: () => fileInfo($fileContextMenuStore.item),
-            label: "Información",
+            label: lang.contextMenu.items.information(),
             hide:
                 $fileContextMenuStore.item.checked &&
                 $fileBrowserStore.numberItemsChecked > 1,
@@ -145,9 +151,7 @@
                     $fileBookmarkGroupStore.groupList,
                     $fileBrowserStore.bookmarks
                 ),
-            label: `${
-                validateBookmark ? "Quitar de " : "Agregar a "
-            } Marcadores`,
+            label: lang.contextMenu.items.bookmark(validateBookmark),
             hide:
                 $fileContextMenuStore.item.checked ||
                 $fileContextMenuStore.item?.isDirectory,

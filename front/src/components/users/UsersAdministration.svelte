@@ -5,10 +5,16 @@
     import InputSearch from "../commons/InputSearch.svelte";
     import UserForm from "./administration/UserForm.svelte";
     import UsersList from "./administration/UsersList.svelte";
-    import type { UserApp, UserAppFunction } from "../../types/UITypes";
+    import type {
+        TxtLang,
+        UserApp,
+        UserAppFunction,
+    } from "../../types/UITypes";
     import type { UserListApiResponse } from "../../types/ApiTypes";
     import AdminService from "../../services/AdminService";
     import dialogStore from "../../stores/dialogStore";
+
+    export let lang: TxtLang;
 
     let collapse: boolean = true;
     let filterValue: string = "";
@@ -31,16 +37,14 @@
     function onDelete(userData: UserApp): void {
         let cb = () => {
             usersData = AdminService.list();
-            dialogStore.showMessage(`${userData.user} fue eliminado`)
+            dialogStore.showMessage(lang.dialogs.deleteUser(userData.user));
         };
         dialogStore.showDialog(
-            `¿Está seguro de eliminar ${userData.user}?`,
+            lang.dialogs.confirmDeleteUser(userData.user),
             (): void => {
                 dialogStore.showLoading();
-                console.log("to delete..")
-                AdminService.delete(userData, cb, (data) =>{
-                    console.log(data)
-                    dialogStore.showMessage(data.message)
+                AdminService.delete(userData, cb, (data) => {
+                    dialogStore.showMessage(data.message);
                 });
             }
         );
@@ -51,13 +55,13 @@
 </script>
 
 <Accordion
-    title={`<i class="fas fa-users m-r-5  m-l-5"></i> Control de accesos`}
+    title={`<i class="fas fa-users m-r-5  m-l-5"></i> ${lang.label.usersControl}`}
     id="userList"
     renderDefault={false}
     bind:collapse
 >
     {#if showForm}
-        <UserForm onCancel={closeForm} {userTarget} />
+        <UserForm onCancel={closeForm} {userTarget} lang={lang.forms.user} />
     {:else}
         <div class="d-flex p-5">
             <InputSearch
@@ -73,11 +77,11 @@
         {#await usersData}
             <div class="loader m-t-10" />
         {:then list}
-            <UsersList list={list.users} />
+            <UsersList list={list.users} lang={lang.forms.user} />
         {:catch error}
             <div class="d-flex">
                 <h3 class="m-auto">
-                    No se pudieron recuperar usuarios: {error.message}
+                    {lang.dialogs.usersListError(error.message)}
                 </h3>
             </div>
         {/await}

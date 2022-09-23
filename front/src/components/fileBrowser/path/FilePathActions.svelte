@@ -1,12 +1,15 @@
 <script lang="ts">
     import fileBrowserStore from "../../../stores/fileBrowserStore";
     import fileDirectoryStore from "../../../stores/fileDirectoryStore";
+    import fileSettingStore from "../../../stores/fileSettingStore";
     import fileBookmarkGroupStore from "../../../stores/fileBookmarkGroupStore";
     import ActionButton from "../../commons/ActionButton.svelte";
     import FilePathForm from "../forms/FilePathForm.svelte";
     import Modal from "../../modal/Modal.svelte";
+    import TextLanguage from "../../../constants/TextLanguage";
 
     let editPath: boolean = false;
+    let lang = TextLanguage[$fileSettingStore.lang];
 </script>
 
 <div class="route-actions d-flex">
@@ -49,7 +52,7 @@
 {#if editPath}
     <Modal
         icon="fas fa-pencil-alt"
-        label="Ir a ruta"
+        label={lang.label.goTo}
         onClose={() => (editPath = false)}
     >
         <FilePathForm />

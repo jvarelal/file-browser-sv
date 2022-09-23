@@ -8,6 +8,7 @@
     import dialogStore from "../../stores/dialogStore";
     import scrollStore from "../../stores/scrollStore";
     import fileToolbarStore from "../../stores/fileToolbarStore";
+    import fileSettingStore from "../../stores/fileSettingStore";
     //components
     import Accordion from "../commons/Accordion.svelte";
     //types
@@ -17,6 +18,7 @@
     import { getLastTreeName, handleDrop } from "../../helpers/Media";
     import { listErrors } from "./contextmenu/FileContextMenu.svelte";
     import FileService from "../../services/FileService";
+    import TextLanguage from "../../constants/TextLanguage";
 
     let section: HTMLElement;
     let dragOn: boolean = false;
@@ -37,7 +39,10 @@
             const cb = (): void => {
                 fileBrowserStore.addFiles(files);
                 dialogStore.showMessage(
-                    `${files.length} archivos subidos a ${route}`
+                    TextLanguage[$fileSettingStore.lang].dialogs.uploadFile(
+                        files.length,
+                        route
+                    )
                 );
             };
             const err = (err: ErrorApiResponse): void => {
@@ -97,7 +102,7 @@
             on:contextmenu|preventDefault|stopPropagation
             transition:fade
         >
-            <Accordion title="Descargando..." id="downloads-fb" collapse={true}>
+            <Accordion title="Downloading..." id="downloads-fb" collapse={true}>
                 {#each $fileDownloadStore.files as file}
                     <div class="download-element">
                         <i
