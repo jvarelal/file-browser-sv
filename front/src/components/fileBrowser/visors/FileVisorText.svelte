@@ -1,6 +1,4 @@
 <script lang="ts">
-    import { each } from "svelte/internal";
-
     import FileService from "../../../services/FileService";
     import dialogStore from "../../../stores/dialogStore";
     import type { FileEdit, FileUI } from "../../../types/UITypes";

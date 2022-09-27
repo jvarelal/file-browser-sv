@@ -11,25 +11,28 @@
     import FileSettingsActions from "./FileSettingsActions.svelte";
     import Accordion from "../../commons/Accordion.svelte";
     //helpers
-    import FileBrowser from "../../../constants/FileBrowser";
+    import TextLanguage from "../../../constants/TextLanguage";
     import Modal from "../../modal/Modal.svelte";
     import FileForm from "../forms/FileForm.svelte";
 
     export let numberItemsFiltered: number = 0;
     export let isToolbarCollapsed: boolean = $fileToolbarStore.isCollapsed;
-
+    
+    let lang = TextLanguage[$fileSettingStore.lang];
+    let sortBySelect = lang.selectOptions.sortBy;
+    let groupBySelect = lang.selectOptions.groupBy;
     let newFile: boolean = false;
 
     $: title =
-        "Vista" +
+        lang.label.view +
         ($fileBrowserStore.numberItems > 0 && !$fileBrowserStore.waiting
-            ? ` | ${$fileBrowserStore.numberItems} elementos ${
+            ? ` | ${$fileBrowserStore.numberItems} ${lang.label.itemName} ${
                   $fileBrowserStore.filter
-                      ? ` | ${numberItemsFiltered} filtrados`
+                      ? ` | ${numberItemsFiltered} ${lang.label.filtered}`
                       : ""
               } ${
                   $fileBrowserStore.numberItemsChecked
-                      ? ` | ${$fileBrowserStore.numberItemsChecked} seleccionados`
+                      ? ` | ${$fileBrowserStore.numberItemsChecked} ${lang.label.selected}`
                       : ""
               }`
             : "");
@@ -45,7 +48,7 @@
 
     function handleGroupChange(e: Event) {
         let value = (e.target as HTMLSelectElement).value;
-        fileSettingStore.setGroupBy(value);
+        fileSettingStore.setGroupBy(value !== "none" ? value : null);
     }
 
     setContext("fileAdd", activateNewFile);
@@ -66,43 +69,41 @@
             {
                 label: "Order elements",
                 icon: `fas fa-sort-amount-${
-                            $fileSettingStore.orderAsc ? "down" : "up"
-                        }-alt`,
+                    $fileSettingStore.orderAsc ? "down" : "up"
+                }-alt`,
                 action: fileSettingStore.setOrderAsc,
             },
             {
                 label: "Grid/List",
-                icon: `fas fa-${
-                            $fileSettingStore.viewList ? "th" : "list"
-                        }`,
+                icon: `fas fa-${$fileSettingStore.viewList ? "th" : "list"}`,
                 action: fileSettingStore.setView,
-            }
+            },
         ]}
     >
         <div class="options-wrapper" transition:fly>
             <div class="form-field-control">
-                <label for="select-sort">Ordenamiento</label>
+                <label for="select-sort">{sortBySelect.label} </label>
                 <div class="form-field">
                     <select
                         value={$fileSettingStore.sortBy}
                         id="select-sort"
                         on:change={handleSortChange}
                     >
-                        {#each FileBrowser.sortOptions as option}
+                        {#each sortBySelect.options as option}
                             <option value={option.value}>{option.label}</option>
                         {/each}
                     </select>
                 </div>
             </div>
             <div class="form-field-control">
-                <label for="select-sort">Agrupación</label>
+                <label for="select-sort">{groupBySelect.label}</label>
                 <div class="form-field">
                     <select
                         value={$fileSettingStore.groupBy}
                         id="select-sort"
                         on:change={handleGroupChange}
                     >
-                        {#each FileBrowser.groupOptions as option}
+                        {#each groupBySelect.options as option}
                             <option value={option.value}>{option.label}</option>
                         {/each}
                     </select>
@@ -116,7 +117,7 @@
     {#if newFile}
         <Modal
             icon="fas fa-plus"
-            label="Agregar elemento"
+            label={lang.label.addElement}
             onClose={() => (newFile = false)}
         >
             <FileForm />

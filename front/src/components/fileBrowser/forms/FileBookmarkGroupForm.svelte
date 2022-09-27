@@ -1,9 +1,11 @@
 <script lang="ts">
     import { getContext, onMount } from "svelte";
+    import TextLanguage from "../../../constants/TextLanguage";
     import UserService from "../../../services/UserService";
     import dialogStore from "../../../stores/dialogStore";
     import fileBookmarkGroupStore from "../../../stores/fileBookmarkGroupStore";
     import fileBrowserStore from "../../../stores/fileBrowserStore";
+    import fileSettingStore from "../../../stores/fileSettingStore";
     import type { VirtualGroup } from "../../../types/UITypes";
     import InputLabel from "../../commons/InputLabel.svelte";
     import InputText from "../../commons/InputText.svelte";
@@ -15,6 +17,7 @@
     const currentGroupIds: number[] = $fileBookmarkGroupStore.groupList.map(
         (g) => g.id
     );
+    let formLang = TextLanguage[$fileSettingStore.lang].forms.bookmark;
     let updateGroup: boolean = $fileBookmarkGroupStore.fileTarget === null;
     let nameError: string = "";
     let focusElement: HTMLElement;
@@ -23,7 +26,6 @@
         id: updateGroup ? findNewId() : $fileBookmarkGroupStore.groupList[0].id,
         name: "",
     };
-    console.log(value);
     function findNewId(): number {
         let newId = 1;
         while (currentGroupIds.includes(newId)) {
@@ -43,9 +45,7 @@
     function handleSubmitGroup(): void {
         const newGroup: boolean = $fileBookmarkGroupStore.groupTarget === null;
         if (currentGroupNames.includes(value.name?.trim())) {
-            nameError = newGroup
-                ? `El nombre ya existe en lista`
-                : `El nombre no ha sido modificado`;
+            nameError = formLang.validations.exist(newGroup);
             return;
         }
         UserService[newGroup ? "addBookmarkGroup" : "editBookmarkGroup"](
@@ -83,18 +83,18 @@
     {#if updateGroup}
         <InputText
             name="virtualGroup"
-            label="Titulo"
+            label={formLang.labels.title}
             maxlength={15}
             bind:value={value.name}
             bind:errors={nameError}
         />
     {:else}
         <InputLabel
-            label="Archivo"
+            label={formLang.labels.target}
             value={$fileBookmarkGroupStore.fileTarget?.name}
         />
         <div class="form-field-control">
-            <label for="type">Grupo</label>
+            <label for="type">{formLang.labels.group}</label>
             <div class="form-field">
                 <select
                     id="type"
@@ -113,10 +113,12 @@
     {/if}
     <div class="form-field-control d-flex">
         <button type="submit" class="btn m-auto w-25">
-            {$fileBookmarkGroupStore.groupTarget ? "Editar" : "Agregar"}
+            {$fileBookmarkGroupStore.groupTarget
+                ? formLang.options.edit
+                : formLang.options.create}
         </button>
         <button on:click|preventDefault={closeModal} class="btn m-auto w-25">
-            Cancelar
+            {formLang.options.cancel}
         </button>
     </div>
 </form>

@@ -1,5 +1,6 @@
 import CryptoJS from 'crypto-js';
 import FileBrowser from '../constants/FileBrowser';
+import type { Select } from '../types/UITypes';
 
 export function limitString(str: string = '', size: number = str.length, complement: string = ''): string {
     if (str.length > size) {
@@ -10,7 +11,6 @@ export function limitString(str: string = '', size: number = str.length, complem
 
 //65 = A 90= z
 export function getExcelColumnCode(index: number) {
-    let code: string = ""
     if (index > 25) {
         let firstWord = Math.trunc(index / 25)
         let secondWord = index % 25
@@ -37,4 +37,9 @@ export const secure = {
             return "";
         }
     }
+}
+
+export const selectKeys = (data: any): Select[] => {
+    let keys: string[] = Object.getOwnPropertyNames(data)
+    return keys.map(key => ({ value: key, label: data[key] }))
 }

@@ -11,9 +11,14 @@
     import FileContextMenuOption from "./FileContextMenuOption.svelte";
     //types
     import userOperations from "../../../constants/UserOperations";
-    import type { ContextMenuOption, FileMove } from "../../../types/UITypes";
+    import type {
+        ContextMenuOption,
+        FileMove,
+        TxtLang,
+    } from "../../../types/UITypes";
 
     export let pasteFiles: (fileData: FileMove) => void;
+    export let lang: TxtLang;
 
     const activateModal = getContext<VoidFunction>("fileAdd");
     const fileInfo = getContext<Function>("fileInfo");
@@ -22,7 +27,7 @@
         {
             icon: "fas fa-folder-plus",
             action: activateModal,
-            label: "Agregar archivos",
+            label: lang.contextMenu.parent.addFiles(),
             hide:
                 $fileBrowserStore.viewBookmarks ||
                 $fileDownloadStore.isDownloading,
@@ -34,9 +39,9 @@
                 fileSettingStore.setViewOptions();
                 fileBrowserStore.setCheckAll(false);
             },
-            label: `${
-                $fileSettingStore.viewOptions ? "Ocultar" : "Mostrar"
-            } opciones de archivo`,
+            label: lang.contextMenu.parent.fileOptions(
+                $fileSettingStore.viewOptions
+            ),
             hide: $fileBrowserStore.numberItems === 0,
             typeOperation: userOperations.read,
         },
@@ -44,9 +49,9 @@
             icon: "fas fa-check-square",
             action: () =>
                 fileBrowserStore.setCheckAll(!$fileBrowserStore.checkAll),
-            label: $fileBrowserStore.checkAll
-                ? "Deseleccionar todos"
-                : "Seleccionar todos",
+            label: lang.contextMenu.parent.checkFiles(
+                $fileBrowserStore.checkAll
+            ),
             hide: $fileBrowserStore.numberItems === 0,
             typeOperation: userOperations.read,
         },
@@ -60,7 +65,7 @@
                 };
                 pasteFiles(fileToMove);
             },
-            label: "Pegar",
+            label: lang.contextMenu.parent.pasteFile(),
             hide:
                 $fileBrowserStore.clipboard.length === 0 ||
                 $fileBrowserStore.clipboard[0].route ===
@@ -70,7 +75,9 @@
         },
         {
             icon: "fas fa-info",
-            label: `Información de ${$fileContextMenuStore.parent.name}`,
+            label: lang.contextMenu.parent.fileInfo(
+                $fileContextMenuStore.parent.name
+            ),
             action: () => {
                 let parts = $fileDirectoryStore.current.split("/");
                 let name = parts.pop();

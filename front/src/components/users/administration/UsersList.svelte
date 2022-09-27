@@ -3,14 +3,16 @@
 
     import UserCard from "./UserCard.svelte";
     import type { UserApiResponse } from "../../../types/ApiTypes";
+    import type { FormLang } from "../../../types/UITypes";
 
     export let list: UserApiResponse[];
+    export let lang: FormLang;
 </script>
 
 <div class="m-8">
     {#if list.length > 0}
         {#each list.map( (u) => ({ ...u, routes: u.routes.map( (r) => secure.recover(r) ) }) ) as userData}
-            <UserCard {userData} />
+            <UserCard {userData} {lang} />
         {/each}
     {:else}
         <h1 class="m-auto">

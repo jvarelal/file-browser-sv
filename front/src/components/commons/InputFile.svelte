@@ -1,10 +1,11 @@
 <script lang="ts">
-    import type { FileUI } from "../../types/UITypes";
+    import type { FileUI, FormLang } from "../../types/UITypes";
     import { handleDrop } from "../../helpers/Media";
 
     export let filesSelected: File[] = [];
     export let currentFiles: FileUI[] = [];
     export let errors: string[] = [];
+    export let formLang: FormLang
 
     let dragOn: boolean = false;
     let inputFile: HTMLInputElement;
@@ -14,7 +15,7 @@
         inputFiles.forEach((file: File) => {
             if (!filesSelected.find((f) => f.name === file.name)) {
                 if (currentFiles.find((f) => f.name === file.name)) {
-                    errors.push(`El archivo ${file.name} ya existe en la ruta`);
+                    errors.push(formLang.validations.exist(file.name));
                 } else {
                     filesSelected = [...filesSelected, file];
                 }
@@ -31,7 +32,7 @@
 </script>
 
 <div class="form-field-control">
-    <label for="file">Archivos</label>
+    <label for="file">{formLang.labels.files}</label>
     <div class="form-field" style="flex-direction: column;">
         <div
             class="file-entry white pointer"

@@ -20,6 +20,7 @@
     import { getLastTreeName } from "../../helpers/Media";
     import UserService from "../../services/UserService";
     import dialogStore from "../../stores/dialogStore";
+    import TextLanguage from "../../constants/TextLanguage";
 
     export let apiResponse: FileListApiResponse;
 
@@ -45,7 +46,9 @@
                 icon: "fas fa-trash",
                 action: () => {
                     dialogStore.showDialog(
-                        `¿Esta seguro de eliminar ${g.name}? Todos los marcadores relaciondados serán eliminados.`,
+                        TextLanguage[$fileSettingStore.lang].dialogs.deleteGroup(
+                            g.name
+                        ),
                         () => {
                             UserService.deleteBookmarkGroup(
                                 g,

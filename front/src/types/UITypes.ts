@@ -78,7 +78,7 @@ export interface FileUIGroup {
     files: FileUI[];
 }
 
-export type AppPages = "browser" | "login" | "config" 
+export type AppPages = "browser" | "login" | "config"
 
 export interface FileUpload {
     route: string;
@@ -109,4 +109,81 @@ export interface ChangePassword {
     prevKey: string;
     key: string;
     validateKey: string;
+}
+
+export interface SelectLang {
+    label: string;
+    options: Select[]
+}
+
+
+export interface FormLang {
+    title: string,
+    validations?: any,
+    labels: any,
+    options?: any,
+    success?: string,
+    successEdit?: string
+    selects?: SelectLang[]
+}
+
+export interface TxtLang {
+    label: {
+        view: string;
+        itemName: string;
+        filtered: string;
+        selected: string;
+        goBack: string;
+        config: string;
+        logout: string;
+        usersControl: string;
+        addElement: string;
+        fileDetail: string;
+        goTo: string;
+    };
+    dialogs: {
+        deleteGroup: (data?: any) => string;
+        uploadFile: (number: number, route: string) => string;
+        deleteUser: (data?: any) => string;
+        confirmDeleteUser: (data?: any) => string;
+        usersListError: (data?: any) => string;
+        fileListError: (data?: any) => string;
+        deleteFiles: (data?: any) => string;
+        fileNotSelected: (data?: any) => string;
+        confirmDeletedFiles: (data?: any) => string;
+        fileMoveCopy: (files: FileUI[], move: boolean) => string;
+    };
+    selectOptions: {
+        sortBy: SelectLang;
+        groupBy: SelectLang;
+    };
+    contextMenu: {
+        parent: {
+            addFiles: (data?: any) => string;
+            fileOptions: (data?: any) => string;
+            checkFiles: (data?: any) => string;
+            pasteFile: (data?: any) => string;
+            fileInfo: (data?: any) => string;
+        };
+        items: {
+            ubication: (data?: any) => string;
+            selection: (data?: any) => string;
+            copy: (data?: any) => string;
+            move: (data?: any) => string;
+            trash: (data?: any) => string;
+            download: (data?: any) => string;
+            information: (data?: any) => string;
+            bookmark: (data?: any) => string;
+        };
+    };
+    forms: {
+        file: FormLang;
+        bookmark: FormLang;
+        path: FormLang;
+        password: FormLang;
+        user: FormLang;
+        settings: FormLang;
+        profile: FormLang;
+        session: FormLang;
+    };
 }

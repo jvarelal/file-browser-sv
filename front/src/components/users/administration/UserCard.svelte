@@ -7,9 +7,11 @@
     import FileBrowser from "../../../constants/FileBrowser";
     import ActionButton from "../../commons/ActionButton.svelte";
     import type { UserApiResponse } from "../../../types/ApiTypes";
-    import type { UserAppFunction } from "../../../types/UITypes";
+    import type { FormLang, UserAppFunction } from "../../../types/UITypes";
 
     export let userData: UserApiResponse;
+    export let lang: FormLang;
+
     let onEditUser: UserAppFunction = getContext<UserAppFunction>("onEditUser");
     let onDelete: UserAppFunction = getContext<UserAppFunction>("onDelete");
 </script>
@@ -23,7 +25,7 @@
     <div class="user-settings-row">
         <div>
             <InputLabel
-                label="Perfil"
+                label="Rol"
                 value={FileBrowser.roles.find((r) => r.value === userData.rol)
                     ?.label}
             />
@@ -45,17 +47,17 @@
     </div>
     <div class="user-settings-row">
         <div>
-            <InputLabel label="Tiempo de sesión" value={userData.sessionTime} />
+            <InputLabel label={lang.labels.sessionTime} value={userData.sessionTime} />
         </div>
         <div>
-            <InputLabel label="Creación" value={userData.creation} />
+            <InputLabel label={lang.labels.creation} value={userData.creation} />
         </div>
     </div>
     <div class="user-settings-row">
         <UserActions userActions={userData.actions} disabled={true} />
         <div>
             <InputLabel
-                label="Rutas acceso"
+                label={lang.labels.routes}
                 value={userData.routes?.join("<br/>")}
             />
         </div>

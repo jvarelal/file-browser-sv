@@ -16,9 +16,11 @@
     //helpers
     import FileService from "../services/FileService";
     import type { FileUI } from "../types/UITypes";
+    import TextLanguage from "../constants/TextLanguage";
 
     let numberItemsFiltered: number = 0;
     let fileInfo: FileUI;
+    let lang = TextLanguage[$fileSettingStore.lang];
 
     $: fileList = FileService.list($fileDirectoryStore.current);
 
@@ -59,7 +61,7 @@
     {#if fileInfo}
         <Modal
             icon="fas fa-info"
-            label="Detalle elemento"
+            label={lang.label.fileDetail}
             onClose={() => (fileInfo = null)}
         >
             <FileInfo file={fileInfo} />

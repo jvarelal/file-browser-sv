@@ -2,6 +2,7 @@
     import { getContext, onMount } from "svelte";
     //stores
     import fileDirectoryStore from "../../../stores/fileDirectoryStore";
+    import fileSettingStore from "../../../stores/fileSettingStore";
     import fileBrowserStore from "../../../stores/fileBrowserStore";
     //components
     import InputText from "../../commons/InputText.svelte";
@@ -15,9 +16,12 @@
     //helpers
     import FileService from "../../../services/FileService";
     import FileBrowser from "../../../constants/FileBrowser";
+    import TextLanguage from "../../../constants/TextLanguage";
 
     const closeModal = getContext<VoidFunction>("closeModal");
     const blockModal = getContext<BooleanFunction>("blockModal");
+    let formLang = TextLanguage[$fileSettingStore.lang].forms.file;
+    let itemSelect = formLang.selects[0];
     let values: FileUpload = {
         type: "folder",
         name: "",
@@ -65,21 +69,19 @@
         };
         if (["folder", "plain"].includes(values.type)) {
             if (values?.name?.trim().length === 0) {
-                errors.name = `* El campo es obligatorio`;
+                errors.name = formLang.validations.required;
                 return;
             }
         }
         if (values.type === "plain") {
             if ($fileBrowserStore.files.find((f) => f.name === values?.name)) {
-                errors.files = [
-                    `El archivo ${values.name} ya existe en la ruta`,
-                ];
+                errors.files = [formLang.validations.exist(values.name)];
                 return;
             }
         }
         if (values.type === "file") {
             if (values?.files.length === 0) {
-                errors.files = [`* El campo es obligatorio`];
+                errors.files = [formLang.validations.required];
                 return;
             }
         }
@@ -92,7 +94,7 @@
 
 <form on:submit|preventDefault={handleSubmit}>
     <div class="form-field-control">
-        <label for="type">Ruta</label>
+        <label for="type">{formLang.labels.route}</label>
         <div class="form-field">
             <span class="inp-type disable p-3 w-100 f-08 t-left">
                 {$fileDirectoryStore.current}
@@ -100,7 +102,7 @@
         </div>
     </div>
     <div class="form-field-control">
-        <label for="type">Tipo de elemento</label>
+        <label for="type">{itemSelect.label}</label>
         <div class="form-field">
             <select
                 id="type"
@@ -109,26 +111,27 @@
                 bind:value={values.type}
                 bind:this={focusElement}
             >
-                <option value="folder">Folder</option>
-                <option value="plain">Archivo</option>
-                <option value="file">Carga multiple</option>
+                {#each itemSelect.options as option}
+                    <option value={option.value}>{option.label}</option>
+                {/each}
             </select>
         </div>
     </div>
     {#if ["folder", "plain"].includes(values.type)}
         <InputText
             name="name"
-            label="Nombre"
+            label={formLang.labels.name}
             bind:value={values.name}
             bind:errors={errors.name}
             regex={FileBrowser.regexp.folderName}
-            errorRegexp={`* Los nombres de archivos no pueden contener los caracteres " / ? * : | < > \ `}
+            errorRegexp={formLang.validations.regexp}
         />
     {:else}
         <InputFile
             bind:errors={errors.files}
             bind:filesSelected={values.files}
             currentFiles={$fileBrowserStore.files}
+            {formLang}
         />
     {/if}
     {#if finalError}
@@ -137,9 +140,11 @@
         </div>
     {/if}
     <div class="form-field-control d-flex">
-        <button type="submit" class="btn m-auto w-25">Agregar</button>
+        <button type="submit" class="btn m-auto w-25"
+            >{formLang.options.submit}</button
+        >
         <button on:click|preventDefault={closeModal} class="btn m-auto w-25">
-            Cancelar
+            {formLang.options.cancel}
         </button>
     </div>
 </form>
