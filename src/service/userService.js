@@ -1,3 +1,4 @@
+import USER_BOOKMARK_BASE from "../constants/userBookmarkBase.js";
 import { getConnection } from "../database.js";
 import FileOperationError from "../errors/FileOperationError.js";
 import secure from "../helpers/secure.js";
@@ -84,7 +85,7 @@ export const addUser = async (userData = {}) => {
         }
         userValidation(userData)
         db.data.users = [...db.data.users, {
-            user, key, rol, sessionTime, actions, routes, creation: new Date().toISOString()
+            user, key, rol, sessionTime, actions, routes, ...USER_BOOKMARK_BASE
         }]
         await db.write();
     } catch (error) {

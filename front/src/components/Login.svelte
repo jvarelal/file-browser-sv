@@ -36,6 +36,7 @@
     }
     onMount(() => {
         document.title = `FileBrowser - Login`;
+        sessionStorage.clear()
     });
 </script>
 

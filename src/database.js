@@ -3,6 +3,7 @@ import { join, dirname } from "path";
 import { fileURLToPath } from "url";
 import { platform } from 'node:process';
 import secure from "./helpers/secure.js";
+import USER_BOOKMARK_BASE from "./constants/userBookmarkBase.js";
 
 let db;
 
@@ -24,12 +25,6 @@ export async function createConnection() {
         "user": "Admin",
         "key": "U2FsdGVkX18LkNaseXY2TCpJ/J95cF9mKijsQF1EH28=",
         "routes": (isWin ? windowsRoutes : linuxRoutes).map(r => secure.digest(r)),
-        "bookmarksGroup": [
-          {
-            "name": "Global",
-            "id": "0"
-          }
-        ],
         "sessionTime": "2h",
         "rol": "0",
         "actions": [
@@ -38,8 +33,7 @@ export async function createConnection() {
           "u",
           "d"
         ],
-        "bookmarks": [],
-        "creation": new Date().toISOString()
+        ...USER_BOOKMARK_BASE
       }
     ]
   };
