@@ -4,7 +4,7 @@ Basic web based file browser with nodeJS and giving a try on Svelte.
 
 ## Get started
 
-To give a first try, locate on path:
+To give a first try, locate on path (in Windows with gitbash):
 
 ```bash
 npm run tryon
@@ -23,32 +23,6 @@ After first execution and with no new changes, only running follow command will 
 ```bash
 npm start
 ```
-
-## Single-page app mode
-
-By default, sirv will only respond to requests that match files in `public`. This is to maximise compatibility with static fileservers, allowing you to deploy your app anywhere.
-
-If you're building a single-page app (SPA) with multiple routes, sirv needs to be able to respond to requests for *any* path. You can make it so by editing the `"start"` command in package.json:
-
-```js
-"start": "sirv public --single"
-```
-
-## Using TypeScript
-
-This template comes with a script to set up a TypeScript development environment, you can run it immediately after cloning the template with:
-
-```bash
-node scripts/setupTypeScript.js
-```
-
-Or remove the script via:
-
-```bash
-rm scripts/setupTypeScript.js
-```
-
-If you want to use `baseUrl` or `path` aliases within your `tsconfig`, you need to set up `@rollup/plugin-alias` to tell Rollup to resolve the aliases. For more info, see [this StackOverflow question](https://stackoverflow.com/questions/63427935/setup-tsconfig-path-in-svelte).
 
 ## Deploying to the web
 
